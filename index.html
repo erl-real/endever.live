@@ -113,7 +113,7 @@
   <a id="go-sub-btn" href="#" target="_blank" rel="noopener" title="dont want a darker lowrez vid? THEN GO WATCH FROM THE ARTIST AND SUB! dont ask us to change it." class="text-[9px] font-black text-white bg-zinc-800 hover:bg-zinc-700 px-2.5 py-1 rounded-full uppercase tracking-widest shrink-0">GO SUB</a>
 </div>
 
-<div class="flex-1 flex min-h-0">
+<div class="flex-1 flex min-h-0 relative">
   <!-- Left: Controls -->
   <div id="controls-sidebar" class="sidebar w-48 flex flex-col relative">
     <!-- Collapsed content -->
@@ -163,8 +163,9 @@
   </div>
 
   <!-- Center -->
-  <div id="center-art" class="flex-1 flex flex-col items-center justify-center gap-6 p-6">
-    <div id="playlist-art-display" class="w-48 h-48 rounded-2xl bg-zinc-900 flex items-center justify-center ring-1 ring-white/5">
+  <div id="center-art" class="absolute left-1/2 top-0 -translate-x-1/2 h-full flex flex-col items-center justify-center gap-6 p-6">
+    <div id="playlist-art-display" class="w-48 h-48 rounded-2xl bg-zinc-900 flex items-center justify-center ring-1 ring-white/5 overflow-hidden">
+      <img id="art-image" class="w-full h-full object-cover hidden">
       <span id="art-number" class="text-6xl font-black text-zinc-700">1</span>
     </div>
     <div id="saying-display" class="text-center max-w-sm min-h-[3rem] flex items-center justify-center">
@@ -260,6 +261,8 @@ const PLAYLISTS = [
   {
     id: 'bass-test',
     name: 'Bass Test',
+    art: '/art/basstestside.png',
+    centerArt: '/art/basstest.png',
     ids: [
       "Y0xZmjRl9_8","U7FGNl7yK3w","kFfqd56blsU","pVjdMQ_iAh0","_z1aJvUTXUY",
       "31j4DIpgY9U","zf99kdFw9b8","np3pU-dLok4","HcQTWq7Sea0","vWaljXUiCaE",
@@ -295,6 +298,8 @@ const PLAYLISTS = [
   {
     id: 'lsd-radio',
     name: 'LSD Radio',
+    art: '/art/LSDTV.jpg',
+    centerArt: '/art/LSDTV.jpg',
     ids: [
       "_2i6phdI9Ow","qSQKvnWnCtY","npcGql9Ir6Y","iDaUy4T7rVI","X89DMLTEzCs","UCegS6qFkfY","IsDqlPKY1fQ","ecOKP4_lFsg","AnycCuYSW7A","mOKMoL8_jaQ",
       "nm65PCbUMZI","WY45ELPHFiM","EqtS19hfWD4","YY6YQFwGYAU","ZF9mWOg01EA","-u3NXWgQpjY","FqG9OaOU184","B7Gj3YodcWU","Qr6KyiJaLpQ","iOZOtHv5H_w",
@@ -308,6 +313,8 @@ const PLAYLISTS = [
   {
     id: 'acid-drop',
     name: 'Acid Drop',
+    art: '/art/aciddrop.jpg',
+    centerArt: '/art/aciddrop.jpg',
     ids: [
       "w87sWe-6HLU","CyAigHilpo4","6XJkPtxqWM8","RSL6KqWKFvo","juuIhW8V1Xw","2DV8vMaS7Wg","WUu39PJ_TI0","HPc8QMycGno","qi2xhtVCh_c","HQl4o0g-wy0",
       "1wl5BbUg05M","KR8jbM8TTRQ","nxg4C365LbQ","3jtp0BDy_oE","_D4Y0jiYxWE","mWSgICOeoPY","luQSQuCHtcI","ETL8NlqYT-Y","LKBG12sUYuA","3YXVdyA9Fxw",
@@ -319,6 +326,8 @@ const PLAYLISTS = [
   {
     id: 'post-pop',
     name: 'Post Pop',
+    art: '/art/postpop.jpg',
+    centerArt: '/art/postpop.jpg',
     ids: [
       "KGgOz_gRD_c","SiAuAJBZuGs","VE3vKgiK4uU","IHoj7qvNmwk","6i01tOMgBDU","FH3CyuSzz98","Rb6Scz-5YOs","GYLcu5tFjUU","bU_-OhxcFVI","1BhJBoSILk4",
       "ogGYTxKj80k","uJ5U2dCfEiU","xcHbc4Z2ths","1xlijyn3j8E","osl2i-G2yjk","rietL01M1r8","NaFd8ucHLuo","KOOhPfMbuIQ","ZFc4itpTpxc","lpRxcL9WhCQ",
@@ -328,8 +337,37 @@ const PLAYLISTS = [
     ]
   },
   {
+    id: 'knock-out',
+    name: 'Knock Out',
+    art: '/art/knockoutside.png',
+    centerArt: '/art/knockout.png',
+    ids: [
+      "VB01l-V_vAE","xflfmYeEt_8","Sq5Gsk-JhVk","KLNRsyKR1vM","jGVcw-fQeik","JT_NgMk9n-4","nHOtPHuPMYo","NZzht9MRk50","dyCo4kqeCZE","xKH3Hj4lqLs",
+      "NE2QAYVlUJE","zxKVYysUynk","O5HX_ua2DC0","r42HwRDxErA","hwLa4VYL0BI","rWRmjkPgZkY","kL0t_z0jCWU","f8c0KPyK3Js"
+    ]
+  },
+  {
+    id: 'unsigned',
+    name: 'Unsigned',
+    art: '/art/unsigned.jpg',
+    centerArt: '/art/unsigned.jpg',
+    ids: [
+      "5ufWpmpKLTc","xsQ_BjxuHpg","zX1KWZBctXs","gB0EafCahKc","WKvSJI5dOFM","bsDUiNRo3rM","JqNkYKpIvX8","Xcd1X06gxNY","kDeJSKzOG2A","KngB7GGxn4w",
+      "6oW98lb7pxE","mXSVpHYgBZ8","NCLqiB5NB8w","Kib-Cyp4QhE","TH7j1HfGXr8","fSn5e5YQpgg","1sF_U1lkFeo","Nk1mnZx040M","XtNW2gNef58","uSG_wPaQbOk",
+      "lDgm6gIMCXw","0EV2mxuRz-w","RwASa9fgyrI","9HjsaJwBYdQ","pJoFHViICsQ","FUZH80j9SqU","v0jDavn1qn0","V1cvCsy8Jpk","w5yngjXaSD8","rDnkBBYm97Y",
+      "EtYp6RCp79M","Dd4y7oZ6YlQ","bxuWPH-_oVw","veu3-Tr6SsY","TXEHYqTFoas","8BGKRBWEEqI","ZdUxX47iYlQ","eqSFskq1yPA","Iw_Td9Q1t4U","7Jq6EIojkE0",
+      "fUoDionzgdE","EXkfhiI0wGo","gDeL1CsbPyM","v5NxCmb2zSc","BSN_47b89y8","Aq9ZYL_SKpw","WxhhuV2etjI","abS6Y8-7tqk","ag9Kw5wiwL0","WsGCbAU23OE",
+      "pbhxoH531Xs","8LNUoL4-jIw","ovEyLznrBZk","lbcKISqazdk","k68NDtZThoA","PUwb0pIIC5M","nYkP9Am7pXI","Agro-BhJ17A","on9P-QxbQ_w","WX6r8D0lOT8",
+      "OZqAmFvVDkk","YB0AqJB3pzY","09lnzTg8YAw","6xOkY0cfrsM","cJkucufmS8I","s02eK62dQGE","AGdoQBsRXw8","A58SKFoVkB4","4v24ccz2sZE","JiQ-Lgidjhg",
+      "avoWpN22jJU","yZ_Hbsb5f6E","DxplQfJ2gX4","YlMTbJTK2g0","zJEJ9kZcFHQ","1SxI25ybOaI","-uF7ApN_1P8","D4uig9U2_HQ","QvZ-pO4MOMU","RZ9Qu5eLOas",
+      "VFIUy39u_4c","kTxt6Qrk8b4"
+    ]
+  },
+  {
     id: 'backseat66',
     name: 'BackSeat66',
+    art: '/art/backseat66side.png',
+    centerArt: '/art/backseat66.png',
     ids: [
       "6RR0Gmqp6LI","1Snj2L_VS1M","1YSP1aqA_jw","kbP2BTUKM4w","S0gUbgSBmBg","GNCd_ERZvZM","BtyHosz4ELw","kfzRXseSBIM","mG6ROHmgc80","XsZKrctSDaw",
       "kU0SmxKucCw","-OqrcUvrbRY","zBftDdSKUdk","Qcuk4LLRatk","ZulYhwXiG7w","NIiKBLA0kXU","4bZeLOvGBgY","O15gyuURcX8","y8PtSL95vrs","unt_LFp5TiM",
@@ -342,6 +380,8 @@ const PLAYLISTS = [
   {
     id: 'hustle-nation',
     name: 'Hustle Nation',
+    art: '/art/hustlenationside.png',
+    centerArt: '/art/hustlenation.png',
     ids: [
       "VdvKsNy2meI","GXLAqBbXfrg","lqWxGE7zSPA","78ZD05_wbqk","MZ924VGx5n0","FeoPeBgbLEY","fEPj_LuaK08","1FSgekLujqE","5SQ0cFHKD_8","ekzs6nv23VE",
       "gkwWyu8uzHA","1-GXJd3bdhQ","N6lZrVktfxU","YZVlSqjjkic","Hjm7k-Lcoe8","AVrNHI4RdPM","9ek1TPomCfg","HR32_Szb3fY","OY0Mk9kTs8M","D8fHatctfRo",
@@ -350,6 +390,41 @@ const PLAYLISTS = [
       "f4mn9zUHx1M","YezVkPlQ33U","jJY85Hysmck","FTrkxkuOB2c","JNcQHJyKIWc","Y7d42LJfkqQ","EVlGLtCnN-Y","5sXFLYX0HNc","2Mk7VTUwbck","ei02LcSl1ZI",
       "j0zyU9YYMos","D3nT0piQDgA","RdeqdPZK2Lw","j_KF4AQddlk","kOVeCqkVoEg","5MU-Y_UqOj8","EKcJ5yXfDpU","yR2ekorR6-k","NA9zxcFBPUk","OQy6ELV-cQY",
       "BhT19qt5rSk","Jj5tt3Elu-k","7ctORopHfjQ","EEgx2JC4d9o"
+    ]
+  },
+  {
+    id: 'hot-100',
+    name: 'HOT 100',
+    art: '/art/top100beta.jpg',
+    centerArt: '/art/top100beta.jpg',
+    ids: [
+      "nz10tpltsE8","p2A4Uz9qN_o","VE3vKgiK4uU","5KypdWDdhcQ","dM-72E6MZbA","CZrzGK46nhQ","n-87chsvCF4","gqxPFnboeJo","CxGJhPLDoQw","aplPE25xg3c",
+      "NrjCdy09cs4","dLTGKQavdSo","LNavo8PHdqU","EAvHd0BI7Aw","vJJ9vuhInho","JEyFIH7WuCA","1F59TuBoabg","S5GWgXXDwdg","maM_b2Hz6lA","gmCnVPcX2tE",
+      "CunaTuLfTVM","Hn9wKP-ZOUM","69cFNlGl5C0","Z5YZW1WQagU","sqyXs1z-pWc","hwROKJ_3LzA","3u85xOuXt8w","Q5FJZdnG19E","-3KTuiSoZL0","tQy4yweC_3g",
+      "uCrI9X-7kh4","WgW4cTCVX-k","Rk0PSCa_JFc","Casq2Kj2sVs","kh0dBe47p2Q","ZCfSQIclS3U","xngaeZH_M0E","OMu-glPiwq0","cPI6FavTQ_U","IySmnW-oNRo",
+      "ydoDo861wSw","lwtPinxGwwM","gkTZE4uhFgk","N9E7wlajNew","9Z6eJthMVbc","LjfayBMnflc","R1xvM84jhpo","9WPUaR5XXfI","_BCKKvtMVTM","itPrTvS5-qs",
+      "FsQI-EjuZNU","KR8jbM8TTRQ","7t2E6vmlpBY","OFAfJZHW5sg","ki4_XVn3qVY","JiuZeXLMH9I","BBKWnrU8A4Y","r-ycvEfbd_w","eMxNkPefqPc","vXP5OCcmE78",
+      "D6xROJfl-60","SB_yKIrI9vk","5B4y_AQuefQ","4rdR3THqynk","Uo5KXUFYQEk","Tj1qiD8VUXY","kMW1Y0l89Eg","PIrHWWyEK70","CEhFSnsSAzs","0Lc3RZrPlaw",
+      "MzJb4tJ_R8I","kyYBC6p_acE","oHIE2Kg9SRA","jfbh_n3Ja2U","4SylD9TLT3U","hCXyvMrEfvk","texi0Mv8Vtc","wol6NVl_h6c","fGzNMFys6w8","pZhM1eB8c78",
+      "mzc0qJTvY9I","kNG7YLWNJCE","iXm5QOwkwsg","-8MXziQRLYc","RHbm5Xrcv3w","bvFPxLSvR6Q","wJcJEsX53Qw","HEwS79_Z2JM","4M2vNTZN0kA"
+    ]
+  },
+  {
+    id: 'nevr',
+    name: 'NEVR',
+    art: '/art/nevr.jpg',
+    centerArt: '/art/nevr.jpg',
+    ids: [
+      "cuEPpCbWQkg","fKFoXjuyXKg","i8A1fGMpwjg","44ie5gRRkug","OTuCAC_XG1Q","hng0iK8At5Y","OE_6RaSedG4","VtoNLmk9gXw","4VqrFH-CBt0","qieJ9f2usbs",
+      "UVN7qPAKOtU","MOtQNkxC4Yk","swYju6ZcnjA","dOnhrRfeHA4","JMeI3Iggk6k","u25nobaP0lE","xqMaobeF5Dk","Mv0ClzTaNxs","sEWEuBgLtVE","UKUOq1NZpEs",
+      "qfxeVKMjz74","OZKP1oMGgcM","W2QR-k7alpI","0m8RFCVSlYk","OyZUAz36sJ0","jINMeMMHH7g","S2by2NjYrBc","bkZlE3EKSVk","Bi_SKJb_5Sw","hxoyflPlOZU",
+      "JsQy-ioho0I","os87YxDtt4k","NaU3HOndyBw","e_a2RPr9p_E","ZDcpZQ4ZVYI","am38RqRX1_w","9Bdq_rWB9-0","3sQhslx8Dx0","uYSVpC7RnBc","LWhLWEYO8QQ",
+      "zdMyl7cepcM","H3J6jMdgBA8","HAVv-ApFzTY","VnIzvPdxw2Y","2IOTBkKnGHM","j1GMsx6ign0","w0Yst2z4bFg","HZ4zzzArr_o","ght6Gmo7tJ8","VuXO1cK3iPE",
+      "Tf38fmLsy8o","ZA8MNRUUZas","gNH6Jz4Swt4","O2VR4TdieAw","lV3MryFIZIY","zRRg92HAKCI","l61KvmL9vLg","qCZHqI68eYg","umubDPBqnng","ld2dvKwbIa8",
+      "-omeMWq0xCo","Htsu_3TdnrE","jwh-_tn9GQs","mkyUITgTPE0","4jpieyXv1Hc","TpOZpAf5cg8","XZw9br4vW9I","opRuEqNRnP0","c6NnymvpDxo","V55t7pYoVQ8",
+      "7aLPud5kBkc","ow0xYaEgdbk","yhsBKk-bqZg","1ES0KQRfsgc","yjVz-akKPQo","tvjJwHBFugU","HAhBNWPk_NU","YgziibaPeCc","pcCRzYDS804","bkTaBJ8b9HQ",
+      "zM6HgDXn1CQ","kQu9b85aKN0","yyX8kjs_T90","svRhcjVimic","JL3GgFQNAM8","hKajyvKsXYY","3jYDFiP7EfE","SdaIXHlgWAA","5HkoD5kgo9s","zaAO2_2MMpo",
+      "oHFmsK4lqMA","XdObeJBIO9c","KtKoeJimyYg","gtHi89GAAdU","PQ8ZHxGtGcQ","TdiBonYKnkY","fxnwhS9YF5A","bLV1IFp65s4","xpZes0q9gPA","oyAyS14SIjw"
     ]
   }
 ];
@@ -518,7 +593,8 @@ function renderPlaylistGrid() {
   if (!grid) return;
   grid.innerHTML = PLAYLISTS.map((pl, i) => {
     const active = pl.id === currentPlaylistId;
-    return `<div onclick="switchPlaylist('${pl.id}')" class="aspect-square rounded-lg flex items-center justify-center cursor-pointer transition-all ${active ? 'ring-2 ring-purple-500 bg-zinc-800' : 'bg-zinc-900 hover:bg-zinc-800'}"><span class="text-2xl font-black text-zinc-700">${i + 1}</span></div>`;
+    const img = pl.art ? `<img src="${pl.art}" alt="${pl.name}" class="w-full h-full object-cover rounded-lg">` : `<span class="text-2xl font-black text-zinc-700">${i + 1}</span>`;
+    return `<div onclick="switchPlaylist('${pl.id}')" class="aspect-square rounded-lg overflow-hidden cursor-pointer transition-all ${active ? 'ring-2 ring-purple-500' : 'opacity-60 hover:opacity-100'}">${img}</div>`;
   }).join('');
 }
 
@@ -536,9 +612,18 @@ function switchPlaylist(id) {
 }
 
 function updateArtDisplay() {
-  const idx = PLAYLISTS.findIndex(p => p.id === currentPlaylistId);
-  const el = document.getElementById('art-number');
-  if (el) el.textContent = idx + 1;
+  const pl = PLAYLISTS.find(p => p.id === currentPlaylistId);
+  const img = document.getElementById('art-image');
+  const num = document.getElementById('art-number');
+  if (pl && pl.centerArt) {
+    img.src = pl.centerArt;
+    img.classList.remove('hidden');
+    num.classList.add('hidden');
+  } else {
+    img.classList.add('hidden');
+    num.classList.remove('hidden');
+    if (num) num.textContent = PLAYLISTS.findIndex(p => p.id === currentPlaylistId) + 1;
+  }
 }
 
 function maybeShowSaying() {
