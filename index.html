@@ -113,7 +113,7 @@
   <a id="go-sub-btn" href="#" target="_blank" rel="noopener" title="dont want a darker lowrez vid? THEN GO WATCH FROM THE ARTIST AND SUB! dont ask us to change it." class="text-[9px] font-black text-white bg-zinc-800 hover:bg-zinc-700 px-2.5 py-1 rounded-full uppercase tracking-widest shrink-0">GO SUB</a>
 </div>
 
-<div class="flex-1 flex min-h-0 relative">
+<div class="flex-1 flex min-h-0 relative justify-between">
   <!-- Left: Controls -->
   <div id="controls-sidebar" class="sidebar w-48 flex flex-col relative">
     <!-- Collapsed content -->
@@ -477,8 +477,6 @@ function onYouTubeIframeAPIReady() {
 
 function onPlayerReady() {
   ready = true;
-  buildQueue();
-  if (VIDEO_IDS.length > 0) playIndex(0);
 }
 
 function onPlayerStateChange(e) {
@@ -798,6 +796,8 @@ onPlayerReady = function() {
 
 function enterPlaylist() {
   preventAutoPlay = false;
+  buildQueue();
+  if (VIDEO_IDS.length > 0) playIndex(0);
   document.getElementById('landing-bg').src = '';
   document.getElementById('landing').classList.add('hidden');
   if (!videoBg) {
