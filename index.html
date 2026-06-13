@@ -258,99 +258,83 @@
 
 <script>
 const PLAYLISTS = [
-  {
+  { // https://www.youtube.com/playlist?list=PLwm3mn269PQg_5ltAWOXuH32eT3G96IuW
     id: 'bass-test',
     name: 'Bass Test',
-    art: '/art/basstestside.png',
-    centerArt: '/art/basstest.png',
+    art: 'art/basstestside.png',
+    centerArt: 'art/basstest.png',
     ids: [
-      "Y0xZmjRl9_8","U7FGNl7yK3w","kFfqd56blsU","pVjdMQ_iAh0","_z1aJvUTXUY",
-      "31j4DIpgY9U","zf99kdFw9b8","np3pU-dLok4","HcQTWq7Sea0","vWaljXUiCaE",
-      "mb6Jc4juSF8","fS9m0Ac8PCU","gODGcVSzh1U","jV69Z8IQRFA","ciya_AQu25o",
-      "Z-zL_paDVTc","8l75Z8wil_U","2bng91N0XV4","pxplVYIN1Fc","vtY8pM-H65c",
-      "39Fc5cNEV84","g8ZRJF5Xfo8","OC7cNS0GINo","7B9t9dLoLMQ","bIPujX6m0RU",
-      "3CBRHLldAgA","Q8aA-AGq5Z8","iK4pINjFAjc","Mxfy_0R2uzc","YHqtpYc9or0",
-      "shS1BYOOiRA","Aztdmq1tYY8","YNcP-0Nf_k8","rOXwZfX2I6c","JwWhzS8d9W4",
-      "jzXSMW5XxFQ","z6-t64KNHyo","5LwkMsQA_64","7mM1je4ToOk","hLyXwRHpqEE",
-      "SlSALURBjNw","0RZYyO7sqMc","sBDWrbGYSAQ","Zz9xXGwrVrU","nxlonpf9FvQ",
-      "pdqGdoQ7ljk","JWViInkIAuk","PpUlXDRayvQ","ZwyuSPkOBAw","rjJv07vlQB8",
-      "3IWAke4NPEU","KIS8saoYNVQ","7SRN-gUD1nY","TF9GxcfJOsk","54gBaTVspRk",
-      "P5EKMn7OQik","IPkvIDpBgPM","MANhmoRJVPY","ruGrJ0aq6tU","SJIKbl3kpz4",
-      "9P_iVqrUvyM","LtcFCy4PtIk","od9at-wd_tw","NjRvXjSHze4","S1YaYheWUYo",
-      "m9t8LyJtrRY","mPtxCrdJlGI","JJRBk4ycYiE","4fOtEXI7gJQ","LBl9s4T6Nio",
-      "UNYqwpx7Cys","9xcDLqMrV_M","bzNwc5ojn8M","8XKKJ5TrPB0","cUzrjjfvYLg",
-      "ai9hLor_u-4","qyjSdLtaJIE","R7CBLAvcUNo","KXDzn5KgUUI","pOEvbk0qWe4",
-      "XbjP_LWLbUw","kL0t_z0jCWU","8CmcmwlWOxI","k7lqr5Jttrs","QGXQOGOw7Pw",
-      "AhKAHoHgDfE","suu5DbNDSQU","fyLpZL-HOxg","6Wi4y1G4Wmk","TOOgowMP_Ps",
-      "WK8Hz9ZEKyI","xwrdZbkOoiQ","kh0dBe47p2Q","QLW9i_SOaEY","VP6q9DAuY48",
-      "wuafJa7KQnE","kkaYuLkx-dw","qEZUSDKYDDE","h8y6ZeNRqbw","HEwS79_Z2JM",
-      "nurnKNEyOKw","NrjCdy09cs4","Tj1qiD8VUXY","CZrzGK46nhQ","FzsQN_twRX0",
-      "fadpaVVBzi0","gkTZE4uhFgk","JEyFIH7WuCA","j0zyU9YYMos","5cbQgqV1J3A",
-      "-oV24UTQ464","hpeXv2BbvpY","ZLdB8mNOLzM","RCX5UOodZtw","Pf4Be8xeD9c",
-      "piZdBsCqZkE","qjR34rhau44","M7-pXHbruYA","xqq72aTKzDg","lCMuNPg5rpE",
-      "b34U3-CutuU","Gy93LiDcc-4","ScoG3KXGXLQ","ONTumIpBZec","srjLwgtcxYo",
-      "jSXkRPDGH3Y","HRraF035RfU","9oMQrrPr5OY","_Rt_G0LAZpQ","-r8eFjQQWcM",
-      "WWwEixFJgp4","4rdR3THqynk","j1ASOCehA8c","F6QVcrbkDmU","j4NPNp8SEk0",
-      "pTviVghoOic","6jvroWtwMb8","DWWskeAaico","8Cxn-nA8UZw","GXLAqBbXfrg",
-      "AxjP9s6J3uY","RJABKjSGKWk","04fY5z4EqJA","N-ZMqX-BtO4"
+      "Y0xZmjRl9_8","U7FGNl7yK3w","kFfqd56blsU","pVjdMQ_iAh0","_z1aJvUTXUY","31j4DIpgY9U","zf99kdFw9b8","np3pU-dLok4","HcQTWq7Sea0","vWaljXUiCaE",
+      "mb6Jc4juSF8","gODGcVSzh1U","jV69Z8IQRFA","ciya_AQu25o","Z-zL_paDVTc","8l75Z8wil_U","2bng91N0XV4","pxplVYIN1Fc","vtY8pM-H65c","39Fc5cNEV84",
+      "g8ZRJF5Xfo8","OC7cNS0GINo","7B9t9dLoLMQ","bIPujX6m0RU","3CBRHLldAgA","Q8aA-AGq5Z8","iK4pINjFAjc","Mxfy_0R2uzc","YHqtpYc9or0","shS1BYOOiRA",
+      "Aztdmq1tYY8","YNcP-0Nf_k8","rOXwZfX2I6c","JwWhzS8d9W4","jzXSMW5XxFQ","z6-t64KNHyo","5LwkMsQA_64","7mM1je4ToOk","hLyXwRHpqEE","SlSALURBjNw",
+      "0RZYyO7sqMc","sBDWrbGYSAQ","Zz9xXGwrVrU","nxlonpf9FvQ","pdqGdoQ7ljk","JWViInkIAuk","PpUlXDRayvQ","ZwyuSPkOBAw","rjJv07vlQB8","3IWAke4NPEU",
+      "KIS8saoYNVQ","7SRN-gUD1nY","TF9GxcfJOsk","54gBaTVspRk","P5EKMn7OQik","IPkvIDpBgPM","MANhmoRJVPY","ruGrJ0aq6tU","SJIKbl3kpz4","9P_iVqrUvyM",
+      "LtcFCy4PtIk","od9at-wd_tw","NjRvXjSHze4","S1YaYheWUYo","m9t8LyJtrRY","mPtxCrdJlGI","JJRBk4ycYiE","4fOtEXI7gJQ","LBl9s4T6Nio","UNYqwpx7Cys",
+      "9xcDLqMrV_M","bzNwc5ojn8M","8XKKJ5TrPB0","cUzrjjfvYLg","ai9hLor_u-4","qyjSdLtaJIE","R7CBLAvcUNo","KXDzn5KgUUI","pOEvbk0qWe4","XbjP_LWLbUw",
+      "kL0t_z0jCWU","8CmcmwlWOxI","k7lqr5Jttrs","QGXQOGOw7Pw","AhKAHoHgDfE","suu5DbNDSQU","fyLpZL-HOxg","6Wi4y1G4Wmk","TOOgowMP_Ps","WK8Hz9ZEKyI",
+      "xwrdZbkOoiQ","kh0dBe47p2Q","QLW9i_SOaEY","VP6q9DAuY48","wuafJa7KQnE","kkaYuLkx-dw","qEZUSDKYDDE","h8y6ZeNRqbw","HEwS79_Z2JM","nurnKNEyOKw",
     ]
   },
-  {
+  { // https://www.youtube.com/playlist?list=PLwm3mn269PQjYSp567_ls-nTJdemFggfd
     id: 'lsd-radio',
     name: 'LSD Radio',
-    art: '/art/LSDTV.jpg',
-    centerArt: '/art/LSDTV.jpg',
+    art: 'art/LSDTV.jpg',
+    centerArt: 'art/LSDTV.jpg',
     ids: [
-      "_2i6phdI9Ow","qSQKvnWnCtY","npcGql9Ir6Y","iDaUy4T7rVI","X89DMLTEzCs","UCegS6qFkfY","IsDqlPKY1fQ","ecOKP4_lFsg","AnycCuYSW7A","mOKMoL8_jaQ",
-      "nm65PCbUMZI","WY45ELPHFiM","EqtS19hfWD4","YY6YQFwGYAU","ZF9mWOg01EA","-u3NXWgQpjY","FqG9OaOU184","B7Gj3YodcWU","Qr6KyiJaLpQ","iOZOtHv5H_w",
-      "u2_jdQGongg","uU9KyXsDn0I","C5h685wsSvM","fN-xq7t6pKw","obcjlfg7yCI","SyJD7gMJBiI","gRmJyR3ff7k","BgP9tzt9_Z8","2Zn5o-gxtFA","wZTIdnooV-s",
-      "uYDZwh9Untw","hyXnT1dt97I","2xRfJNOGXrc","7k7sfRE7HYU","MBG3Gdt5OGs","wzw0cr3EOfk","hVdvFGkB7q4","JAcBkwGwQjo","Hr28D6yzuYY","43y19nAt3xA",
-      "-F7c7Es0nuM","miZr60PaIjc","iYIVQz5uAns","p0HsEFkDwUo","TOOgowMP_Ps","MRkOSkBbjSw","SdadL7kay50","Mh_iUu1mFso","B5X2Fh0qNBc","0dLmzKlInr4",
-      "X4UuYoxmH60","TNxP8_huxyQ","SEG92Z_NGJE","CpkTMx5ywmU","3ZSRmvh3qhY","8dHLWuddFQ8","JDPGefjM_vU","mQOV11xi4SM","NhheiPTdZCw","9RHFFeQ2tu4",
-      "5Yz2t1QeIHQ","M910sjgb3gk","jSYwFTGAVWM","jkAw87ZIwQA","8luEj9dkTt0","6NlstW2xvwc","1kmNFc1pmuI","oYxohKbeMZw","k3OTpuNep_o","me4SkrRxqaI"
+      "_2i6phdI9Ow","qSQKvnWnCtY","iDaUy4T7rVI","X89DMLTEzCs","UCegS6qFkfY","IsDqlPKY1fQ","ecOKP4_lFsg","AnycCuYSW7A","mOKMoL8_jaQ","nm65PCbUMZI",
+      "WY45ELPHFiM","EqtS19hfWD4","YY6YQFwGYAU","ZF9mWOg01EA","-u3NXWgQpjY","FqG9OaOU184","B7Gj3YodcWU","Qr6KyiJaLpQ","iOZOtHv5H_w","u2_jdQGongg",
+      "uU9KyXsDn0I","C5h685wsSvM","fN-xq7t6pKw","obcjlfg7yCI","SyJD7gMJBiI","gRmJyR3ff7k","BgP9tzt9_Z8","2Zn5o-gxtFA","wZTIdnooV-s","uYDZwh9Untw",
+      "hyXnT1dt97I","2xRfJNOGXrc","7k7sfRE7HYU","MBG3Gdt5OGs","hVdvFGkB7q4","JAcBkwGwQjo","Hr28D6yzuYY","43y19nAt3xA","-F7c7Es0nuM","miZr60PaIjc",
+      "iYIVQz5uAns","p0HsEFkDwUo","TOOgowMP_Ps","SdadL7kay50","Mh_iUu1mFso","B5X2Fh0qNBc","0dLmzKlInr4","X4UuYoxmH60","TNxP8_huxyQ","SEG92Z_NGJE",
+      "3ZSRmvh3qhY","8dHLWuddFQ8","JDPGefjM_vU","mQOV11xi4SM","NhheiPTdZCw","9RHFFeQ2tu4","5Yz2t1QeIHQ","M910sjgb3gk","jSYwFTGAVWM","VUg3hJUG6dY",
+      "jkAw87ZIwQA","8luEj9dkTt0","6NlstW2xvwc","1kmNFc1pmuI","oYxohKbeMZw","k3OTpuNep_o","me4SkrRxqaI","HBgIoMDzGNE","HLNTp3e1hMo","OHAjc-ayhus",
+      "iZZaYkOG1Zk","0H-ZTUhDjy4","Rk8wCxSRiqs","hbj4sFs7WMA","TdySGOHBwaM","rA7nyWxxqNM","FGL-KmhE5kw","u_RXl18CD_8","DviqacxbJnU","CpkTMx5ywmU",
     ]
   },
-  {
+  { // https://www.youtube.com/playlist?list=PLwm3mn269PQhm2Ml5nRuXwnXKrDGNl76U
     id: 'acid-drop',
     name: 'Acid Drop',
-    art: '/art/aciddrop.jpg',
-    centerArt: '/art/aciddrop.jpg',
+    art: 'art/aciddrop.jpg',
+    centerArt: 'art/aciddrop.jpg',
     ids: [
       "w87sWe-6HLU","CyAigHilpo4","6XJkPtxqWM8","RSL6KqWKFvo","juuIhW8V1Xw","2DV8vMaS7Wg","WUu39PJ_TI0","HPc8QMycGno","qi2xhtVCh_c","HQl4o0g-wy0",
       "1wl5BbUg05M","KR8jbM8TTRQ","nxg4C365LbQ","3jtp0BDy_oE","_D4Y0jiYxWE","mWSgICOeoPY","luQSQuCHtcI","ETL8NlqYT-Y","LKBG12sUYuA","3YXVdyA9Fxw",
       "zE85mW71uB0","4RBGDgEpKIw","2YllipGl2Is","bxYhJpILIQE","5BzgNBn786o","gkTZE4uhFgk","kWNHvIt9ryk","Z0v9fqVz38c","FHccClTAdzc","-iFD5TWDG-g",
       "eOE1wVr1jvI","NkRkuI0ZgX0","eV4wmLbRKiM","UCAp24HDUKY","a1rjVVcZvTY","9Ux0eOPanxE","S5fefU5UNZo","v2Djx0Dff9c","vO2imKkn2ow","oeQ9noQKy1o",
-      "kFZKgf5WG0g","d9VUldypP_g","0_gMIUh6IUg","NjBjBiFlFZQ","G_ztQYJB0UM","rJmE3pRUhsc"
+      "kFZKgf5WG0g","d9VUldypP_g","0_gMIUh6IUg","NjBjBiFlFZQ","G_ztQYJB0UM","rJmE3pRUhsc","E_pv5ASvz0c","fPZsUfDIrg4","GLXj4clHtqA","mQHh_-c7uIQ",
+      "p_rw_W0XadA","4VZIFczKMW8","VkiIBEGR8NU","aftOCaPnsns","o1hggJOIY_c","n7aXauXziCg",
     ]
   },
-  {
+  { // https://www.youtube.com/playlist?list=PLwm3mn269PQgWjE_ZLbM1PRTIiuIIN0QC
     id: 'post-pop',
     name: 'Post Pop',
-    art: '/art/postpop.jpg',
-    centerArt: '/art/postpop.jpg',
+    art: 'art/postpop.jpg',
+    centerArt: 'art/postpop.jpg',
     ids: [
       "KGgOz_gRD_c","SiAuAJBZuGs","VE3vKgiK4uU","IHoj7qvNmwk","6i01tOMgBDU","FH3CyuSzz98","Rb6Scz-5YOs","GYLcu5tFjUU","bU_-OhxcFVI","1BhJBoSILk4",
       "ogGYTxKj80k","uJ5U2dCfEiU","xcHbc4Z2ths","1xlijyn3j8E","osl2i-G2yjk","rietL01M1r8","NaFd8ucHLuo","KOOhPfMbuIQ","ZFc4itpTpxc","lpRxcL9WhCQ",
       "a09amGO7a5w","SRID6uOJgHg","gUUDrMW5noc","ydoDo861wSw","V2AfXNJImSo","XbjP_LWLbUw","qVPte9wGAZA","-tGxqjmU3A0","1vI_xrmc8gE","upztkfYqkDA",
       "Zd0j0xnhWFw","chJu5t4GRA8","Ng24U4zn8-I","sDcrdG6Zl_A","6xC14oYAhrU","s9rURTSNUk0","VtzbIot6SEo","qF5Pr6zeMqY","gwXmR_jGGAo","SgIBs3Iz9iw",
-      "ke4DQvxmN_s","-z4YaVBZbWQ","3psDZCLiTTc"
+      "ke4DQvxmN_s","-z4YaVBZbWQ","3psDZCLiTTc","LpWCuxgbMNI","vn9Up9_a5o8","vkz2FRfYPl0",
     ]
   },
-  {
+  { // https://www.youtube.com/playlist?list=PLwm3mn269PQiwvTXwnRxM-B2U09vwcTTG
     id: 'knock-out',
     name: 'Knock Out',
-    art: '/art/knockoutside.png',
-    centerArt: '/art/knockout.png',
+    art: 'art/knockoutside.png',
+    centerArt: 'art/knockout.png',
     ids: [
       "VB01l-V_vAE","xflfmYeEt_8","Sq5Gsk-JhVk","KLNRsyKR1vM","jGVcw-fQeik","JT_NgMk9n-4","nHOtPHuPMYo","NZzht9MRk50","dyCo4kqeCZE","xKH3Hj4lqLs",
-      "NE2QAYVlUJE","zxKVYysUynk","O5HX_ua2DC0","r42HwRDxErA","hwLa4VYL0BI","rWRmjkPgZkY","kL0t_z0jCWU","f8c0KPyK3Js"
+      "NE2QAYVlUJE","zxKVYysUynk","O5HX_ua2DC0","r42HwRDxErA","hwLa4VYL0BI","rWRmjkPgZkY","kL0t_z0jCWU","f8c0KPyK3Js","Ve4EeGrewvY","owvMxYbNJPM",
+      "q39uDJzvFok","5KHgZAxllh4","4yXFVgy7laM","_3FiSB3uN0g","oVUr9Pm6-EM","RQF_xDs6rFA",
     ]
   },
-  {
+  { // no YouTube playlist URL known
     id: 'unsigned',
     name: 'Unsigned',
-    art: '/art/unsigned.jpg',
-    centerArt: '/art/unsigned.jpg',
+    art: 'art/unsigned.jpg',
+    centerArt: 'art/unsigned.jpg',
     ids: [
       "5ufWpmpKLTc","xsQ_BjxuHpg","zX1KWZBctXs","gB0EafCahKc","WKvSJI5dOFM","bsDUiNRo3rM","JqNkYKpIvX8","Xcd1X06gxNY","kDeJSKzOG2A","KngB7GGxn4w",
       "6oW98lb7pxE","mXSVpHYgBZ8","NCLqiB5NB8w","Kib-Cyp4QhE","TH7j1HfGXr8","fSn5e5YQpgg","1sF_U1lkFeo","Nk1mnZx040M","XtNW2gNef58","uSG_wPaQbOk",
@@ -363,40 +347,41 @@ const PLAYLISTS = [
       "VFIUy39u_4c","kTxt6Qrk8b4"
     ]
   },
-  {
+  { // https://www.youtube.com/playlist?list=PLwm3mn269PQhSoLItIltGCyDdlePbPr3U
     id: 'backseat66',
     name: 'BackSeat66',
-    art: '/art/backseat66side.png',
-    centerArt: '/art/backseat66.png',
+    art: 'art/backseat66side.png',
+    centerArt: 'art/backseat66.png',
     ids: [
-      "6RR0Gmqp6LI","1Snj2L_VS1M","1YSP1aqA_jw","kbP2BTUKM4w","S0gUbgSBmBg","GNCd_ERZvZM","BtyHosz4ELw","kfzRXseSBIM","mG6ROHmgc80","XsZKrctSDaw",
-      "kU0SmxKucCw","-OqrcUvrbRY","zBftDdSKUdk","Qcuk4LLRatk","ZulYhwXiG7w","NIiKBLA0kXU","4bZeLOvGBgY","O15gyuURcX8","y8PtSL95vrs","unt_LFp5TiM",
-      "O3QOBYq0lBI","BA4VcGXlu_o","tFqz4_sSaAk","GTe57jQX5Eg","dARAN1z2KqY","rKyc9NfNWww","AckhnLpwceM","XxB_JotP1is","rpjk_tm5BWk","-bnx_Qwy7w4",
-      "TViT_KFVWgI","aIpteHRMbZo","Mh0euI3agt0","5h_2Uk0oTHk","P59Z7edms2w","XGcCQrvdu1E","4Nlr9vU0DfU","iwjHAA-Ke2I","gjEAXdTbb8A","7DD0oxGVRV8",
-      "qXK7MDrYifI","zYoTqBGsDkU","m4n1V3g3vks","2SFt7JHwJeg","9X4uZqxcwSU","GdYpxVQ1BZs","2-kV6TRs8PU","sPwCttDbS5c","aka3CpLMvG0","bjRF4JjoCp4",
-      "yiBPAoCiNKk","XFL844sj1To","ScoG3KXGXLQ","SswreOoz9iE","e2TNCf2PEyw"
+      "6RR0Gmqp6LI","1Snj2L_VS1M","1YSP1aqA_jw","kbP2BTUKM4w","S0gUbgSBmBg","GNCd_ERZvZM","kfzRXseSBIM","mG6ROHmgc80","XsZKrctSDaw","kU0SmxKucCw",
+      "-OqrcUvrbRY","zBftDdSKUdk","Qcuk4LLRatk","ZulYhwXiG7w","NIiKBLA0kXU","4bZeLOvGBgY","O15gyuURcX8","y8PtSL95vrs","unt_LFp5TiM","O3QOBYq0lBI",
+      "BA4VcGXlu_o","tFqz4_sSaAk","GTe57jQX5Eg","dARAN1z2KqY","rKyc9NfNWww","AckhnLpwceM","XxB_JotP1is","rpjk_tm5BWk","-bnx_Qwy7w4","TViT_KFVWgI",
+      "aIpteHRMbZo","Mh0euI3agt0","5h_2Uk0oTHk","P59Z7edms2w","XGcCQrvdu1E","4Nlr9vU0DfU","iwjHAA-Ke2I","gjEAXdTbb8A","7DD0oxGVRV8","qXK7MDrYifI",
+      "zYoTqBGsDkU","m4n1V3g3vks","2SFt7JHwJeg","9X4uZqxcwSU","GdYpxVQ1BZs","2-kV6TRs8PU","sPwCttDbS5c","aka3CpLMvG0","bjRF4JjoCp4","yiBPAoCiNKk",
+      "XFL844sj1To","ScoG3KXGXLQ","SswreOoz9iE","e2TNCf2PEyw","h8WWfmTVFiU","mIyda1hoSKw","z-kiZX8yYCg","0DTrjpIb4QI","Cvvy4_PoUL8","KEo2NDuIj4U",
+      "LltS_oXX2Oo","gfPZ6TuBElI","dNG--igfh-Q","0y3JnaPq-U8",
     ]
   },
-  {
+  { // https://www.youtube.com/playlist?list=PLwm3mn269PQgNfB8Isk2_Px4w5ljFz06L
     id: 'hustle-nation',
     name: 'Hustle Nation',
-    art: '/art/hustlenationside.png',
-    centerArt: '/art/hustlenation.png',
+    art: 'art/hustlenationside.png',
+    centerArt: 'art/hustlenation.png',
     ids: [
       "VdvKsNy2meI","GXLAqBbXfrg","lqWxGE7zSPA","78ZD05_wbqk","MZ924VGx5n0","FeoPeBgbLEY","fEPj_LuaK08","1FSgekLujqE","5SQ0cFHKD_8","ekzs6nv23VE",
       "gkwWyu8uzHA","1-GXJd3bdhQ","N6lZrVktfxU","YZVlSqjjkic","Hjm7k-Lcoe8","AVrNHI4RdPM","9ek1TPomCfg","HR32_Szb3fY","OY0Mk9kTs8M","D8fHatctfRo",
       "vvvQwYXPV-s","PA6o5mheZKw","cb8U6atGJp8","52ToK1R1kzI","0i4UlhUkn5w","0I6QAuA9nWE","WWwEixFJgp4","G2JMTwqD170","H6EYl1SngtI","5_qAwMHhkwQ",
       "ukDsgc8Oua4","BbQv67li8wE","Xj1Jw3rxfm4","dyPkHleltno","kUxwT_GBNe8","-JMechSxBq0","oH8y6B_P7nc","01fPEGiYd4o","u9rdzKwhxhI","4jU-jaB9Z-c",
       "f4mn9zUHx1M","YezVkPlQ33U","jJY85Hysmck","FTrkxkuOB2c","JNcQHJyKIWc","Y7d42LJfkqQ","EVlGLtCnN-Y","5sXFLYX0HNc","2Mk7VTUwbck","ei02LcSl1ZI",
-      "j0zyU9YYMos","D3nT0piQDgA","RdeqdPZK2Lw","j_KF4AQddlk","kOVeCqkVoEg","5MU-Y_UqOj8","EKcJ5yXfDpU","yR2ekorR6-k","NA9zxcFBPUk","OQy6ELV-cQY",
-      "BhT19qt5rSk","Jj5tt3Elu-k","7ctORopHfjQ","EEgx2JC4d9o"
+      "j0zyU9YYMos","D3nT0piQDgA","RdeqdPZK2Lw","j_KF4AQddlk","kOVeCqkVoEg","5MU-Y_UqOj8","EKcJ5yXfDpU","yR2ekorR6-k","NA9zxcFBPUk","OQy6ELV-cYQ",
+      "BhT19qt5rSk","Jj5tt3Elu-k","7ctORopHfjQ","EEgx2JC4d9o","FnBBQon4Xuo","d2nnWQb_bMk","j1ASOCehA8c","PXTPYFMeYqE","UW2QoShtHgE","ej7FyZKVVMQ",
     ]
   },
-  {
+  { // no YouTube playlist URL known
     id: 'hot-100',
     name: 'HOT 100',
-    art: '/art/top100beta.jpg',
-    centerArt: '/art/top100beta.jpg',
+    art: 'art/top100beta.jpg',
+    centerArt: 'art/top100beta.jpg',
     ids: [
       "nz10tpltsE8","p2A4Uz9qN_o","VE3vKgiK4uU","5KypdWDdhcQ","dM-72E6MZbA","CZrzGK46nhQ","n-87chsvCF4","gqxPFnboeJo","CxGJhPLDoQw","aplPE25xg3c",
       "NrjCdy09cs4","dLTGKQavdSo","LNavo8PHdqU","EAvHd0BI7Aw","vJJ9vuhInho","JEyFIH7WuCA","1F59TuBoabg","S5GWgXXDwdg","maM_b2Hz6lA","gmCnVPcX2tE",
@@ -409,11 +394,11 @@ const PLAYLISTS = [
       "mzc0qJTvY9I","kNG7YLWNJCE","iXm5QOwkwsg","-8MXziQRLYc","RHbm5Xrcv3w","bvFPxLSvR6Q","wJcJEsX53Qw","HEwS79_Z2JM","4M2vNTZN0kA"
     ]
   },
-  {
+  { // no YouTube playlist URL known
     id: 'nevr',
     name: 'NEVR',
-    art: '/art/nevr.jpg',
-    centerArt: '/art/nevr.jpg',
+    art: 'art/nevr.jpg',
+    centerArt: 'art/nevr.jpg',
     ids: [
       "cuEPpCbWQkg","fKFoXjuyXKg","i8A1fGMpwjg","44ie5gRRkug","OTuCAC_XG1Q","hng0iK8At5Y","OE_6RaSedG4","VtoNLmk9gXw","4VqrFH-CBt0","qieJ9f2usbs",
       "UVN7qPAKOtU","MOtQNkxC4Yk","swYju6ZcnjA","dOnhrRfeHA4","JMeI3Iggk6k","u25nobaP0lE","xqMaobeF5Dk","Mv0ClzTaNxs","sEWEuBgLtVE","UKUOq1NZpEs",
@@ -425,6 +410,40 @@ const PLAYLISTS = [
       "7aLPud5kBkc","ow0xYaEgdbk","yhsBKk-bqZg","1ES0KQRfsgc","yjVz-akKPQo","tvjJwHBFugU","HAhBNWPk_NU","YgziibaPeCc","pcCRzYDS804","bkTaBJ8b9HQ",
       "zM6HgDXn1CQ","kQu9b85aKN0","yyX8kjs_T90","svRhcjVimic","JL3GgFQNAM8","hKajyvKsXYY","3jYDFiP7EfE","SdaIXHlgWAA","5HkoD5kgo9s","zaAO2_2MMpo",
       "oHFmsK4lqMA","XdObeJBIO9c","KtKoeJimyYg","gtHi89GAAdU","PQ8ZHxGtGcQ","TdiBonYKnkY","fxnwhS9YF5A","bLV1IFp65s4","xpZes0q9gPA","oyAyS14SIjw"
+    ]
+  },
+  { // https://www.youtube.com/playlist?list=PLwm3mn269PQgFsGTF_l7210V8XUPFoeBR
+    id: 'exe-obj',
+    name: '.exe Obj',
+    art: 'art/exe obj by themighty808.png',
+    centerArt: 'art/exe obj by themighty808.png',
+    ids: [
+      "UXVtm1FUCfY","kV1x8229lxU","4nhUkU0UOvw","RpYmqyngPoo","9TUOHKISN28","mHlCP6hc3zY","rsaQsHxu4LU","xmait-bDevY","n-87chsvCF4","H2hUmlQsVmA",
+      "g-VehdL25J8","WWX2tKAi23g","aplPE25xg3c",
+    ]
+  },
+  { // https://www.youtube.com/playlist?list=PLwm3mn269PQhgq34UB6vLE5rlz2u9V06f
+    id: 'red',
+    name: 'Red',
+    art: 'art/redplaylist.png',
+    centerArt: 'art/redplaylist.png',
+    ids: [
+      "g3d29aHsQVw","UdfLpn3aS94","rqG5IupOiO0","ESjPc7I5h_Q","ypTyxrFLi8Q","_UZAGlM7n8w","D64a2fb72sE","7z_yW74PiGs","B6CuMGL5bvk","62ks-CDZAzs",
+      "wVBO10heWr0","HDLwQx6apq0","-rzybyvCBRI","jpYDw7AJDtM","UJCIRkMaCww","Yibmu-F_Qxs","s56Rx6qlo0Y","XJgh_D379jU","TZCE6PfaUWA","dKsDHh2Vkv4",
+      "ALZw9jMFjIY","yH8ZYthxmZ8","CiX2iPmX15Q","xGY8PuFbQZs","_9smBd1h7Uw","ft7wLE5_VEU","7ZGax20kxO0","8z1bGdli4fM","qRNXrz_MyFw","BESlgVbNTKY",
+      "IK6tGbeIZjU",
+    ]
+  },
+  { // https://www.youtube.com/playlist?list=PLwm3mn269PQhCcqI8Hzul8GvGbHZD0_hV
+    id: 'homesick',
+    name: 'Homesick',
+    art: 'art/homesickplaylist.png',
+    centerArt: 'art/homesickplaylist.png',
+    ids: [
+      "VTA8F3PG4hE","xvuT0Snxi9s","waYRxXNXRK8","I9hbYCR4XDE","CZrzGK46nhQ","BxVUlRhzuDw","CoCfw0Xkq_0","thzbIdytjZ8","-_HbBDo9P-o","kIS5drN9c8Y",
+      "7YlpFk1O864","CunaTuLfTVM","qMaG3zFGtaU","pMzk6eMi2DU","RqLkA3pak1o","WwYYP3ewe7A","ypT31CBLRO4","x6_mbnsh6VU","n3vRczwXsaM","dqEvoItaQbM",
+      "bdW9aPC8b4I","OEQITCAqyDc","BQnkTkVBfAk","C7Jdo_wRssk","ZES3nJQYJok","EEKkPBVyClo","t2k5g7bj7DE","0rtH8ioGFq4","25c2Wz70Gbo","R9mRAb-uY7g",
+      "1CjM3NLjXnE","Iyl-n6J27Q4","YjDfnb-EWgw","mJQ9tx_WJA4","BtyHosz4ELw","LL56qF3-M-g","S78ZyANGtUE","zeQa7pV3Tac","OBlff9x4KvA",
     ]
   }
 ];
