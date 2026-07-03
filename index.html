@@ -174,10 +174,10 @@
       <span class="mode-title">Radio</span>
       <span id="radio-sub" class="mode-sub">Soon</span>
     </div>
-    <div class="mode-btn" onclick="enterShop()">
+    <div id="shop-btn" class="mode-btn disabled" onclick="enterShop()">
       <span class="mode-label">Mode</span>
-      <span class="mode-title">Shop</span>
-      <span class="mode-sub" style="color:#a1a1aa">Browse</span>
+      <span class="mode-title">Merch</span>
+      <span id="shop-sub" class="mode-sub">Soon</span>
     </div>
   </div>
 </div>
@@ -1224,6 +1224,8 @@ function initShopLightbox() {
 // --- Shop Entry/Exit ---
 
 function enterShop() {
+  const btn = document.getElementById('shop-btn');
+  if (btn.classList.contains('disabled')) return;
   initShop();
   document.body.classList.add('shop-active');
   document.getElementById('landing').classList.add('hidden');
