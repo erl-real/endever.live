@@ -78,6 +78,60 @@
   .mode-sub { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.2em; color: #a855f7; }
   .mode-sub-btn { color: #a1a1aa; text-decoration: none; }
   .mode-sub-btn:hover { color: #fff; }
+
+  /* --- Shop View --- */
+  #shop-view { opacity: 0; pointer-events: none; transition: opacity 0.5s; }
+  #shop-view.active { opacity: 1; pointer-events: auto; }
+  body.shop-active #app,
+  body.shop-active #yt-player,
+  body.shop-active #video-overlay,
+  body.shop-active #goop-container { display: none !important; }
+
+  /* --- Shop --- */
+  .shop-item {
+    width: fit-content;
+    max-width: 85%;
+    margin-bottom: 60px;
+    cursor: pointer;
+    position: relative;
+    z-index: 1;
+  }
+  .shop-item img {
+    width: 100%;
+    height: auto;
+    border-radius: 12px;
+    display: block;
+    transition: filter 0.3s, box-shadow 0.3s;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+  }
+  .shop-item:hover img {
+    filter: brightness(1.15);
+    box-shadow: 0 12px 48px rgba(0,0,0,0.7);
+  }
+  .shop-float {
+    animation: shop-float var(--float-dur, 6s) ease-in-out infinite;
+    animation-delay: var(--float-delay, 0s);
+    transform: rotate(var(--rot, 0deg));
+  }
+  @keyframes shop-float {
+    0%, 100% { transform: rotate(var(--rot, 0deg)) translateY(0px); }
+    33% { transform: rotate(var(--rot, 0deg)) translateY(-6px); }
+    66% { transform: rotate(var(--rot, 0deg)) translateY(4px); }
+  }
+  .depth-1 { z-index: 3; }
+  .depth-2 { z-index: 2; }
+  .depth-3 { z-index: 1; }
+  .shop-item { transform: translate(var(--px, 0px), var(--py, 0px)); }
+
+  #shop-scroll::-webkit-scrollbar { width: 3px; }
+  #shop-scroll::-webkit-scrollbar-track { background: transparent; }
+  #shop-scroll::-webkit-scrollbar-thumb { background: #27272a; border-radius: 2px; }
+
+  #shop-lightbox.active { opacity: 1; pointer-events: auto; }
+  #shop-lightbox.active #shop-lightbox-close { display: block; }
+  #shop-lightbox.active #shop-lightbox-prev,
+  #shop-lightbox.active #shop-lightbox-next { opacity: 0.5; }
+  #shop-lightbox.active #shop-lightbox-img { transform: scale(1); opacity: 1; }
 </style>
 </head>
 <body>
@@ -85,7 +139,7 @@
 <div id="app" style="position:relative;z-index:10;display:flex;flex-direction:column;height:100vh">
 
 <div id="landing">
-  <iframe id="landing-bg" src="https://my.spline.design/unchained-d3hHCgdWho7a8ATGzKtB11TU" frameborder="0"></iframe>
+  <iframe id="landing-bg" frameborder="0"></iframe>
   <div class="flex flex-col items-center gap-8">
     <div class="mode-btn" onclick="enterPlaylist()">
       <span class="mode-label">Mode</span>
@@ -101,6 +155,11 @@
       <span class="mode-label">Mode</span>
       <span class="mode-title">Radio</span>
       <span id="radio-sub" class="mode-sub">Soon</span>
+    </div>
+    <div class="mode-btn" onclick="enterShop()">
+      <span class="mode-label">Mode</span>
+      <span class="mode-title">Shop</span>
+      <span class="mode-sub" style="color:#a1a1aa">Browse</span>
     </div>
   </div>
 </div>
@@ -256,43 +315,63 @@
 </div>
 <audio id="radio-audio" preload="auto"></audio>
 
+<!-- Shop View -->
+<div id="shop-view" class="fixed inset-0 z-[150] bg-[#020204] flex flex-col">
+  <div class="shrink-0 px-3 h-11 flex items-center justify-between">
+    <span onclick="backFromShop()" class="text-xs font-black text-white uppercase italic tracking-tight cursor-pointer hover:opacity-70 transition-opacity">&#8592; Back</span>
+    <span class="text-[9px] font-black text-zinc-600 uppercase tracking-[0.3em]">Shop</span>
+    <span class="text-xs opacity-0">&#8592; Back</span>
+  </div>
+  <div class="flex-1 overflow-y-auto" id="shop-scroll">
+    <!-- images injected by JS -->
+  </div>
+</div>
+
+<!-- Shop Lightbox -->
+<div id="shop-lightbox" class="fixed inset-0 z-[100] bg-black/90 flex items-center justify-center pointer-events-none opacity-0 transition-all duration-500 cursor-pointer">
+  <img id="shop-lightbox-img" class="max-w-[90vw] max-h-[90vh] object-contain transition-all duration-500 scale-75 opacity-0">
+  <button id="shop-lightbox-close" class="absolute top-4 right-4 text-zinc-400 hover:text-white text-3xl leading-none hidden z-10">&times;</button>
+  <button id="shop-lightbox-prev" class="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-white text-4xl leading-none opacity-0 hover:opacity-100 transition-opacity z-10">&lsaquo;</button>
+  <button id="shop-lightbox-next" class="absolute right-4 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-white text-4xl leading-none opacity-0 hover:opacity-100 transition-opacity z-10">&rsaquo;</button>
+</div>
+
 <script>
 const PLAYLISTS = [
-  { // https://www.youtube.com/playlist?list=PLwm3mn269PQg_5ltAWOXuH32eT3G96IuW
+  { url: 'https://www.youtube.com/playlist?list=PLwm3mn269PQg_5ltAWOXuH32eT3G96IuW',
     id: 'bass-test',
     name: 'Bass Test',
     art: 'art/basstestside.png',
     centerArt: 'art/basstest.png',
     ids: [
-      "Y0xZmjRl9_8","U7FGNl7yK3w","kFfqd56blsU","pVjdMQ_iAh0","_z1aJvUTXUY","31j4DIpgY9U","zf99kdFw9b8","np3pU-dLok4","HcQTWq7Sea0","vWaljXUiCaE",
-      "mb6Jc4juSF8","gODGcVSzh1U","jV69Z8IQRFA","ciya_AQu25o","Z-zL_paDVTc","8l75Z8wil_U","2bng91N0XV4","pxplVYIN1Fc","vtY8pM-H65c","39Fc5cNEV84",
-      "g8ZRJF5Xfo8","OC7cNS0GINo","7B9t9dLoLMQ","bIPujX6m0RU","3CBRHLldAgA","Q8aA-AGq5Z8","iK4pINjFAjc","Mxfy_0R2uzc","YHqtpYc9or0","shS1BYOOiRA",
-      "Aztdmq1tYY8","YNcP-0Nf_k8","rOXwZfX2I6c","JwWhzS8d9W4","jzXSMW5XxFQ","z6-t64KNHyo","5LwkMsQA_64","7mM1je4ToOk","hLyXwRHpqEE","SlSALURBjNw",
-      "0RZYyO7sqMc","sBDWrbGYSAQ","Zz9xXGwrVrU","nxlonpf9FvQ","pdqGdoQ7ljk","JWViInkIAuk","PpUlXDRayvQ","ZwyuSPkOBAw","rjJv07vlQB8","3IWAke4NPEU",
-      "KIS8saoYNVQ","7SRN-gUD1nY","TF9GxcfJOsk","54gBaTVspRk","P5EKMn7OQik","IPkvIDpBgPM","MANhmoRJVPY","ruGrJ0aq6tU","SJIKbl3kpz4","9P_iVqrUvyM",
-      "LtcFCy4PtIk","od9at-wd_tw","NjRvXjSHze4","S1YaYheWUYo","m9t8LyJtrRY","mPtxCrdJlGI","JJRBk4ycYiE","4fOtEXI7gJQ","LBl9s4T6Nio","UNYqwpx7Cys",
-      "9xcDLqMrV_M","bzNwc5ojn8M","8XKKJ5TrPB0","cUzrjjfvYLg","ai9hLor_u-4","qyjSdLtaJIE","R7CBLAvcUNo","KXDzn5KgUUI","pOEvbk0qWe4","XbjP_LWLbUw",
-      "kL0t_z0jCWU","8CmcmwlWOxI","k7lqr5Jttrs","QGXQOGOw7Pw","AhKAHoHgDfE","suu5DbNDSQU","fyLpZL-HOxg","6Wi4y1G4Wmk","TOOgowMP_Ps","WK8Hz9ZEKyI",
-      "xwrdZbkOoiQ","kh0dBe47p2Q","QLW9i_SOaEY","VP6q9DAuY48","wuafJa7KQnE","kkaYuLkx-dw","qEZUSDKYDDE","h8y6ZeNRqbw","HEwS79_Z2JM","nurnKNEyOKw",
+      "Y0xZmjRl9_8","OBlff9x4KvA","HcQTWq7Sea0","oW3D8LC856E","j1ASOCehA8c","zf99kdFw9b8","np3pU-dLok4","vWaljXUiCaE","kFfqd56blsU","mb6Jc4juSF8",
+      "gODGcVSzh1U","jV69Z8IQRFA","ciya_AQu25o","Z-zL_paDVTc","8l75Z8wil_U","2bng91N0XV4","pxplVYIN1Fc","vtY8pM-H65c","39Fc5cNEV84","g8ZRJF5Xfo8",
+      "OC7cNS0GINo","7B9t9dLoLMQ","bIPujX6m0RU","SlSALURBjNw","3CBRHLldAgA","Q8aA-AGq5Z8","iK4pINjFAjc","YHqtpYc9or0","shS1BYOOiRA","z6-t64KNHyo",
+      "YNcP-0Nf_k8","rOXwZfX2I6c","U7FGNl7yK3w","JwWhzS8d9W4","5LwkMsQA_64","hLyXwRHpqEE","_z1aJvUTXUY","0RZYyO7sqMc","sBDWrbGYSAQ","Zz9xXGwrVrU",
+      "nxlonpf9FvQ","pdqGdoQ7ljk","mPtxCrdJlGI","PpUlXDRayvQ","ZwyuSPkOBAw","rjJv07vlQB8","3IWAke4NPEU","KIS8saoYNVQ","TF9GxcfJOsk","54gBaTVspRk",
+      "IPkvIDpBgPM","MANhmoRJVPY","ruGrJ0aq6tU","SJIKbl3kpz4","9P_iVqrUvyM","LtcFCy4PtIk","od9at-wd_tw","NjRvXjSHze4","S1YaYheWUYo","m9t8LyJtrRY",
+      "Mxfy_0R2uzc","pVjdMQ_iAh0","JJRBk4ycYiE","4fOtEXI7gJQ","LBl9s4T6Nio","UNYqwpx7Cys","9xcDLqMrV_M","bzNwc5ojn8M","8XKKJ5TrPB0","cUzrjjfvYLg",
+      "ai9hLor_u-4","qyjSdLtaJIE","R7CBLAvcUNo","KXDzn5KgUUI","pOEvbk0qWe4","XbjP_LWLbUw","8CmcmwlWOxI","k7lqr5Jttrs","QGXQOGOw7Pw","AhKAHoHgDfE",
+      "suu5DbNDSQU","fyLpZL-HOxg","6Wi4y1G4Wmk","TOOgowMP_Ps","WK8Hz9ZEKyI","xwrdZbkOoiQ","kh0dBe47p2Q","QLW9i_SOaEY","VP6q9DAuY48","wuafJa7KQnE",
+      "kkaYuLkx-dw","qEZUSDKYDDE","h8y6ZeNRqbw","HEwS79_Z2JM","nurnKNEyOKw","NrjCdy09cs4","Tj1qiD8VUXY","CZrzGK46nhQ","FzsQN_twRX0","fadpaVVBzi0",
+      "gkTZE4uhFgk",
     ]
   },
-  { // https://www.youtube.com/playlist?list=PLwm3mn269PQjYSp567_ls-nTJdemFggfd
+  { url: 'https://www.youtube.com/playlist?list=PLwm3mn269PQjYSp567_ls-nTJdemFggfd',
     id: 'lsd-radio',
     name: 'LSD Radio',
     art: 'art/LSDTV.jpg',
     centerArt: 'art/LSDTV.jpg',
     ids: [
-      "_2i6phdI9Ow","qSQKvnWnCtY","iDaUy4T7rVI","X89DMLTEzCs","UCegS6qFkfY","IsDqlPKY1fQ","ecOKP4_lFsg","AnycCuYSW7A","mOKMoL8_jaQ","nm65PCbUMZI",
-      "WY45ELPHFiM","EqtS19hfWD4","YY6YQFwGYAU","ZF9mWOg01EA","-u3NXWgQpjY","FqG9OaOU184","B7Gj3YodcWU","Qr6KyiJaLpQ","iOZOtHv5H_w","u2_jdQGongg",
-      "uU9KyXsDn0I","C5h685wsSvM","fN-xq7t6pKw","obcjlfg7yCI","SyJD7gMJBiI","gRmJyR3ff7k","BgP9tzt9_Z8","2Zn5o-gxtFA","wZTIdnooV-s","uYDZwh9Untw",
-      "hyXnT1dt97I","2xRfJNOGXrc","7k7sfRE7HYU","MBG3Gdt5OGs","hVdvFGkB7q4","JAcBkwGwQjo","Hr28D6yzuYY","43y19nAt3xA","-F7c7Es0nuM","miZr60PaIjc",
-      "iYIVQz5uAns","p0HsEFkDwUo","TOOgowMP_Ps","SdadL7kay50","Mh_iUu1mFso","B5X2Fh0qNBc","0dLmzKlInr4","X4UuYoxmH60","TNxP8_huxyQ","SEG92Z_NGJE",
-      "3ZSRmvh3qhY","8dHLWuddFQ8","JDPGefjM_vU","mQOV11xi4SM","NhheiPTdZCw","9RHFFeQ2tu4","5Yz2t1QeIHQ","M910sjgb3gk","jSYwFTGAVWM","VUg3hJUG6dY",
-      "jkAw87ZIwQA","8luEj9dkTt0","6NlstW2xvwc","1kmNFc1pmuI","oYxohKbeMZw","k3OTpuNep_o","me4SkrRxqaI","HBgIoMDzGNE","HLNTp3e1hMo","OHAjc-ayhus",
-      "iZZaYkOG1Zk","0H-ZTUhDjy4","Rk8wCxSRiqs","hbj4sFs7WMA","TdySGOHBwaM","rA7nyWxxqNM","FGL-KmhE5kw","u_RXl18CD_8","DviqacxbJnU","CpkTMx5ywmU",
+      "_2i6phdI9Ow","SEG92Z_NGJE","1tIJ5TA7dk4","UCegS6qFkfY","IsDqlPKY1fQ","ecOKP4_lFsg","AnycCuYSW7A","mOKMoL8_jaQ","nm65PCbUMZI","WY45ELPHFiM",
+      "EqtS19hfWD4","YY6YQFwGYAU","-u3NXWgQpjY","iDaUy4T7rVI","FqG9OaOU184","B7Gj3YodcWU","Qr6KyiJaLpQ","iOZOtHv5H_w","u2_jdQGongg","uU9KyXsDn0I",
+      "C5h685wsSvM","fN-xq7t6pKw","obcjlfg7yCI","SyJD7gMJBiI","gRmJyR3ff7k","BgP9tzt9_Z8","2Zn5o-gxtFA","wZTIdnooV-s","ZF9mWOg01EA","uYDZwh9Untw",
+      "hyXnT1dt97I","2xRfJNOGXrc","7k7sfRE7HYU","MBG3Gdt5OGs","hVdvFGkB7q4","Mh_iUu1mFso","Hr28D6yzuYY","43y19nAt3xA","-F7c7Es0nuM","iYIVQz5uAns",
+      "DviqacxbJnU","p0HsEFkDwUo","TOOgowMP_Ps","B5X2Fh0qNBc","X4UuYoxmH60","8dHLWuddFQ8","mQOV11xi4SM","NhheiPTdZCw","9RHFFeQ2tu4","5Yz2t1QeIHQ",
+      "M910sjgb3gk","jSYwFTGAVWM","VUg3hJUG6dY","8luEj9dkTt0","oYxohKbeMZw","k3OTpuNep_o","X89DMLTEzCs","HLNTp3e1hMo","0H-ZTUhDjy4","Rk8wCxSRiqs",
+      "hbj4sFs7WMA","TdySGOHBwaM","rA7nyWxxqNM","FGL-KmhE5kw","u_RXl18CD_8","CpkTMx5ywmU","iZZaYkOG1Zk","O431N-XdZpQ","qSQKvnWnCtY","OHAjc-ayhus",
     ]
   },
-  { // https://www.youtube.com/playlist?list=PLwm3mn269PQhm2Ml5nRuXwnXKrDGNl76U
+  { url: 'https://www.youtube.com/playlist?list=PLwm3mn269PQhm2Ml5nRuXwnXKrDGNl76U',
     id: 'acid-drop',
     name: 'Acid Drop',
     art: 'art/aciddrop.jpg',
@@ -303,10 +382,10 @@ const PLAYLISTS = [
       "zE85mW71uB0","4RBGDgEpKIw","2YllipGl2Is","bxYhJpILIQE","5BzgNBn786o","gkTZE4uhFgk","kWNHvIt9ryk","Z0v9fqVz38c","FHccClTAdzc","-iFD5TWDG-g",
       "eOE1wVr1jvI","NkRkuI0ZgX0","eV4wmLbRKiM","UCAp24HDUKY","a1rjVVcZvTY","9Ux0eOPanxE","S5fefU5UNZo","v2Djx0Dff9c","vO2imKkn2ow","oeQ9noQKy1o",
       "kFZKgf5WG0g","d9VUldypP_g","0_gMIUh6IUg","NjBjBiFlFZQ","G_ztQYJB0UM","rJmE3pRUhsc","E_pv5ASvz0c","fPZsUfDIrg4","GLXj4clHtqA","mQHh_-c7uIQ",
-      "p_rw_W0XadA","4VZIFczKMW8","VkiIBEGR8NU","aftOCaPnsns","o1hggJOIY_c","n7aXauXziCg",
+      "p_rw_W0XadA","4VZIFczKMW8","VkiIBEGR8NU","aftOCaPnsns","o1hggJOIY_c","n7aXauXziCg","GUzzzuXZ0M4",
     ]
   },
-  { // https://www.youtube.com/playlist?list=PLwm3mn269PQgWjE_ZLbM1PRTIiuIIN0QC
+  { url: 'https://www.youtube.com/playlist?list=PLwm3mn269PQgWjE_ZLbM1PRTIiuIIN0QC',
     id: 'post-pop',
     name: 'Post Pop',
     art: 'art/postpop.jpg',
@@ -319,7 +398,7 @@ const PLAYLISTS = [
       "ke4DQvxmN_s","-z4YaVBZbWQ","3psDZCLiTTc","LpWCuxgbMNI","vn9Up9_a5o8","vkz2FRfYPl0",
     ]
   },
-  { // https://www.youtube.com/playlist?list=PLwm3mn269PQiwvTXwnRxM-B2U09vwcTTG
+  { url: 'https://www.youtube.com/playlist?list=PLwm3mn269PQiwvTXwnRxM-B2U09vwcTTG',
     id: 'knock-out',
     name: 'Knock Out',
     art: 'art/knockoutside.png',
@@ -327,7 +406,7 @@ const PLAYLISTS = [
     ids: [
       "VB01l-V_vAE","xflfmYeEt_8","Sq5Gsk-JhVk","KLNRsyKR1vM","jGVcw-fQeik","JT_NgMk9n-4","nHOtPHuPMYo","NZzht9MRk50","dyCo4kqeCZE","xKH3Hj4lqLs",
       "NE2QAYVlUJE","zxKVYysUynk","O5HX_ua2DC0","r42HwRDxErA","hwLa4VYL0BI","rWRmjkPgZkY","kL0t_z0jCWU","f8c0KPyK3Js","Ve4EeGrewvY","owvMxYbNJPM",
-      "q39uDJzvFok","5KHgZAxllh4","4yXFVgy7laM","_3FiSB3uN0g","oVUr9Pm6-EM","RQF_xDs6rFA",
+      "q39uDJzvFok","5KHgZAxllh4","4yXFVgy7laM","_3FiSB3uN0g","oVUr9Pm6-EM","RQF_xDs6rFA","B-7DzWFOWJw",
     ]
   },
   { // no YouTube playlist URL known
@@ -347,7 +426,7 @@ const PLAYLISTS = [
       "VFIUy39u_4c","kTxt6Qrk8b4"
     ]
   },
-  { // https://www.youtube.com/playlist?list=PLwm3mn269PQhSoLItIltGCyDdlePbPr3U
+  { url: 'https://www.youtube.com/playlist?list=PLwm3mn269PQhSoLItIltGCyDdlePbPr3U',
     id: 'backseat66',
     name: 'BackSeat66',
     art: 'art/backseat66side.png',
@@ -359,10 +438,10 @@ const PLAYLISTS = [
       "aIpteHRMbZo","Mh0euI3agt0","5h_2Uk0oTHk","P59Z7edms2w","XGcCQrvdu1E","4Nlr9vU0DfU","iwjHAA-Ke2I","gjEAXdTbb8A","7DD0oxGVRV8","qXK7MDrYifI",
       "zYoTqBGsDkU","m4n1V3g3vks","2SFt7JHwJeg","9X4uZqxcwSU","GdYpxVQ1BZs","2-kV6TRs8PU","sPwCttDbS5c","aka3CpLMvG0","bjRF4JjoCp4","yiBPAoCiNKk",
       "XFL844sj1To","ScoG3KXGXLQ","SswreOoz9iE","e2TNCf2PEyw","h8WWfmTVFiU","mIyda1hoSKw","z-kiZX8yYCg","0DTrjpIb4QI","Cvvy4_PoUL8","KEo2NDuIj4U",
-      "LltS_oXX2Oo","gfPZ6TuBElI","dNG--igfh-Q","0y3JnaPq-U8",
+      "LltS_oXX2Oo","gfPZ6TuBElI","dNG--igfh-Q","0y3JnaPq-U8","1WmI0LkWCqw","bTx9es4RkiI","_zv9TGmPfX0",
     ]
   },
-  { // https://www.youtube.com/playlist?list=PLwm3mn269PQgNfB8Isk2_Px4w5ljFz06L
+  { url: 'https://www.youtube.com/playlist?list=PLwm3mn269PQgNfB8Isk2_Px4w5ljFz06L',
     id: 'hustle-nation',
     name: 'Hustle Nation',
     art: 'art/hustlenationside.png',
@@ -412,17 +491,17 @@ const PLAYLISTS = [
       "oHFmsK4lqMA","XdObeJBIO9c","KtKoeJimyYg","gtHi89GAAdU","PQ8ZHxGtGcQ","TdiBonYKnkY","fxnwhS9YF5A","bLV1IFp65s4","xpZes0q9gPA","oyAyS14SIjw"
     ]
   },
-  { // https://www.youtube.com/playlist?list=PLwm3mn269PQgFsGTF_l7210V8XUPFoeBR
+  { url: 'https://www.youtube.com/playlist?list=PLwm3mn269PQgFsGTF_l7210V8XUPFoeBR',
     id: 'exe-obj',
     name: '.exe Obj',
     art: 'art/exe obj by themighty808.png',
     centerArt: 'art/exe obj by themighty808.png',
     ids: [
       "UXVtm1FUCfY","kV1x8229lxU","4nhUkU0UOvw","RpYmqyngPoo","9TUOHKISN28","mHlCP6hc3zY","rsaQsHxu4LU","xmait-bDevY","n-87chsvCF4","H2hUmlQsVmA",
-      "g-VehdL25J8","WWX2tKAi23g","aplPE25xg3c",
+      "g-VehdL25J8","WWX2tKAi23g","aplPE25xg3c","fMK43XDVvX4",
     ]
   },
-  { // https://www.youtube.com/playlist?list=PLwm3mn269PQhgq34UB6vLE5rlz2u9V06f
+  { url: 'https://www.youtube.com/playlist?list=PLwm3mn269PQhgq34UB6vLE5rlz2u9V06f',
     id: 'red',
     name: 'Red',
     art: 'art/redplaylist1.png',
@@ -431,10 +510,10 @@ const PLAYLISTS = [
       "g3d29aHsQVw","UdfLpn3aS94","rqG5IupOiO0","ESjPc7I5h_Q","ypTyxrFLi8Q","_UZAGlM7n8w","D64a2fb72sE","7z_yW74PiGs","B6CuMGL5bvk","62ks-CDZAzs",
       "wVBO10heWr0","HDLwQx6apq0","-rzybyvCBRI","jpYDw7AJDtM","UJCIRkMaCww","Yibmu-F_Qxs","s56Rx6qlo0Y","XJgh_D379jU","TZCE6PfaUWA","dKsDHh2Vkv4",
       "ALZw9jMFjIY","yH8ZYthxmZ8","CiX2iPmX15Q","xGY8PuFbQZs","_9smBd1h7Uw","ft7wLE5_VEU","7ZGax20kxO0","8z1bGdli4fM","qRNXrz_MyFw","BESlgVbNTKY",
-      "IK6tGbeIZjU",
+      "IK6tGbeIZjU","LfxKMBAVgng","JWViInkIAuk",
     ]
   },
-  { // https://www.youtube.com/playlist?list=PLwm3mn269PQhCcqI8Hzul8GvGbHZD0_hV
+  { url: 'https://www.youtube.com/playlist?list=PLwm3mn269PQhCcqI8Hzul8GvGbHZD0_hV',
     id: 'homesick',
     name: 'Homesick',
     art: 'art/homesick.png',
@@ -443,7 +522,48 @@ const PLAYLISTS = [
       "VTA8F3PG4hE","xvuT0Snxi9s","waYRxXNXRK8","I9hbYCR4XDE","CZrzGK46nhQ","BxVUlRhzuDw","CoCfw0Xkq_0","thzbIdytjZ8","-_HbBDo9P-o","kIS5drN9c8Y",
       "7YlpFk1O864","CunaTuLfTVM","qMaG3zFGtaU","pMzk6eMi2DU","RqLkA3pak1o","WwYYP3ewe7A","ypT31CBLRO4","x6_mbnsh6VU","n3vRczwXsaM","dqEvoItaQbM",
       "bdW9aPC8b4I","OEQITCAqyDc","BQnkTkVBfAk","C7Jdo_wRssk","ZES3nJQYJok","EEKkPBVyClo","t2k5g7bj7DE","0rtH8ioGFq4","25c2Wz70Gbo","R9mRAb-uY7g",
-      "1CjM3NLjXnE","Iyl-n6J27Q4","YjDfnb-EWgw","mJQ9tx_WJA4","BtyHosz4ELw","LL56qF3-M-g","S78ZyANGtUE","zeQa7pV3Tac","OBlff9x4KvA",
+      "1CjM3NLjXnE","Iyl-n6J27Q4","YjDfnb-EWgw","mJQ9tx_WJA4","BtyHosz4ELw","LL56qF3-M-g","S78ZyANGtUE","zeQa7pV3Tac","XLjmdP2eji4","agARZZp4ZWk",
+      "ss2c-Nddqkc","7Q9cX7Wr5Qg",
+    ]
+  },
+  { url: 'https://www.youtube.com/playlist?list=PLwm3mn269PQisYFZrOhihhsprM2XtsFDN',
+    id: 'full-cds',
+    name: 'FULL CDs',
+    ids: [
+      "H1d_aEantvc","Pql36y-4KY0","wyDMn6z4dHo","S9NbJFmvVIs","ei2HWnoyHmw","d1YhCHCVkS8","uZ4S3Bd9kkE","mua4GGdWOdM","gOcD0ugZvrM","X1Gz3hXvu9U",
+      "wMre4Z22hTM","5SgUO0h9DMY","4I5LPscXoPY","bhnWRMu2DG0","d79YI7998CI",
+    ]
+  },
+  { url: 'https://www.youtube.com/playlist?list=PLwm3mn269PQgOBvMgeHVny8oPFh_nDAsS',
+    id: 'tomes',
+    name: 'Tomes',
+    ids: [
+      "wF0DxHqOb_M","dG-fxbEdOAU","QmYyh63pqwI","ZPncMw5oWZs","Aqo-hyxjCYE","rFGiC7h7nWU","VsoYUKU9g30","6hv8GRC5Los","szt6MHlC5S8","rNOQGKXf4EM",
+      "9T51n3tvZ3M","c9OjAmM-cQ4","tavD6fDHSeo","yhJB4bMJVJM","0hmLm3-Pn78",
+    ]
+  },
+  { url: 'https://www.youtube.com/playlist?list=PLwm3mn269PQimOh-ibjW-B_2_UvxwszJX',
+    id: 'reload',
+    name: 'Reload',
+    ids: [
+      "adV8-_hgL4g","KxhZF4Wc9Kw","_siJRgDlddY","MXBMd-XO0Yo","jxmTzV-eO7Y","bndL7wwAj0U","mYGGfK4bqVs","BFE2hz1Xdsc","Td7ZV3jCb00","Qf1FHLjoRRc",
+      "XaiYxczjZ0U","nTPvHQ4_250",
+    ]
+  },
+  { url: 'https://www.youtube.com/playlist?list=PLwm3mn269PQh-dMYvYes9-aMUTJgQuzgu',
+    id: 'the-end',
+    name: 'The End',
+    ids: [
+      "vAmuiLOnsG4","t8tN_IOAJzw","ZwyuSPkOBAw","4jMsE6KcuAg","tjabE6xTRNQ","fS9m0Ac8PCU","73UMberIFJA","PjwFotUyC6Y","0XZQEjLjb2g","xB-vIF1ZYgA",
+      "npcGql9Ir6Y","FqyaorxpDLQ","sMoThWQ87nk","JH-Nnh0trLY","EttCNMDUFwc",
+    ]
+  },
+  { url: 'https://www.youtube.com/playlist?list=PLwm3mn269PQih_bzThGmEaBayLBaVO3Dg',
+    id: 'dither',
+    name: 'Dither',
+    ids: [
+      "W20U9lJyamQ","AxjP9s6J3uY","7SRN-gUD1nY","4wfuK_AbZiQ","WbsIz6UD5O0","Jq8ZjkOX-zY","71qQ5_uVtfs","Bn0vyXyQ_Zo","GIsH_9mS45U","MRkOSkBbjSw",
+      "6jvroWtwMb8","P5EKMn7OQik","jzXSMW5XxFQ",
     ]
   }
 ];
@@ -611,7 +731,8 @@ function renderPlaylistGrid() {
   grid.innerHTML = PLAYLISTS.map((pl, i) => {
     const active = pl.id === currentPlaylistId;
     const img = pl.art ? `<img src="${pl.art}" alt="${pl.name}" class="w-full h-full object-cover rounded-lg">` : `<span class="text-2xl font-black text-zinc-700">${i + 1}</span>`;
-    return `<div onclick="switchPlaylist('${pl.id}')" class="aspect-square rounded-lg overflow-hidden cursor-pointer transition-all ${active ? 'ring-2 ring-purple-500' : 'opacity-60 hover:opacity-100'}">${img}</div>`;
+    const ytLink = pl.url ? `<a href="${pl.url}" target="_blank" rel="noopener" onclick="event.stopPropagation()" class="absolute top-1 right-1 w-5 h-5 bg-black/60 rounded-full flex items-center justify-center hover:bg-red-600 transition-colors" title="Open playlist on YouTube"><svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor" class="text-white"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg></a>` : '';
+    return `<div onclick="switchPlaylist('${pl.id}')" class="aspect-square rounded-lg overflow-hidden cursor-pointer transition-all relative ${active ? 'ring-2 ring-purple-500' : 'opacity-60 hover:opacity-100'}">${img}${ytLink}</div>`;
   }).join('');
 }
 
@@ -745,6 +866,7 @@ function toggleControlsSidebar() {
 
 let videoBg = false;
 let goopTween = null;
+function isMobile() { return window.innerWidth < 768 || ('ontouchstart' in window); }
 function toggleVideoBg() {
   videoBg = !videoBg;
   const app = document.getElementById('app');
@@ -752,12 +874,13 @@ function toggleVideoBg() {
   const btn = document.getElementById('btn-video-bg');
   const goop = document.getElementById('goop-container');
   app.classList.toggle('video-bg', videoBg);
-  app.classList.toggle('goop-mode', !videoBg);
+  app.classList.toggle('goop-mode', !videoBg && !isMobile());
   overlay.classList.toggle('show', videoBg);
-  goop.classList.toggle('show', !videoBg);
+  if (!isMobile()) goop.classList.toggle('show', !videoBg);
   if (!videoBg) {
     if (goopTween) goopTween.kill();
-    goopTween = TweenMax.staggerFromTo('#goop-inner .blob', 4, {
+    if (!isMobile()) {
+      goopTween = TweenMax.staggerFromTo('#goop-inner .blob', 4, {
       cycle: {
         attr: function(i) {
           var r = i*90;
@@ -774,6 +897,7 @@ function toggleVideoBg() {
       ease:Linear.easeNone,
       repeat:-1
     });
+    }
   } else {
     if (goopTween) { goopTween.kill(); goopTween = null; }
   }
@@ -820,10 +944,13 @@ function enterPlaylist() {
   document.getElementById('landing-bg').src = '';
   document.getElementById('landing').classList.add('hidden');
   if (!videoBg) {
-    document.getElementById('app').classList.add('goop-mode');
-    document.getElementById('goop-container').classList.add('show');
+    if (!isMobile()) {
+      document.getElementById('app').classList.add('goop-mode');
+      document.getElementById('goop-container').classList.add('show');
+    }
     if (goopTween) goopTween.kill();
-    goopTween = TweenMax.staggerFromTo('#goop-inner .blob', 4, {
+    if (!isMobile()) {
+      goopTween = TweenMax.staggerFromTo('#goop-inner .blob', 4, {
       cycle: {
         attr: function(i) {
           var r = i*90;
@@ -840,6 +967,7 @@ function enterPlaylist() {
       ease:Linear.easeNone,
       repeat:-1
     });
+    }
   }
 }
 
@@ -924,11 +1052,165 @@ async function checkRadioApi() {
 
 let bgTimer = null;
 function showLandingBg() {
+  if (isMobile()) return;
   const bg = document.getElementById('landing-bg');
   bg.classList.remove('show');
   bg.src = 'https://my.spline.design/unchained-d3hHCgdWho7a8ATGzKtB11TU';
   if (bgTimer) clearTimeout(bgTimer);
   bgTimer = setTimeout(() => bg.classList.add('show'), 5000);
+}
+
+// --- Shop ---
+
+let shopItems = [];
+let shopMouseX = 0, shopMouseY = 0;
+let shopParallaxRunning = false;
+let shopInited = false;
+
+function initShop() {
+  if (shopInited) return;
+  shopInited = true;
+  const container = document.getElementById('shop-scroll');
+  const depths = ['depth-1', 'depth-2', 'depth-3'];
+  const n = 14;
+
+  for (let i = 1; i <= n; i++) {
+    const num = String(i).padStart(2, '0');
+    const item = document.createElement('div');
+    item.className = `shop-item ${depths[i % 3]}`;
+    item.style.marginLeft = `${5 + (i * 37) % 65}%`;
+    item.style.marginTop = `${20 + (i * 13) % 60}px`;
+    item.dataset.index = i - 1;
+
+    const floater = document.createElement('div');
+    floater.className = 'shop-float';
+    floater.style.setProperty('--float-dur', `${4 + (i % 5) * 0.8}s`);
+    floater.style.setProperty('--float-delay', `${i * 0.3}s`);
+    floater.style.setProperty('--rot', `${((i * 31) % 9) - 4}deg`);
+
+    const img = document.createElement('img');
+    img.src = `/shop/${num}.png`;
+    img.alt = '';
+    img.loading = 'lazy';
+    floater.appendChild(img);
+    item.appendChild(floater);
+    container.appendChild(item);
+
+    item.addEventListener('click', () => openShopLightbox(i - 1));
+  }
+
+  initShopParallax();
+  initShopLightbox();
+}
+
+function initShopParallax() {
+  shopItems = document.querySelectorAll('.shop-item');
+  const scroll = document.getElementById('shop-scroll');
+
+  scroll.addEventListener('scroll', () => {
+    if (!shopParallaxRunning) {
+      shopParallaxRunning = true;
+      requestAnimationFrame(updateShopParallax);
+    }
+  });
+
+  scroll.addEventListener('mousemove', (e) => {
+    const rect = scroll.getBoundingClientRect();
+    shopMouseX = (e.clientX - rect.left) / rect.width - 0.5;
+    shopMouseY = (e.clientY - rect.top) / rect.height - 0.5;
+    if (!shopParallaxRunning) {
+      shopParallaxRunning = true;
+      requestAnimationFrame(updateShopParallax);
+    }
+  });
+
+  requestAnimationFrame(updateShopParallax);
+}
+
+function updateShopParallax() {
+  const depthFactors = { 'depth-1': 1.2, 'depth-2': 0.6, 'depth-3': 0.2 };
+
+  shopItems.forEach((item) => {
+    const depthClass = item.classList[1];
+    const depth = depthFactors[depthClass] || 0.5;
+    const rect = item.getBoundingClientRect();
+    const itemCenterY = rect.top + rect.height / 2;
+    const viewCenterY = window.innerHeight / 2;
+    const scrollOffset = (itemCenterY - viewCenterY) * depth * 0.15;
+    const mouseOffsetX = shopMouseX * depth * 30;
+    const mouseOffsetY = shopMouseY * depth * 20;
+    item.style.setProperty('--px', `${mouseOffsetX}px`);
+    item.style.setProperty('--py', `${scrollOffset + mouseOffsetY}px`);
+  });
+
+  shopParallaxRunning = false;
+}
+
+// --- Shop Lightbox ---
+
+let shopCurrentIndex = 0;
+const shopImageCount = 14;
+
+function openShopLightbox(index) {
+  shopCurrentIndex = index;
+  const num = String(index + 1).padStart(2, '0');
+  document.getElementById('shop-lightbox-img').src = `/shop/${num}.png`;
+  document.getElementById('shop-lightbox').classList.add('active');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeShopLightbox() {
+  document.getElementById('shop-lightbox').classList.remove('active');
+  document.body.style.overflow = '';
+}
+
+function shopLightboxPrev() {
+  shopCurrentIndex = (shopCurrentIndex - 1 + shopImageCount) % shopImageCount;
+  const num = String(shopCurrentIndex + 1).padStart(2, '0');
+  document.getElementById('shop-lightbox-img').src = `/shop/${num}.png`;
+}
+
+function shopLightboxNext() {
+  shopCurrentIndex = (shopCurrentIndex + 1) % shopImageCount;
+  const num = String(shopCurrentIndex + 1).padStart(2, '0');
+  document.getElementById('shop-lightbox-img').src = `/shop/${num}.png`;
+}
+
+function initShopLightbox() {
+  const lb = document.getElementById('shop-lightbox');
+  const img = document.getElementById('shop-lightbox-img');
+
+  lb.addEventListener('click', (e) => {
+    if (e.target === lb || e.target === img) closeShopLightbox();
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (!lb.classList.contains('active')) return;
+    if (e.key === 'Escape') closeShopLightbox();
+    if (e.key === 'ArrowLeft') shopLightboxPrev();
+    if (e.key === 'ArrowRight') shopLightboxNext();
+  });
+
+  document.getElementById('shop-lightbox-close').addEventListener('click', closeShopLightbox);
+  document.getElementById('shop-lightbox-prev').addEventListener('click', (e) => { e.stopPropagation(); shopLightboxPrev(); });
+  document.getElementById('shop-lightbox-next').addEventListener('click', (e) => { e.stopPropagation(); shopLightboxNext(); });
+}
+
+// --- Shop Entry/Exit ---
+
+function enterShop() {
+  initShop();
+  document.body.classList.add('shop-active');
+  document.getElementById('landing').classList.add('hidden');
+  requestAnimationFrame(() => {
+    document.getElementById('shop-view').classList.add('active');
+  });
+}
+
+function backFromShop() {
+  document.getElementById('shop-view').classList.remove('active');
+  document.getElementById('landing').classList.remove('hidden');
+  document.body.classList.remove('shop-active');
 }
 
 // Init
