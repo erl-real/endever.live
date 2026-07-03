@@ -132,6 +132,24 @@
   #shop-lightbox.active #shop-lightbox-prev,
   #shop-lightbox.active #shop-lightbox-next { opacity: 0.5; }
   #shop-lightbox.active #shop-lightbox-img { transform: scale(1); opacity: 1; }
+
+  /* --- Shop Lighting --- */
+  #shop-lighting {
+    position: absolute;
+    inset: 0;
+    top: 44px;
+    pointer-events: none;
+    z-index: 4;
+    background: linear-gradient(
+      to bottom,
+      rgba(2,2,4,0.85) 0%,
+      rgba(2,2,4,0.35) 15%,
+      rgba(2,2,4,0) 30%,
+      rgba(2,2,4,0) 70%,
+      rgba(2,2,4,0.35) 85%,
+      rgba(2,2,4,0.85) 100%
+    );
+  }
 </style>
 </head>
 <body>
@@ -325,6 +343,7 @@
   <div class="flex-1 overflow-y-auto" id="shop-scroll">
     <!-- images injected by JS -->
   </div>
+  <div id="shop-lighting"></div>
 </div>
 
 <!-- Shop Lightbox -->
@@ -938,9 +957,6 @@ onPlayerReady = function() {
 };
 
 function enterPlaylist() {
-  preventAutoPlay = false;
-  buildQueue();
-  if (VIDEO_IDS.length > 0) playIndex(0);
   document.getElementById('landing-bg').src = '';
   document.getElementById('landing').classList.add('hidden');
   if (!videoBg) {
@@ -1078,7 +1094,12 @@ function initShop() {
     const num = String(i).padStart(2, '0');
     const item = document.createElement('div');
     item.className = `shop-item ${depths[i % 3]}`;
-    item.style.marginLeft = `${5 + (i * 37) % 65}%`;
+    if (i === 11) {
+      item.style.marginLeft = '72%';
+      item.style.maxWidth = '75%';
+    } else {
+      item.style.marginLeft = `${5 + (i * 37) % 65}%`;
+    }
     item.style.marginTop = `${20 + (i * 13) % 60}px`;
     item.dataset.index = i - 1;
 
