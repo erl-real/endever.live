@@ -588,7 +588,7 @@ const PLAYLISTS = [
 ];
 
 let currentPlaylistId = PLAYLISTS[0].id;
-let VIDEO_IDS = PLAYLISTS[0].ids;
+let VIDEO_IDS = [];
 
 // State
 let player = null;
@@ -776,10 +776,14 @@ function updateArtDisplay() {
     img.src = pl.centerArt;
     img.classList.remove('hidden');
     num.classList.add('hidden');
+  } else if (pl) {
+    img.classList.add('hidden');
+    num.classList.remove('hidden');
+    num.textContent = (PLAYLISTS.indexOf(pl) + 1).toString();
   } else {
     img.classList.add('hidden');
     num.classList.remove('hidden');
-    if (num) num.textContent = PLAYLISTS.findIndex(p => p.id === currentPlaylistId) + 1;
+    num.textContent = '?';
   }
 }
 
@@ -1235,11 +1239,6 @@ function backFromShop() {
 }
 
 // Init
-const savedPlaylist = localStorage.getItem('endever_active_playlist');
-if (savedPlaylist) {
-  const pl = PLAYLISTS.find(p => p.id === savedPlaylist);
-  if (pl) { currentPlaylistId = pl.id; VIDEO_IDS = pl.ids; }
-}
 const savedShuffle = localStorage.getItem('endever_playlist_shuffle');
 if (savedShuffle === 'true') {
   shuffle = true;
