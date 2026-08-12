@@ -214,7 +214,7 @@
   </div>
 
   <!-- Center -->
-  <div id="center-art" class="absolute left-1/2 top-0 -translate-x-1/2 h-full flex flex-col items-center justify-center gap-6 p-6">
+  <div id="center-art" onclick="centerArtActivate()" class="absolute left-1/2 top-0 -translate-x-1/2 h-full flex flex-col items-center justify-center gap-6 p-6 cursor-pointer">
     <div id="playlist-art-display" class="w-48 h-48 rounded-2xl bg-zinc-900 flex items-center justify-center ring-1 ring-white/5 overflow-hidden">
       <img id="art-image" class="w-full h-full object-cover hidden">
       <span id="art-number" class="text-6xl font-black text-zinc-700">1</span>
@@ -627,7 +627,7 @@ function onYouTubeIframeAPIReady() {
   player = new YT.Player('yt-player', {
     height: '100%',
     width: '100%',
-    playerVars: { autoplay: 1, controls: 0, disablekb: 1, fs: 0, modestbranding: 1, rel: 0, playsinline: 1 },
+    playerVars: { autoplay: 0, controls: 0, disablekb: 1, fs: 0, modestbranding: 1, rel: 0 },
     events: {
       onReady: onPlayerReady,
       onStateChange: onPlayerStateChange,
@@ -767,6 +767,7 @@ function switchPlaylist(id) {
   renderPlaylistGrid();
   titles = {};
   buildQueue();
+  if (!videoBg) toggleVideoBg();
   if (ready && player) playIndex(0);
   updateArtDisplay();
 }
@@ -890,7 +891,7 @@ function toggleControlsSidebar() {
   document.getElementById('controls-sidebar').classList.toggle('collapsed');
 }
 
-let videoBg = true;
+let videoBg = false;
 let goopTween = null;
 function isMobile() { return window.innerWidth < 768 || ('ontouchstart' in window); }
 function toggleVideoBg() {
@@ -930,6 +931,14 @@ function toggleVideoBg() {
   btn.classList.toggle('text-purple-400', videoBg);
 }
 
+function centerArtActivate() {
+  if (!videoBg) toggleVideoBg();
+  if (!isPlaying) {
+    if (currentIndex >= 0 && player && player.playVideo) player.playVideo();
+    else if (VIDEO_IDS.length > 0) playIndex(0);
+  }
+}
+
 // Volume
 function initVolume() {
   const saved = localStorage.getItem('endever_playlist_volume');
@@ -960,26 +969,13 @@ onPlayerReady = function() {
   ready = true;
   buildQueue();
   applyVolume();
-  if (VIDEO_IDS.length > 0) playIndex(0);
 };
 
 function enterPlaylist() {
-  const app = document.getElementById('app');
-  const overlay = document.getElementById('video-overlay');
-  const btn = document.getElementById('btn-video-bg');
-  const goop = document.getElementById('goop-container');
-  if (videoBg) {
-    app.classList.add('video-bg');
-    app.classList.remove('goop-mode');
-    overlay.classList.add('show');
-    if (!isMobile()) goop.classList.remove('show');
-    if (btn) btn.classList.add('text-purple-400');
-    if (goopTween) { goopTween.kill(); goopTween = null; }
-  } else {
-    app.classList.remove('video-bg');
+  if (!videoBg) {
     if (!isMobile()) {
-      app.classList.add('goop-mode');
-      goop.classList.add('show');
+      document.getElementById('app').classList.add('goop-mode');
+      document.getElementById('goop-container').classList.add('show');
     }
     if (goopTween) goopTween.kill();
     if (!isMobile()) {
