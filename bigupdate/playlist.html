@@ -1,0 +1,1023 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bass Test Radio — EndEver Live</title>
+<script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/1.19.1/TweenMax.min.js"></script>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Inter', sans-serif;
+    background: #020204;
+    color: #a1a1aa;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  ::-webkit-scrollbar { width: 3px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: #27272a; border-radius: 2px; }
+
+  #yt-player { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 0; }
+  #yt-player iframe { width: 100% !important; height: 100% !important; object-fit: cover; }
+  #video-overlay { position: fixed; inset: 0; z-index: 1; background: rgba(0,0,0,0.65); pointer-events: none; display: none; }
+  #video-overlay.show { display: block; }
+  #goop-container { position: fixed; inset: 0; z-index: 2; display: none; }
+  #goop-container.show { display: block; }
+  #goop-inner { width: 100%; height: 100%; position: relative; overflow: hidden; background: linear-gradient(to bottom right, #0d0014, #1a0a3e); }
+  #goop-inner::before { content: ""; position: absolute; inset: 0; background: rgba(0,0,0,0.85); z-index: 1; }
+  #goop-inner svg { position: absolute; z-index: 2; width: 800px; height: 800px; top: 50%; left: 50%; margin-left: -400px; margin-top: -400px; }
+  #goop-inner rect { -webkit-transform-origin: 50% 50%; transform-origin: 50% 50%; }
+  #goop-inner .blobs { -webkit-filter: url("#goo"); filter: url("#goo"); }
+  #goop-inner .blob { fill: white; }
+  #app { background: #020204; }
+  #app.video-bg { background: transparent; }
+  #app.goop-mode { background: transparent; }
+
+  #app.video-bg #center-art { visibility: hidden; }
+
+  .track-item {
+    padding: 8px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.15s;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .track-item:hover { background: rgba(255,255,255,0.04); }
+  .track-item.active { background: rgba(168,85,247,0.1); border: 1px solid rgba(168,85,247,0.2); }
+  .track-item.playing .track-title { color: #a855f7; }
+
+  .glass { background: rgba(9,9,11,0.8); backdrop-filter: blur(12px); border-bottom: 1px solid rgba(255,255,255,0.06); }
+
+  @keyframes pulse-dot { 0%,100%{opacity:1} 50%{opacity:0.4} }
+  .live-dot { animation: pulse-dot 1.5s ease-in-out infinite; }
+
+  .sidebar { transition: width 0.25s ease; overflow: hidden; }
+  .sidebar.collapsed { width: 32px !important; }
+  .sidebar.collapsed > .expanded-content { display: none; }
+  .sidebar:not(.collapsed) > .collapsed-content { display: none; }
+  #controls-sidebar.collapsed .collapsed-shuffle { margin-top: auto; }
+
+  #landing { position: fixed; inset: 0; z-index: 100; display: flex; flex-direction: column; align-items: center; justify-content: center; background: #020204; transition: opacity 0.4s; overflow: hidden; }
+  #landing.hidden { opacity: 0; pointer-events: none; }
+  #landing-bg { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; transition: opacity 2s ease; pointer-events: none; z-index: 2; }
+  #landing-bg.show { opacity: 1; }
+  .mode-btn { display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 24px 0; cursor: pointer; position: relative; z-index: 1; opacity: 0.3; transition: opacity 0.6s ease; }
+  .mode-btn:hover { z-index: 3; opacity: 1; }
+  .mode-btn.disabled { cursor: default; }
+  .mode-btn.disabled:hover { opacity: 0.3; }
+  .mode-label { font-size: 10px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.3em; color: #52525b; }
+  .mode-title { font-size: 28px; font-weight: 900; color: #fff; text-transform: uppercase; letter-spacing: -0.02em; }
+  .mode-sub { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.2em; color: #a855f7; }
+  .mode-sub-btn { color: #a1a1aa; text-decoration: none; }
+  .mode-sub-btn:hover { color: #fff; }
+
+  /* --- Shop View --- */
+  #shop-view { opacity: 0; pointer-events: none; transition: opacity 0.5s; }
+  #shop-view.active { opacity: 1; pointer-events: auto; }
+  body.shop-active #app,
+  body.shop-active #yt-player,
+  body.shop-active #video-overlay,
+  body.shop-active #goop-container { display: none !important; }
+
+  /* --- Shop --- */
+  .shop-item {
+    width: fit-content;
+    max-width: 85%;
+    margin-bottom: 60px;
+    cursor: pointer;
+    position: relative;
+    z-index: 1;
+  }
+  .shop-item img {
+    width: 100%;
+    height: auto;
+    border-radius: 12px;
+    display: block;
+    transition: filter 0.3s, box-shadow 0.3s;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+  }
+  .shop-item:hover img {
+    filter: brightness(1.15);
+    box-shadow: 0 12px 48px rgba(0,0,0,0.7);
+  }
+  .shop-float {
+    animation: shop-float var(--float-dur, 6s) ease-in-out infinite;
+    animation-delay: var(--float-delay, 0s);
+    transform: rotate(var(--rot, 0deg));
+  }
+  @keyframes shop-float {
+    0%, 100% { transform: rotate(var(--rot, 0deg)) translateY(0px); }
+    33% { transform: rotate(var(--rot, 0deg)) translateY(-6px); }
+    66% { transform: rotate(var(--rot, 0deg)) translateY(4px); }
+  }
+  .depth-1 { z-index: 3; }
+  .depth-2 { z-index: 2; }
+  .depth-3 { z-index: 1; }
+  .shop-item { transform: translate(var(--px, 0px), var(--py, 0px)); }
+
+  #shop-scroll::-webkit-scrollbar { width: 3px; }
+  #shop-scroll::-webkit-scrollbar-track { background: transparent; }
+  #shop-scroll::-webkit-scrollbar-thumb { background: #27272a; border-radius: 2px; }
+
+  #shop-lightbox.active { opacity: 1; pointer-events: auto; }
+  #shop-lightbox.active #shop-lightbox-close { display: block; }
+  #shop-lightbox.active #shop-lightbox-prev,
+  #shop-lightbox.active #shop-lightbox-next { opacity: 0.5; }
+  #shop-lightbox.active #shop-lightbox-img { transform: scale(1); opacity: 1; }
+
+  /* --- Shop Lighting --- */
+  #shop-lighting {
+    position: absolute;
+    inset: 0;
+    top: 44px;
+    pointer-events: none;
+    z-index: 4;
+    background: linear-gradient(
+      to bottom,
+      rgba(2,2,4,0.85) 0%,
+      rgba(2,2,4,0.35) 15%,
+      rgba(2,2,4,0) 30%,
+      rgba(2,2,4,0) 70%,
+      rgba(2,2,4,0.35) 85%,
+      rgba(2,2,4,0.85) 100%
+    );
+  }
+</style>
+</head>
+<body>
+
+<div id="app" style="position:relative;z-index:10;display:flex;flex-direction:column;height:100vh">
+
+<div class="shrink-0 px-3 h-11 flex items-center justify-between">
+  <span onclick="location.reload()" class="text-xs font-black text-white uppercase italic tracking-tight shrink-0 cursor-pointer">ENDEVER.LIVE</span>
+  <div class="flex items-center gap-2 flex-1 justify-center min-w-0 px-3">
+    <span id="now-title" class="text-xs font-black text-white uppercase italic tracking-tight truncate">Select a track</span>
+  </div>
+  <a id="go-sub-btn" href="#" target="_blank" rel="noopener" title="dont want a darker lowrez vid? THEN GO WATCH FROM THE ARTIST AND SUB! dont ask us to change it." class="text-[9px] font-black text-white bg-zinc-800 hover:bg-zinc-700 px-2.5 py-1 rounded-full uppercase tracking-widest shrink-0">GO SUB</a>
+</div>
+
+<div class="flex-1 flex min-h-0 relative justify-between">
+  <!-- Left: Controls -->
+  <div id="controls-sidebar" class="sidebar w-48 flex flex-col relative">
+    <!-- Collapsed content -->
+    <div class="collapsed-content flex flex-col items-center py-2 gap-3">
+      <button onclick="toggleControlsSidebar()" class="text-zinc-500 hover:text-white transition-colors p-1" title="Open controls">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+      </button>
+      <button onclick="prev()" class="text-zinc-600 hover:text-white transition-colors p-1" title="Previous">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M6 6h2v12H6zm3.5 6 8.5 6V6z"/></svg>
+      </button>
+      <button onclick="togglePlay()" class="text-zinc-600 hover:text-white transition-colors p-1" title="Play/Pause">
+        <svg id="play-icon-sm" width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+      </button>
+      <button onclick="next()" class="text-zinc-600 hover:text-white transition-colors p-1" title="Next">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"/></svg>
+      </button>
+      <div class="flex-1"></div>
+      <button onclick="toggleShuffle()" class="shuffle-btn text-zinc-600 hover:text-white transition-colors p-1" title="Shuffle">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 3 21 3 21 8"/><line x1="4" y1="20" x2="21" y2="3"/><polyline points="21 16 21 21 16 21"/><line x1="15" y1="15" x2="21" y2="21"/><line x1="4" y1="4" x2="9" y2="9"/></svg>
+      </button>
+    </div>
+
+    <!-- Expanded content -->
+    <div class="expanded-content flex flex-col flex-1 min-h-0">
+      <div class="px-3 py-2.5 shrink-0 flex items-center justify-between">
+        <h2 class="text-[9px] font-black text-zinc-600 uppercase tracking-[0.3em]">Playlists</h2>
+        <button onclick="toggleControlsSidebar()" class="text-zinc-500 hover:text-white transition-colors p-0.5" title="Close">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+      <div id="playlist-grid" class="flex-1 overflow-y-auto p-2 grid grid-cols-2 gap-2 content-start"></div>
+      <div class="shrink-0 flex items-center justify-center gap-3 px-4 py-3">
+        <button onclick="prev()" class="text-zinc-600 hover:text-white transition-colors" title="Previous">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M6 6h2v12H6zm3.5 6 8.5 6V6z"/></svg>
+        </button>
+        <button onclick="togglePlay()" class="w-10 h-10 bg-white text-black rounded-full flex items-center justify-center hover:scale-110 active:scale-95 transition-all shadow-xl shadow-white/5">
+          <svg id="play-icon" width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+        </button>
+        <button onclick="next()" class="text-zinc-600 hover:text-white transition-colors" title="Next">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"/></svg>
+        </button>
+        <button onclick="toggleShuffle()" class="shuffle-btn text-zinc-600 hover:text-white transition-colors p-1" title="Shuffle">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 3 21 3 21 8"/><line x1="4" y1="20" x2="21" y2="3"/><polyline points="21 16 21 21 16 21"/><line x1="15" y1="15" x2="21" y2="21"/><line x1="4" y1="4" x2="9" y2="9"/></svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Center -->
+  <div id="center-art" onclick="centerArtActivate()" class="absolute left-1/2 top-0 -translate-x-1/2 h-full flex flex-col items-center justify-center gap-6 p-6 cursor-pointer">
+    <div id="playlist-art-display" class="w-48 h-48 rounded-2xl bg-zinc-900 flex items-center justify-center ring-1 ring-white/5 overflow-hidden">
+      <img id="art-image" class="w-full h-full object-cover hidden">
+      <span id="art-number" class="text-6xl font-black text-zinc-700">1</span>
+    </div>
+    <div id="saying-display" class="text-center max-w-sm min-h-[3rem] flex items-center justify-center">
+      <p id="saying-text" class="text-sm text-zinc-500 italic leading-relaxed"></p>
+    </div>
+  </div>
+
+  <!-- Right: Playlist -->
+  <div id="playlist-sidebar" class="sidebar w-72 flex flex-col relative">
+    <!-- Collapsed content (thin strip) -->
+    <div class="collapsed-content flex flex-col items-center py-2 gap-3">
+      <button onclick="togglePlaylistSidebar()" class="text-zinc-500 hover:text-white transition-colors p-1" title="Open playlist">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+      </button>
+    </div>
+
+    <!-- Expanded content -->
+    <div class="expanded-content flex flex-col flex-1 min-h-0">
+      <div class="px-4 py-2.5 shrink-0 flex items-center justify-between">
+        <h2 class="text-[9px] font-black text-zinc-600 uppercase tracking-[0.3em]">Tracks</h2>
+        <div class="flex items-center gap-1">
+          <button onclick="scrollToCurrent()" class="text-zinc-600 hover:text-white transition-colors p-0.5" title="Scroll to current">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          </button>
+          <button id="btn-video-bg" onclick="toggleVideoBg()" class="text-zinc-600 hover:text-white transition-colors p-0.5" title="Toggle video background">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
+          </button>
+          <button onclick="togglePlaylistSidebar()" class="text-zinc-500 hover:text-white transition-colors p-0.5" title="Close playlist">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+          </button>
+        </div>
+      </div>
+      <div id="playlist" class="flex-1 overflow-y-auto p-2 space-y-0.5">
+        <div class="flex items-center justify-center h-32 text-zinc-800 text-[10px] font-black uppercase tracking-widest animate-pulse">Loading...</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Bottom bar: time + volume -->
+<div class="shrink-0 px-3 py-1.5 flex items-center">
+  <span id="time-display" class="text-[10px] font-mono text-zinc-500 w-10 shrink-0">0:00</span>
+  <div class="flex-1 mx-3 h-1 bg-zinc-900 rounded-full overflow-hidden">
+    <div id="progress-bar" class="h-full bg-gradient-to-r from-purple-500 to-fuchsia-500 rounded-full transition-all duration-300" style="width:0%"></div>
+  </div>
+  <div class="flex items-center gap-1.5 w-auto">
+    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-zinc-500 shrink-0"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
+    <div class="w-16 h-1 bg-zinc-900 rounded-full relative">
+      <div id="volume-fill" class="h-full bg-white/30 rounded-full" style="width:50%"></div>
+      <input type="range" id="volume-slider" min="0" max="100" value="50" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10">
+    </div>
+    <span id="volume-label" class="text-[9px] font-mono text-zinc-500 w-6 text-right shrink-0">50%</span>
+  </div>
+</div>
+
+</div> <!-- /#app -->
+
+<!-- Hidden YouTube Player -->
+<div id="yt-player"></div>
+<div id="video-overlay"></div>
+<div id="goop-container">
+  <div id="goop-inner">
+    <svg version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800">
+      <defs>
+        <filter id="goo">
+          <feGaussianBlur in="SourceGraphic" result="blur" stdDeviation="10" />
+          <feColorMatrix in="blur" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 18 -7" result="goo" />
+          <feBlend in2="goo" in="SourceGraphic" result="mix" />
+        </filter>
+        <linearGradient id="goopGrad">
+          <stop offset="5%" stop-color="#2a0a3e"/>
+          <stop offset="40%" stop-color="#5a1a6a"/>
+          <stop offset="100%" stop-color="#8a2a7a"/>
+        </linearGradient>
+      </defs>
+      <mask id="goopMask">
+        <g class="blobs">
+          <circle class="blob" cx="440" cy="250" r="30"/>
+          <circle class="blob" cx="500" cy="320" r="70"/>
+          <circle class="blob" cx="300" cy="390" r="40"/>
+          <circle class="blob" cx="380" cy="390" r="80"/>
+          <circle class="blob" cx="470" cy="450" r="20"/>
+        </g>
+      </mask>
+      <rect x="200" y="200" mask="url(#goopMask)" fill="url(#goopGrad)" width="400" height="400"/>
+    </svg>
+  </div>
+</div>
+
+<script>
+const PLAYLISTS = [
+  { url: 'https://www.youtube.com/playlist?list=PLwm3mn269PQg_5ltAWOXuH32eT3G96IuW',
+    id: 'bass-test',
+    name: 'Bass Test',
+    art: 'art/basstestside.png',
+    centerArt: 'art/basstest.png',
+    ids: [
+      "Y0xZmjRl9_8","j1ASOCehA8c","T0xup5UAqZ8","CZrzGK46nhQ","xOGe8mkk0aE","9OjcjKLsPJ4","SlSALURBjNw","OBlff9x4KvA","6Wi4y1G4Wmk","oW3D8LC856E",
+      "Z-zL_paDVTc","8l75Z8wil_U","2bng91N0XV4","OC7cNS0GINo","7B9t9dLoLMQ","pxplVYIN1Fc","3CBRHLldAgA","39Fc5cNEV84","Q8aA-AGq5Z8","iK4pINjFAjc",
+      "shS1BYOOiRA","rOXwZfX2I6c","kFfqd56blsU","U7FGNl7yK3w","JwWhzS8d9W4","5LwkMsQA_64","hLyXwRHpqEE","_z1aJvUTXUY","0RZYyO7sqMc","sBDWrbGYSAQ",
+      "Zz9xXGwrVrU","nxlonpf9FvQ","pdqGdoQ7ljk","rjJv07vlQB8","3IWAke4NPEU","KIS8saoYNVQ","TF9GxcfJOsk","IPkvIDpBgPM","MANhmoRJVPY","g8ZRJF5Xfo8",
+      "SJIKbl3kpz4","9P_iVqrUvyM","LtcFCy4PtIk","NjRvXjSHze4","S1YaYheWUYo","m9t8LyJtrRY","Mxfy_0R2uzc","pVjdMQ_iAh0","JJRBk4ycYiE","4fOtEXI7gJQ",
+      "7jtiilR0azA","LBl9s4T6Nio","9xcDLqMrV_M","bzNwc5ojn8M","8XKKJ5TrPB0","ai9hLor_u-4","R7CBLAvcUNo","KXDzn5KgUUI","pOEvbk0qWe4","h8y6ZeNRqbw",
+      "XbjP_LWLbUw","8CmcmwlWOxI","k7lqr5Jttrs","QGXQOGOw7Pw","AhKAHoHgDfE","suu5DbNDSQU","fyLpZL-HOxg","rqOjtba2l4g","TOOgowMP_Ps","WK8Hz9ZEKyI",
+      "xwrdZbkOoiQ","kh0dBe47p2Q","QLW9i_SOaEY","wuafJa7KQnE","kkaYuLkx-dw","qEZUSDKYDDE","HEwS79_Z2JM","4rdR3THqynk","NrjCdy09cs4","Tj1qiD8VUXY",
+      "FzsQN_twRX0","fadpaVVBzi0","j0zyU9YYMos","5cbQgqV1J3A","-oV24UTQ464","hpeXv2BbvpY","ZLdB8mNOLzM","RCX5UOodZtw","Pf4Be8xeD9c","piZdBsCqZkE",
+      "qjR34rhau44","M7-pXHbruYA","xqq72aTKzDg","lCMuNPg5rpE","b34U3-CutuU","Gy93LiDcc-4","ScoG3KXGXLQ","ONTumIpBZec","srjLwgtcxYo","jSXkRPDGH3Y",
+      "HRraF035RfU",
+    ]
+  },
+  { url: 'https://www.youtube.com/playlist?list=PLwm3mn269PQisYFZrOhihhsprM2XtsFDN',
+    id: 'full-cds',
+    name: 'FULL CDs',
+    art: 'art/fullcds.png',
+    centerArt: 'art/fullcds.png',
+    ids: [
+      "H1d_aEantvc","Pql36y-4KY0","wyDMn6z4dHo","S9NbJFmvVIs","ei2HWnoyHmw","d1YhCHCVkS8","uZ4S3Bd9kkE","mua4GGdWOdM","gOcD0ugZvrM","X1Gz3hXvu9U",
+      "wMre4Z22hTM","5SgUO0h9DMY","4I5LPscXoPY","bhnWRMu2DG0","d79YI7998CI","XLjmdP2eji4","OgchXR6m2YU","NTIu-_-Wix8","q_KO8_v5PCc","RIF8wLr2duE",
+      "Jsun7Hso0-k","iB8gsuzI81w","ischizOypWU","KbHWeYv3vXU","jd3aeMtFs_U","3YqGqp1TQxQ","OmviTV1mXaY","LPR9OF-ggq8","Hqm8ZWC0qMQ","cSU93PjIYsk",
+      "Y24h4hgubqA","virgKma161E","bWFz8mJn5jU","Smd41gEO6pM","68BojOgYaUY","PnabLaZhupU","DrO8KNfwcPQ","LyS2EgLcdM8","NFa7KlLyzGY","AlbfCfiUmok",
+      "NczAVOGWfIw","j95r5nwRO3M","bYvFS9VWBog","yL-4oSQwzJI","K2ZYPtmiOmE","4xOTsa1pP58",
+    ]
+  },
+  { url: 'https://www.youtube.com/playlist?list=PLwm3mn269PQjYSp567_ls-nTJdemFggfd',
+    id: 'lsd-radio',
+    name: 'LSD Radio',
+    art: 'art/LSDTV.jpg',
+    centerArt: 'art/LSDTV.jpg',
+    ids: [
+      "_2i6phdI9Ow","SEG92Z_NGJE","1tIJ5TA7dk4","UCegS6qFkfY","IsDqlPKY1fQ","ecOKP4_lFsg","AnycCuYSW7A","mOKMoL8_jaQ","nm65PCbUMZI","WY45ELPHFiM",
+      "EqtS19hfWD4","YY6YQFwGYAU","-u3NXWgQpjY","iDaUy4T7rVI","FqG9OaOU184","B7Gj3YodcWU","Qr6KyiJaLpQ","iOZOtHv5H_w","u2_jdQGongg","uU9KyXsDn0I",
+      "C5h685wsSvM","fN-xq7t6pKw","obcjlfg7yCI","SyJD7gMJBiI","gRmJyR3ff7k","BgP9tzt9_Z8","2Zn5o-gxtFA","wZTIdnooV-s","ZF9mWOg01EA","uYDZwh9Untw",
+      "hyXnT1dt97I","2xRfJNOGXrc","7k7sfRE7HYU","MBG3Gdt5OGs","hVdvFGkB7q4","Mh_iUu1mFso","Hr28D6yzuYY","43y19nAt3xA","-F7c7Es0nuM","iYIVQz5uAns",
+      "DviqacxbJnU","p0HsEFkDwUo","TOOgowMP_Ps","B5X2Fh0qNBc","8dHLWuddFQ8","mQOV11xi4SM","NhheiPTdZCw","9RHFFeQ2tu4","5Yz2t1QeIHQ","M910sjgb3gk",
+      "jSYwFTGAVWM","VUg3hJUG6dY","oYxohKbeMZw","k3OTpuNep_o","X89DMLTEzCs","HLNTp3e1hMo","0H-ZTUhDjy4","Rk8wCxSRiqs","hbj4sFs7WMA","TdySGOHBwaM",
+      "rA7nyWxxqNM","FGL-KmhE5kw","u_RXl18CD_8","CpkTMx5ywmU","iZZaYkOG1Zk","O431N-XdZpQ","qSQKvnWnCtY","OHAjc-ayhus","nAjSX60DAvg","ICnk5PD3JZM",
+      "7meWEiJEHeI","bTEwpGrigPw","xzxx3iW8DiQ","tD7ICikvuZ0","z4TYT-yqT1o","zvpHrgaZu_o","OjXxXDZbzV4","5yeW0ystjFo","RMxRi9DX61c","alGvz7rS3ws",
+      "Ht9tf0nRb6s","qPRKc5BDe8A","bxmwUAgeaoE","A8eyJMLrT_g","qXPkWv32g4A","pCQwLLV60lI","K3jE0sr_wbM","s2QsMHX3MN4","0nH85tGzGGM","ZmSORFI2XzU",
+      "5syjIby9oAU","ssu2rvpra3k","O7ICrxgpmlI","54gBaTVspRk","qyjSdLtaJIE","z6-t64KNHyo","gODGcVSzh1U","bIPujX6m0RU","Fb9X4tCTa-E","T0YNM0b0q1U",
+      "RWP5Rzv8yzc",
+    ]
+  },
+  { url: 'https://www.youtube.com/playlist?list=PLwm3mn269PQhm2Ml5nRuXwnXKrDGNl76U',
+    id: 'acid-drop',
+    name: 'Acid Drop',
+    art: 'art/aciddrop.jpg',
+    centerArt: 'art/aciddrop.jpg',
+    ids: [
+      "w87sWe-6HLU","CyAigHilpo4","6XJkPtxqWM8","RSL6KqWKFvo","juuIhW8V1Xw","2DV8vMaS7Wg","WUu39PJ_TI0","HPc8QMycGno","qi2xhtVCh_c","HQl4o0g-wy0",
+      "1wl5BbUg05M","KR8jbM8TTRQ","nxg4C365LbQ","_D4Y0jiYxWE","mWSgICOeoPY","luQSQuCHtcI","ETL8NlqYT-Y","LKBG12sUYuA","3YXVdyA9Fxw","zE85mW71uB0",
+      "4RBGDgEpKIw","2YllipGl2Is","bxYhJpILIQE","5BzgNBn786o","gkTZE4uhFgk","kWNHvIt9ryk","Z0v9fqVz38c","FHccClTAdzc","-iFD5TWDG-g","eOE1wVr1jvI",
+      "NkRkuI0ZgX0","eV4wmLbRKiM","UCAp24HDUKY","a1rjVVcZvTY","9Ux0eOPanxE","S5fefU5UNZo","v2Djx0Dff9c","vO2imKkn2ow","oeQ9noQKy1o","kFZKgf5WG0g",
+      "d9VUldypP_g","0_gMIUh6IUg","NjBjBiFlFZQ","G_ztQYJB0UM","rJmE3pRUhsc","E_pv5ASvz0c","fPZsUfDIrg4","GLXj4clHtqA","mQHh_-c7uIQ","p_rw_W0XadA",
+      "4VZIFczKMW8","VkiIBEGR8NU","aftOCaPnsns","o1hggJOIY_c","n7aXauXziCg","GUzzzuXZ0M4","3EUi37lUsC4","3jtp0BDy_oE","VeH2nehX55U","nCcuZEXau4k",
+      "YqJh3CKO8EM","WUlJMCqy9-M","aFUqsPHEXhA","yMTzQRahmQ0","sxQ3P71kFXg","DQ9Ekw_Nfi4","512c5bWo-t0","KGqdPqtH_FU","OJSZkO3ffJw","MFhh1U5fE6o",
+      "6BRU7roVu3Y","638mK_n99Mk","IASimZr1RgY","vZvtbGRFSTc","blYEmH7IOkY","m58fL7l-c4s","qFQK5ayKqQo","XQjZT2MN7Io","q0MEtTzzA3k","1Gw1nTsE7Gg",
+      "bsHjzuj0wvE","lHc_u-tTzEs","z0k6nosLjMc","BlsL_Sr-Rdk","AuHOKJ-upSE","dI2EAqWHaRk","mp-HWukUDSE","UNYqwpx7Cys",
+    ]
+  },
+  { url: 'https://www.youtube.com/playlist?list=PLwm3mn269PQgOBvMgeHVny8oPFh_nDAsS',
+    id: 'tomes',
+    name: 'Tomes',
+    art: 'art/raptomes.png',
+    centerArt: 'art/raptomes.png',
+    ids: [
+      "wF0DxHqOb_M","dG-fxbEdOAU","QmYyh63pqwI","ZPncMw5oWZs","Aqo-hyxjCYE","rFGiC7h7nWU","VsoYUKU9g30","6hv8GRC5Los","szt6MHlC5S8","rNOQGKXf4EM",
+      "9T51n3tvZ3M","c9OjAmM-cQ4","tavD6fDHSeo","yhJB4bMJVJM","0hmLm3-Pn78","L3dtIyt6U1E","qy7sci2az88","dR3m-jybx74","Isn8Qp-H0N4","uYU1J7QszpU",
+      "4dpeNDt-Us8","K7p-q5qZfBU","3ziixar3gqI","Nup3_s5gojw","Kw3HOfM_Oms","0vgBqe0WDDo","y4NlW43QNQQ","yAVTzOElZzI","YNcP-0Nf_k8","F-W3wuwhrgI",
+      "vtY8pM-H65c","gXZ6R7iB_tE",
+    ]
+  },
+  { url: 'https://www.youtube.com/playlist?list=PLwm3mn269PQgWjE_ZLbM1PRTIiuIIN0QC',
+    id: 'post-pop',
+    name: 'Post Pop',
+    art: 'art/postpop.jpg',
+    centerArt: 'art/postpop.jpg',
+    ids: [
+      "KGgOz_gRD_c","SiAuAJBZuGs","VE3vKgiK4uU","IHoj7qvNmwk","6i01tOMgBDU","FH3CyuSzz98","Rb6Scz-5YOs","GYLcu5tFjUU","bU_-OhxcFVI","1BhJBoSILk4",
+      "ogGYTxKj80k","uJ5U2dCfEiU","xcHbc4Z2ths","1xlijyn3j8E","osl2i-G2yjk","rietL01M1r8","NaFd8ucHLuo","KOOhPfMbuIQ","ZFc4itpTpxc","lpRxcL9WhCQ",
+      "a09amGO7a5w","SRID6uOJgHg","gUUDrMW5noc","ydoDo861wSw","V2AfXNJImSo","XbjP_LWLbUw","qVPte9wGAZA","-tGxqjmU3A0","1vI_xrmc8gE","upztkfYqkDA",
+      "Zd0j0xnhWFw","chJu5t4GRA8","Ng24U4zn8-I","sDcrdG6Zl_A","6xC14oYAhrU","s9rURTSNUk0","VtzbIot6SEo","qF5Pr6zeMqY","gwXmR_jGGAo","SgIBs3Iz9iw",
+      "ke4DQvxmN_s","-z4YaVBZbWQ","3psDZCLiTTc","LpWCuxgbMNI","vn9Up9_a5o8","vkz2FRfYPl0","3DWasde_06o","e4aLN_GwpQU","_Xqexqiqkdk","tf56W164ub8",
+      "AgOCnZtdz3U","OkApy8LE8s8","UvipjLL1ZCE","qR_jVl0Sd14","gA7hz69AqX8","KHDTryHjhwc","9NSt9dTf0U4",
+    ]
+  },
+  { url: 'https://www.youtube.com/playlist?list=PLwm3mn269PQiwvTXwnRxM-B2U09vwcTTG',
+    id: 'knock-out',
+    name: 'Knock Out',
+    art: 'art/knockoutside.png',
+    centerArt: 'art/knockout.png',
+    ids: [
+      "VB01l-V_vAE","xflfmYeEt_8","Sq5Gsk-JhVk","KLNRsyKR1vM","jGVcw-fQeik","JT_NgMk9n-4","nHOtPHuPMYo","NZzht9MRk50","dyCo4kqeCZE","xKH3Hj4lqLs",
+      "NE2QAYVlUJE","zxKVYysUynk","O5HX_ua2DC0","r42HwRDxErA","hwLa4VYL0BI","rWRmjkPgZkY","kL0t_z0jCWU","f8c0KPyK3Js","Ve4EeGrewvY","owvMxYbNJPM",
+      "q39uDJzvFok","5KHgZAxllh4","4yXFVgy7laM","_3FiSB3uN0g","oVUr9Pm6-EM","RQF_xDs6rFA","B-7DzWFOWJw","G63iPGvgGYs","SdamWn9_KUM",
+    ]
+  },
+  { url: 'https://www.youtube.com/playlist?list=PLwm3mn269PQimOh-ibjW-B_2_UvxwszJX',
+    id: 'reload',
+    name: 'Reload',
+    art: 'art/reloaded.png',
+    centerArt: 'art/reloaded.png',
+    ids: [
+      "adV8-_hgL4g","KxhZF4Wc9Kw","_siJRgDlddY","MXBMd-XO0Yo","jxmTzV-eO7Y","bndL7wwAj0U","mYGGfK4bqVs","BFE2hz1Xdsc","Td7ZV3jCb00","Qf1FHLjoRRc",
+      "XaiYxczjZ0U","nTPvHQ4_250","C6uqTWHzHvo","OqEZPdmevhc","Y7JG63IuaWs","-_nQhGR0K8M","DelhLppPSxY","iywaBOMvYLI","WFHl1L06ITM","T8dyxGiBx3g",
+    ]
+  },
+  { // no YouTube playlist URL known
+    id: 'unsigned',
+    name: 'Unsigned',
+    art: 'art/unsigned.jpg',
+    centerArt: 'art/unsigned.jpg',
+    ids: [
+      "5ufWpmpKLTc","xsQ_BjxuHpg","zX1KWZBctXs","gB0EafCahKc","WKvSJI5dOFM","bsDUiNRo3rM","JqNkYKpIvX8","Xcd1X06gxNY","kDeJSKzOG2A","KngB7GGxn4w",
+      "6oW98lb7pxE","mXSVpHYgBZ8","NCLqiB5NB8w","Kib-Cyp4QhE","TH7j1HfGXr8","fSn5e5YQpgg","1sF_U1lkFeo","Nk1mnZx040M","XtNW2gNef58","uSG_wPaQbOk",
+      "lDgm6gIMCXw","0EV2mxuRz-w","RwASa9fgyrI","9HjsaJwBYdQ","pJoFHViICsQ","FUZH80j9SqU","v0jDavn1qn0","V1cvCsy8Jpk","w5yngjXaSD8","rDnkBBYm97Y",
+      "EtYp6RCp79M","Dd4y7oZ6YlQ","bxuWPH-_oVw","veu3-Tr6SsY","TXEHYqTFoas","8BGKRBWEEqI","ZdUxX47iYlQ","eqSFskq1yPA","Iw_Td9Q1t4U","7Jq6EIojkE0",
+      "fUoDionzgdE","EXkfhiI0wGo","gDeL1CsbPyM","v5NxCmb2zSc","BSN_47b89y8","Aq9ZYL_SKpw","WxhhuV2etjI","abS6Y8-7tqk","ag9Kw5wiwL0","WsGCbAU23OE",
+      "pbhxoH531Xs","8LNUoL4-jIw","ovEyLznrBZk","lbcKISqazdk","k68NDtZThoA","PUwb0pIIC5M","nYkP9Am7pXI","Agro-BhJ17A","on9P-QxbQ_w","WX6r8D0lOT8",
+      "OZqAmFvVDkk","YB0AqJB3pzY","09lnzTg8YAw","6xOkY0cfrsM","cJkucufmS8I","s02eK62dQGE","AGdoQBsRXw8","A58SKFoVkB4","4v24ccz2sZE","JiQ-Lgidjhg",
+      "avoWpN22jJU","yZ_Hbsb5f6E","DxplQfJ2gX4","YlMTbJTK2g0","zJEJ9kZcFHQ","1SxI25ybOaI","-uF7ApN_1P8","D4uig9U2_HQ","QvZ-pO4MOMU","RZ9Qu5eLOas",
+      "VFIUy39u_4c","kTxt6Qrk8b4"
+    ]
+  },
+  { url: 'https://www.youtube.com/playlist?list=PLwm3mn269PQh-dMYvYes9-aMUTJgQuzgu',
+    id: 'the-end',
+    name: 'The End',
+    art: 'art/theend.jpg',
+    centerArt: 'art/theend.png',
+    ids: [
+      "vAmuiLOnsG4","t8tN_IOAJzw","ZwyuSPkOBAw","4jMsE6KcuAg","tjabE6xTRNQ","fS9m0Ac8PCU","73UMberIFJA","PjwFotUyC6Y","0XZQEjLjb2g","xB-vIF1ZYgA",
+      "npcGql9Ir6Y","FqyaorxpDLQ","sMoThWQ87nk","JH-Nnh0trLY","EttCNMDUFwc","PBO6joRBWa8","l3N-t4cWKWA","wzw0cr3EOfk","LJGdcgqqpvI","hmpXbNKOYsY",
+      "4ErMGyAo3W4","wUYbfF92K0k","fr88zMLoYaI","vkK0uhQ2pEA","EaGLIZoIe2E","nurnKNEyOKw","HGmgWvKGy90",
+    ]
+  },
+  { url: 'https://www.youtube.com/playlist?list=PLwm3mn269PQhSoLItIltGCyDdlePbPr3U',
+    id: 'backseat66',
+    name: 'BackSeat66',
+    art: 'art/backseat66side.png',
+    centerArt: 'art/backseat66.png',
+    ids: [
+      "6RR0Gmqp6LI","1Snj2L_VS1M","1YSP1aqA_jw","kbP2BTUKM4w","S0gUbgSBmBg","GNCd_ERZvZM","kfzRXseSBIM","mG6ROHmgc80","XsZKrctSDaw","kU0SmxKucCw",
+      "-OqrcUvrbRY","zBftDdSKUdk","Qcuk4LLRatk","ZulYhwXiG7w","NIiKBLA0kXU","4bZeLOvGBgY","O15gyuURcX8","y8PtSL95vrs","unt_LFp5TiM","O3QOBYq0lBI",
+      "BA4VcGXlu_o","tFqz4_sSaAk","GTe57jQX5Eg","dARAN1z2KqY","rKyc9NfNWww","AckhnLpwceM","XxB_JotP1is","rpjk_tm5BWk","-bnx_Qwy7w4","TViT_KFVWgI",
+      "aIpteHRMbZo","Mh0euI3agt0","5h_2Uk0oTHk","P59Z7edms2w","XGcCQrvdu1E","4Nlr9vU0DfU","iwjHAA-Ke2I","gjEAXdTbb8A","7DD0oxGVRV8","qXK7MDrYifI",
+      "zYoTqBGsDkU","m4n1V3g3vks","2SFt7JHwJeg","9X4uZqxcwSU","GdYpxVQ1BZs","2-kV6TRs8PU","sPwCttDbS5c","aka3CpLMvG0","bjRF4JjoCp4","yiBPAoCiNKk",
+      "XFL844sj1To","ScoG3KXGXLQ","SswreOoz9iE","e2TNCf2PEyw","h8WWfmTVFiU","mIyda1hoSKw","z-kiZX8yYCg","0DTrjpIb4QI","Cvvy4_PoUL8","KEo2NDuIj4U",
+      "LltS_oXX2Oo","gfPZ6TuBElI","dNG--igfh-Q","0y3JnaPq-U8","1WmI0LkWCqw","bTx9es4RkiI","_zv9TGmPfX0","E-jZReB3CpQ","H5ht9ZtWHq4","iCCuwITdFVc",
+      "CnFIKs1_-uE","bKmZfW3jCBs","WRZ-utumaas","078Uvl1mwVc","g8gf3E9VtEU","vWaljXUiCaE","ruGrJ0aq6tU","od9at-wd_tw","ciya_AQu25o","9OjcjKLsPJ4",
+      "jV69Z8IQRFA","YHqtpYc9or0","t2k5g7bj7DE","aUhI8Va4DXs",
+    ]
+  },
+  { url: 'https://www.youtube.com/playlist?list=PLwm3mn269PQgNfB8Isk2_Px4w5ljFz06L',
+    id: 'hustle-nation',
+    name: 'Hustle Nation',
+    art: 'art/hustlenationside.png',
+    centerArt: 'art/hustlenation.png',
+    ids: [
+      "VdvKsNy2meI","GXLAqBbXfrg","lqWxGE7zSPA","78ZD05_wbqk","MZ924VGx5n0","FeoPeBgbLEY","fEPj_LuaK08","1FSgekLujqE","5SQ0cFHKD_8","ekzs6nv23VE",
+      "gkwWyu8uzHA","1-GXJd3bdhQ","N6lZrVktfxU","YZVlSqjjkic","Hjm7k-Lcoe8","AVrNHI4RdPM","9ek1TPomCfg","HR32_Szb3fY","OY0Mk9kTs8M","D8fHatctfRo",
+      "vvvQwYXPV-s","PA6o5mheZKw","cb8U6atGJp8","52ToK1R1kzI","0i4UlhUkn5w","0I6QAuA9nWE","WWwEixFJgp4","G2JMTwqD170","H6EYl1SngtI","5_qAwMHhkwQ",
+      "ukDsgc8Oua4","BbQv67li8wE","Xj1Jw3rxfm4","dyPkHleltno","kUxwT_GBNe8","-JMechSxBq0","oH8y6B_P7nc","01fPEGiYd4o","u9rdzKwhxhI","4jU-jaB9Z-c",
+      "f4mn9zUHx1M","YezVkPlQ33U","jJY85Hysmck","FTrkxkuOB2c","JNcQHJyKIWc","Y7d42LJfkqQ","EVlGLtCnN-Y","5sXFLYX0HNc","2Mk7VTUwbck","ei02LcSl1ZI",
+      "j0zyU9YYMos","D3nT0piQDgA","RdeqdPZK2Lw","j_KF4AQddlk","kOVeCqkVoEg","5MU-Y_UqOj8","EKcJ5yXfDpU","yR2ekorR6-k","NA9zxcFBPUk","OQy6ELV-cYQ",
+      "BhT19qt5rSk","Jj5tt3Elu-k","7ctORopHfjQ","EEgx2JC4d9o","FnBBQon4Xuo","d2nnWQb_bMk","j1ASOCehA8c","PXTPYFMeYqE","UW2QoShtHgE","ej7FyZKVVMQ",
+      "S_g_LiL9dBk","tcU_TQ7ndUA","F25tO1hS-80","sqcmCuVSLDM","yHkunGglSNI","UlKzPSHOeEw","RjOaSQldiag","mb6Jc4juSF8","HcQTWq7Sea0","39Fc5cNEV84",
+      "C_sF2aLodAw","-G5Y3VLX184","IffOs2SXfFA","RuDOabXS4nU","UubykOGsotg",
+    ]
+  },
+  { url: 'https://www.youtube.com/playlist?list=PLwm3mn269PQih_bzThGmEaBayLBaVO3Dg',
+    id: 'dither',
+    name: 'Dither',
+    art: 'art/dither.png',
+    centerArt: 'art/dither.png',
+    ids: [
+      "W20U9lJyamQ","WbsIz6UD5O0","Jq8ZjkOX-zY","4wfuK_AbZiQ","Bn0vyXyQ_Zo","GIsH_9mS45U","AxjP9s6J3uY","P5EKMn7OQik","7SRN-gUD1nY","71qQ5_uVtfs",
+      "8luEj9dkTt0","MRkOSkBbjSw","tD_92m8Te1Q","6jvroWtwMb8","jzXSMW5XxFQ","VxnG3H52TRg","0VXdMlLd4Ko","mPtxCrdJlGI","VP6q9DAuY48","tIOFz5RlUYw",
+      "cUzrjjfvYLg","oItN3ee8YFI","PhZNfXzmmAI","8-X3AITRSOk","GBKyNbzeeaY","ISDuuhjSLuI","0raWwJQs_6M","DlTinG_kZhQ","K3-TZA7D09A",
+    ]
+  },
+  { // no YouTube playlist URL known
+    id: 'hot-100',
+    name: 'HOT 100',
+    art: 'art/top100beta.jpg',
+    centerArt: 'art/top100beta.jpg',
+    ids: [
+      "nz10tpltsE8","p2A4Uz9qN_o","VE3vKgiK4uU","5KypdWDdhcQ","dM-72E6MZbA","CZrzGK46nhQ","n-87chsvCF4","gqxPFnboeJo","CxGJhPLDoQw","aplPE25xg3c",
+      "NrjCdy09cs4","dLTGKQavdSo","LNavo8PHdqU","EAvHd0BI7Aw","vJJ9vuhInho","JEyFIH7WuCA","1F59TuBoabg","S5GWgXXDwdg","maM_b2Hz6lA","gmCnVPcX2tE",
+      "CunaTuLfTVM","Hn9wKP-ZOUM","69cFNlGl5C0","Z5YZW1WQagU","sqyXs1z-pWc","hwROKJ_3LzA","3u85xOuXt8w","Q5FJZdnG19E","-3KTuiSoZL0","tQy4yweC_3g",
+      "uCrI9X-7kh4","WgW4cTCVX-k","Rk0PSCa_JFc","Casq2Kj2sVs","kh0dBe47p2Q","ZCfSQIclS3U","xngaeZH_M0E","OMu-glPiwq0","cPI6FavTQ_U","IySmnW-oNRo",
+      "ydoDo861wSw","lwtPinxGwwM","gkTZE4uhFgk","N9E7wlajNew","9Z6eJthMVbc","LjfayBMnflc","R1xvM84jhpo","9WPUaR5XXfI","_BCKKvtMVTM","itPrTvS5-qs",
+      "FsQI-EjuZNU","KR8jbM8TTRQ","7t2E6vmlpBY","OFAfJZHW5sg","ki4_XVn3qVY","JiuZeXLMH9I","BBKWnrU8A4Y","r-ycvEfbd_w","eMxNkPefqPc","vXP5OCcmE78",
+      "D6xROJfl-60","SB_yKIrI9vk","5B4y_AQuefQ","4rdR3THqynk","Uo5KXUFYQEk","Tj1qiD8VUXY","kMW1Y0l89Eg","PIrHWWyEK70","CEhFSnsSAzs","0Lc3RZrPlaw",
+      "MzJb4tJ_R8I","kyYBC6p_acE","oHIE2Kg9SRA","jfbh_n3Ja2U","4SylD9TLT3U","hCXyvMrEfvk","texi0Mv8Vtc","wol6NVl_h6c","fGzNMFys6w8","pZhM1eB8c78",
+      "mzc0qJTvY9I","kNG7YLWNJCE","iXm5QOwkwsg","-8MXziQRLYc","RHbm5Xrcv3w","bvFPxLSvR6Q","wJcJEsX53Qw","HEwS79_Z2JM","4M2vNTZN0kA"
+    ]
+  },
+  { url: 'https://www.youtube.com/playlist?list=PLLvvJwrcjWUg',
+    id: 'projects',
+    name: 'Projects',
+    art: 'art/1.png',
+    centerArt: 'art/1.png',
+    ids: [
+      "tYSM0MzaGlY","2cewNVmJW3k","rc5zZYwzwaQ","93fROC6MosQ","mqOxFgsUAfw","W9hWIbqOrSQ","l7tuo1-KwVM","rDWd_X8AeHw","ANN4vRyNnpA","vzUj580ODtM",
+      "Izx-O_3ZTBI","8sk4bfZGkJU","V6g52FHLZwM","dRNUHxmPblo","ZZHzAPzR3x0","OPqZfo243pA","RZqgXS_jZOk","TiuTi68IJ1E","iVLTOomUrcc","OKWyf55mIBY",
+      "7Mkon7L0278","S33GHcF5ugI","p2nRN-wafck","EQjskMWgSXo",
+    ]
+  },
+  { // no YouTube playlist URL known
+    id: 'nevr',
+    name: 'NEVR',
+    art: 'art/nevr.jpg',
+    centerArt: 'art/nevr.jpg',
+    ids: [
+      "cuEPpCbWQkg","fKFoXjuyXKg","i8A1fGMpwjg","44ie5gRRkug","OTuCAC_XG1Q","hng0iK8At5Y","OE_6RaSedG4","VtoNLmk9gXw","4VqrFH-CBt0","qieJ9f2usbs",
+      "UVN7qPAKOtU","MOtQNkxC4Yk","swYju6ZcnjA","dOnhrRfeHA4","JMeI3Iggk6k","u25nobaP0lE","xqMaobeF5Dk","Mv0ClzTaNxs","sEWEuBgLtVE","UKUOq1NZpEs",
+      "qfxeVKMjz74","OZKP1oMGgcM","W2QR-k7alpI","0m8RFCVSlYk","OyZUAz36sJ0","jINMeMMHH7g","S2by2NjYrBc","bkZlE3EKSVk","Bi_SKJb_5Sw","hxoyflPlOZU",
+      "JsQy-ioho0I","os87YxDtt4k","NaU3HOndyBw","e_a2RPr9p_E","ZDcpZQ4ZVYI","am38RqRX1_w","9Bdq_rWB9-0","3sQhslx8Dx0","uYSVpC7RnBc","LWhLWEYO8QQ",
+      "zdMyl7cepcM","H3J6jMdgBA8","HAVv-ApFzTY","VnIzvPdxw2Y","2IOTBkKnGHM","j1GMsx6ign0","w0Yst2z4bFg","HZ4zzzArr_o","ght6Gmo7tJ8","VuXO1cK3iPE",
+      "Tf38fmLsy8o","ZA8MNRUUZas","gNH6Jz4Swt4","O2VR4TdieAw","lV3MryFIZIY","zRRg92HAKCI","l61KvmL9vLg","qCZHqI68eYg","umubDPBqnng","ld2dvKwbIa8",
+      "-omeMWq0xCo","Htsu_3TdnrE","jwh-_tn9GQs","mkyUITgTPE0","4jpieyXv1Hc","TpOZpAf5cg8","XZw9br4vW9I","opRuEqNRnP0","c6NnymvpDxo","V55t7pYoVQ8",
+      "7aLPud5kBkc","ow0xYaEgdbk","yhsBKk-bqZg","1ES0KQRfsgc","yjVz-akKPQo","tvjJwHBFugU","HAhBNWPk_NU","YgziibaPeCc","pcCRzYDS804","bkTaBJ8b9HQ",
+      "zM6HgDXn1CQ","kQu9b85aKN0","yyX8kjs_T90","svRhcjVimic","JL3GgFQNAM8","hKajyvKsXYY","3jYDFiP7EfE","SdaIXHlgWAA","5HkoD5kgo9s","zaAO2_2MMpo",
+      "oHFmsK4lqMA","XdObeJBIO9c","KtKoeJimyYg","gtHi89GAAdU","PQ8ZHxGtGcQ","TdiBonYKnkY","fxnwhS9YF5A","bLV1IFp65s4","xpZes0q9gPA","oyAyS14SIjw"
+    ]
+  },
+  { url: 'https://www.youtube.com/playlist?list=PLwm3mn269PQgFsGTF_l7210V8XUPFoeBR',
+    id: 'exe-obj',
+    name: '.exe Obj',
+    art: 'art/exe obj by themighty808.png',
+    centerArt: 'art/exe obj by themighty808.png',
+    ids: [
+      "UXVtm1FUCfY","kV1x8229lxU","4nhUkU0UOvw","RpYmqyngPoo","9TUOHKISN28","mHlCP6hc3zY","rsaQsHxu4LU","xmait-bDevY","n-87chsvCF4","H2hUmlQsVmA",
+      "g-VehdL25J8","WWX2tKAi23g","aplPE25xg3c","fMK43XDVvX4","Tq8DczkpU1M","JEyFIH7WuCA","zf99kdFw9b8",
+    ]
+  },
+  { url: 'https://www.youtube.com/playlist?list=PLdqTBzwxveq0',
+    id: 'closing-time',
+    name: 'Closing Time',
+    art: 'art/closeingtime.png',
+    centerArt: 'art/closeingtime.png',
+    ids: [
+      "yjJSV8yE0Bk","G2XDjOhYGA0","lJduPBmN8I4","umdWhwZdQds","5LN1Yi-5w-A","Ac02TiaE4KY","szzoZrPJD_Y","xPWue4gcNEw","f7jQDWD9YM0","-lRPEny5jug",
+      "t6gpkj7bNC4","7mfhePJCqnI","sB0K7JZZqb4","PM0LnzSSsLE","56EG957YinM","FniAf2XHzyg","A8Xw8DkIK7Q","T47ZuNliryI","gWYmaOstAJI","f4bxc8gaqo8",
+      "fI5cQAmgeXc","6RpJ83cEJpM","xJfQQgm4kdQ","K22_5LBuB9Y","RqLkA3pak1o",
+    ]
+  },
+  { url: 'https://www.youtube.com/playlist?list=PLwm3mn269PQhgq34UB6vLE5rlz2u9V06f',
+    id: 'red',
+    name: 'Red',
+    art: 'art/redplaylist1.png',
+    centerArt: 'art/redplaylist1.png',
+    ids: [
+      "g3d29aHsQVw","UdfLpn3aS94","rqG5IupOiO0","ESjPc7I5h_Q","ypTyxrFLi8Q","_UZAGlM7n8w","D64a2fb72sE","7z_yW74PiGs","B6CuMGL5bvk","62ks-CDZAzs",
+      "wVBO10heWr0","HDLwQx6apq0","-rzybyvCBRI","jpYDw7AJDtM","UJCIRkMaCww","Yibmu-F_Qxs","s56Rx6qlo0Y","XJgh_D379jU","TZCE6PfaUWA","dKsDHh2Vkv4",
+      "ALZw9jMFjIY","yH8ZYthxmZ8","CiX2iPmX15Q","xGY8PuFbQZs","_9smBd1h7Uw","ft7wLE5_VEU","7ZGax20kxO0","8z1bGdli4fM","qRNXrz_MyFw","BESlgVbNTKY",
+      "IK6tGbeIZjU","LfxKMBAVgng","JWViInkIAuk","3GKjhvimIZc","Y-uphG3khkY","2AQ51HNit7A","aHwb-HhKtt0",
+    ]
+  },
+  { url: 'https://www.youtube.com/playlist?list=PLwm3mn269PQhCcqI8Hzul8GvGbHZD0_hV',
+    id: 'homesick',
+    name: 'Homesick',
+    art: 'art/homesick.png',
+    centerArt: 'art/homesick.png',
+    ids: [
+      "VTA8F3PG4hE","xvuT0Snxi9s","waYRxXNXRK8","I9hbYCR4XDE","CZrzGK46nhQ","BxVUlRhzuDw","CoCfw0Xkq_0","thzbIdytjZ8","-_HbBDo9P-o","kIS5drN9c8Y",
+      "7YlpFk1O864","CunaTuLfTVM","qMaG3zFGtaU","pMzk6eMi2DU","RqLkA3pak1o","WwYYP3ewe7A","ypT31CBLRO4","x6_mbnsh6VU","n3vRczwXsaM","dqEvoItaQbM",
+      "bdW9aPC8b4I","OEQITCAqyDc","BQnkTkVBfAk","C7Jdo_wRssk","ZES3nJQYJok","EEKkPBVyClo","t2k5g7bj7DE","0rtH8ioGFq4","25c2Wz70Gbo","R9mRAb-uY7g",
+      "1CjM3NLjXnE","Iyl-n6J27Q4","YjDfnb-EWgw","mJQ9tx_WJA4","BtyHosz4ELw","LL56qF3-M-g","S78ZyANGtUE","zeQa7pV3Tac","XLjmdP2eji4","agARZZp4ZWk",
+      "ss2c-Nddqkc","7Q9cX7Wr5Qg","TSnXTlCOtJw","WXcp0KWHLRM","4hjTLMMu9TI",
+    ]
+  }
+];
+
+let currentPlaylistId = PLAYLISTS[0].id;
+let VIDEO_IDS = [];
+
+// State
+let player = null;
+let currentIndex = -1;
+let isPlaying = false;
+let shuffle = false;
+let playQueue = []; // ordered list of indices for current play mode
+let queuePos = 0;
+let titles = {};
+
+const SAYINGS = {
+  common: [
+    "Made for artist by artist",
+    "NEVER.END.EVER."
+  ],
+  'bass-test': [
+    "Not responsble for hearing loss or blown subs",
+    "Take Notes",
+    "Headphones or change songs your missing all of it!"
+  ]
+};
+let sayingActive = false;
+
+// Load YouTube IFrame API
+function loadYTAPI() {
+  const tag = document.createElement('script');
+  tag.src = 'https://www.youtube.com/iframe_api';
+  const first = document.getElementsByTagName('script')[0];
+  first.parentNode.insertBefore(tag, first);
+}
+
+function onYouTubeIframeAPIReady() {
+  player = new YT.Player('yt-player', {
+    height: '100%',
+    width: '100%',
+    playerVars: { autoplay: 0, controls: 0, disablekb: 1, fs: 0, modestbranding: 1, rel: 0 },
+    events: {
+      onReady: onPlayerReady,
+      onStateChange: onPlayerStateChange,
+      onError: onPlayerError
+    }
+  });
+}
+
+function onPlayerReady() {
+  ready = true;
+}
+
+function onPlayerStateChange(e) {
+  if (e.data === YT.PlayerState.PLAYING) { isPlaying = true; updateUI(); startProgress(); }
+  else if (e.data === YT.PlayerState.PAUSED) { isPlaying = false; updateUI(); }
+  else if (e.data === YT.PlayerState.ENDED) { next(); }
+  else if (e.data === YT.PlayerState.CUED) { if (!preventAutoPlay) player.playVideo(); }
+}
+
+function onPlayerError(e) {
+  console.warn('Player error:', e.data);
+  setTimeout(next, 2000);
+}
+
+// Queue management
+function buildQueue() {
+  playQueue = VIDEO_IDS.map((_, i) => i);
+  if (shuffle) fisherYates(playQueue);
+  queuePos = playQueue.indexOf(currentIndex);
+  updateUI();
+}
+
+function fisherYates(arr) {
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+}
+
+function toggleShuffle() {
+  shuffle = !shuffle;
+  localStorage.setItem('endever_playlist_shuffle', shuffle);
+  const currentId = currentIndex >= 0 ? VIDEO_IDS[currentIndex] : null;
+  buildQueue();
+  // If shuffle turned on, make sure current track stays at queuePos 0 then randomize rest
+  if (shuffle && currentId) {
+    playQueue = [currentIndex, ...VIDEO_IDS.map((_, i) => i).filter(i => i !== currentIndex)];
+    fisherYates(playQueue.slice(1));
+    playQueue = [currentIndex, ...fisherYatesInPlace([...playQueue.slice(1)])];
+  }
+  // If shuffle turned off, rebuild in order
+  if (!shuffle) buildQueue();
+  syncQueuePos();
+  document.querySelectorAll('.shuffle-btn').forEach(el => {
+    el.classList.toggle('text-purple-400', shuffle);
+  });
+  updateUI();
+}
+
+function fisherYatesInPlace(arr) {
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
+function syncQueuePos() {
+  queuePos = playQueue.indexOf(currentIndex);
+  if (queuePos === -1 && playQueue.length > 0) { queuePos = 0; currentIndex = playQueue[0]; }
+}
+
+function playIndex(idx) {
+  if (idx < 0 || idx >= VIDEO_IDS.length) return;
+  clearSaying();
+  currentIndex = idx;
+  syncQueuePos();
+  if (ready && player) {
+    player.loadVideoById(VIDEO_IDS[idx]);
+    isPlaying = true;
+    fetchTitle(VIDEO_IDS[idx]);
+  }
+  updateUI();
+  renderPlaylist();
+  scrollToCurrent();
+  maybeShowSaying();
+}
+
+function next() {
+  if (playQueue.length === 0) return;
+  if (queuePos + 1 >= playQueue.length) {
+    const currentIdx = PLAYLISTS.findIndex(p => p.id === currentPlaylistId);
+    const nextIdx = (currentIdx + 1) % PLAYLISTS.length;
+    switchPlaylist(PLAYLISTS[nextIdx].id);
+    return;
+  }
+  queuePos++;
+  playIndex(playQueue[queuePos]);
+}
+
+function prev() {
+  if (playQueue.length === 0) return;
+  // If more than 3 seconds in, restart current track
+  if (player && player.getCurrentTime && player.getCurrentTime() > 3) {
+    player.seekTo(0);
+    return;
+  }
+  queuePos = (queuePos - 1 + playQueue.length) % playQueue.length;
+  playIndex(playQueue[queuePos]);
+}
+
+function togglePlay() {
+  if (currentIndex < 0 && VIDEO_IDS.length > 0) { playIndex(0); return; }
+  if (!player) return;
+  if (isPlaying) { player.pauseVideo(); }
+  else { player.playVideo(); }
+}
+
+// Playlist switching
+function renderPlaylistGrid() {
+  const grid = document.getElementById('playlist-grid');
+  if (!grid) return;
+  grid.innerHTML = PLAYLISTS.map((pl, i) => {
+    const active = pl.id === currentPlaylistId;
+    const img = pl.art ? `<img src="${pl.art}" alt="${pl.name}" class="w-full h-full object-cover rounded-lg">` : `<span class="text-2xl font-black text-zinc-700">${i + 1}</span>`;
+    const ytLink = pl.url ? `<a href="${pl.url}" target="_blank" rel="noopener" onclick="event.stopPropagation()" class="absolute top-1 right-1 w-5 h-5 bg-black/60 rounded-full flex items-center justify-center hover:bg-red-600 transition-colors" title="Open playlist on YouTube"><svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor" class="text-white"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg></a>` : '';
+    return `<div onclick="switchPlaylist('${pl.id}')" class="aspect-square rounded-lg overflow-hidden cursor-pointer transition-all relative ${active ? 'ring-2 ring-purple-500' : 'opacity-60 hover:opacity-100'}">${img}${ytLink}</div>`;
+  }).join('');
+}
+
+function switchPlaylist(id) {
+  const pl = PLAYLISTS.find(p => p.id === id);
+  if (!pl) return;
+  currentPlaylistId = id;
+  VIDEO_IDS = pl.ids;
+  localStorage.setItem('endever_active_playlist', id);
+  renderPlaylistGrid();
+  titles = {};
+  buildQueue();
+  if (!videoBg) toggleVideoBg();
+  if (ready && player) playIndex(0);
+  updateArtDisplay();
+}
+
+function updateArtDisplay() {
+  const pl = PLAYLISTS.find(p => p.id === currentPlaylistId);
+  const img = document.getElementById('art-image');
+  const num = document.getElementById('art-number');
+  if (pl && pl.centerArt) {
+    img.src = pl.centerArt;
+    img.classList.remove('hidden');
+    num.classList.add('hidden');
+  } else if (pl) {
+    img.classList.add('hidden');
+    num.classList.remove('hidden');
+    num.textContent = (PLAYLISTS.indexOf(pl) + 1).toString();
+  } else {
+    img.classList.add('hidden');
+    num.classList.remove('hidden');
+    num.textContent = '?';
+  }
+}
+
+function maybeShowSaying() {
+  if (sayingActive) return;
+  if (Math.random() > 0.2) return;
+  const pool = [...(SAYINGS.common || []), ...(SAYINGS[currentPlaylistId] || [])];
+  if (pool.length === 0) return;
+  const el = document.getElementById('saying-text');
+  if (el) {
+    el.textContent = pool[Math.floor(Math.random() * pool.length)];
+    sayingActive = true;
+  }
+}
+
+function clearSaying() {
+  if (!sayingActive) return;
+  const el = document.getElementById('saying-text');
+  if (el) el.textContent = '';
+  sayingActive = false;
+}
+
+// UI
+function updateUI() {
+  const html = isPlaying
+    ? '<rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/>'
+    : '<polygon points="5 3 19 12 5 21 5 3"/>';
+  const big = document.getElementById('play-icon');
+  const sm = document.getElementById('play-icon-sm');
+  if (big) big.innerHTML = html;
+  if (sm) sm.innerHTML = html;
+
+  document.querySelectorAll('.shuffle-btn').forEach(el => {
+    el.classList.toggle('text-purple-400', shuffle);
+  });
+}
+
+function startProgress() {
+  function tick() {
+    if (!player || !isPlaying) return;
+    const dur = player.getDuration();
+    const cur = player.getCurrentTime();
+    if (dur > 0) {
+      document.getElementById('progress-bar').style.width = `${(cur / dur) * 100}%`;
+      const m = Math.floor(cur / 60);
+      const s = Math.floor(cur % 60);
+      document.getElementById('time-display').textContent = `${m}:${s < 10 ? '0' : ''}${s}`;
+    }
+    requestAnimationFrame(tick);
+  }
+  requestAnimationFrame(tick);
+}
+
+// Titles
+async function fetchTitle(videoId) {
+  if (titles[videoId]) { updateNowPlaying(videoId, titles[videoId]); return; }
+  try {
+    const res = await fetch(`https://www.youtube.com/oembed?url=https://youtu.be/${videoId}&format=json`);
+    const data = await res.json();
+    titles[videoId] = data.title;
+    updateNowPlaying(videoId, data.title);
+    renderPlaylist();
+  } catch {
+    updateNowPlaying(videoId, videoId);
+  }
+}
+
+function updateNowPlaying(videoId, title) {
+  document.getElementById('now-title').textContent = title || videoId;
+  const btn = document.getElementById('go-sub-btn');
+  if (btn) btn.href = `https://youtu.be/${videoId}`;
+}
+
+// Playlist rendering
+function renderPlaylist() {
+  const container = document.getElementById('playlist');
+  if (!container) return;
+  container.innerHTML = VIDEO_IDS.map((id, i) => {
+    const isCurrent = i === currentIndex;
+    const title = titles[id] || id;
+    return `<div class="track-item ${isCurrent ? 'active playing' : ''}" onclick="playIndex(${i})">
+      <span class="text-[9px] font-mono text-zinc-600 w-5 shrink-0 text-right">${i + 1}</span>
+      <span class="text-[10px] font-mono ${isCurrent ? 'text-purple-400' : 'text-zinc-300'} truncate flex-1 track-title">${title}</span>
+      ${isCurrent && isPlaying ? '<span class="w-1.5 h-1.5 rounded-full bg-purple-500 live-dot shrink-0"></span>' : ''}
+    </div>`;
+  }).join('');
+}
+
+function scrollToCurrent() {
+  const container = document.getElementById('playlist');
+  if (!container) return;
+  const active = container.querySelector('.active');
+  if (active) active.scrollIntoView({ block: 'center', behavior: 'smooth' });
+}
+
+function togglePlaylistSidebar() {
+  document.getElementById('playlist-sidebar').classList.toggle('collapsed');
+}
+
+function toggleControlsSidebar() {
+  document.getElementById('controls-sidebar').classList.toggle('collapsed');
+}
+
+let videoBg = false;
+let goopTween = null;
+function isMobile() { return window.innerWidth < 768 || ('ontouchstart' in window); }
+function toggleVideoBg() {
+  videoBg = !videoBg;
+  const app = document.getElementById('app');
+  const overlay = document.getElementById('video-overlay');
+  const btn = document.getElementById('btn-video-bg');
+  const goop = document.getElementById('goop-container');
+  app.classList.toggle('video-bg', videoBg);
+  app.classList.toggle('goop-mode', !videoBg && !isMobile());
+  overlay.classList.toggle('show', videoBg);
+  if (!isMobile()) goop.classList.toggle('show', !videoBg);
+  if (!videoBg) {
+    if (goopTween) goopTween.kill();
+    if (!isMobile()) {
+      goopTween = TweenMax.staggerFromTo('#goop-inner .blob', 4, {
+      cycle: {
+        attr: function(i) {
+          var r = i*90;
+          return { transform:'rotate('+r+') translate(8,0.1) rotate('+(-r)+')' }
+        }
+      }
+    }, {
+      cycle: {
+        attr: function(i) {
+          var r = i*90+360;
+          return { transform:'rotate('+r+') translate(8,0.1) rotate('+(-r)+')' }
+        }
+      },
+      ease:Linear.easeNone,
+      repeat:-1
+    });
+    }
+  } else {
+    if (goopTween) { goopTween.kill(); goopTween = null; }
+  }
+  btn.classList.toggle('text-purple-400', videoBg);
+}
+
+function centerArtActivate() {
+  if (!videoBg) toggleVideoBg();
+  if (!isPlaying) {
+    if (currentIndex >= 0 && player && player.playVideo) player.playVideo();
+    else if (VIDEO_IDS.length > 0) playIndex(0);
+  }
+}
+
+// Volume
+function initVolume() {
+  const saved = localStorage.getItem('endever_playlist_volume');
+  const val = saved !== null ? Math.max(0, Math.min(100, parseInt(saved))) : 50;
+  const slider = document.getElementById('volume-slider');
+  const fill = document.getElementById('volume-fill');
+  const label = document.getElementById('volume-label');
+  slider.value = val;
+  if (fill) fill.style.width = val + '%';
+  if (label) label.textContent = val + '%';
+  slider.addEventListener('input', () => {
+    const v = parseInt(slider.value);
+    if (fill) fill.style.width = v + '%';
+    if (label) label.textContent = v + '%';
+    if (player && player.setVolume) player.setVolume(v);
+    localStorage.setItem('endever_playlist_volume', v);
+  });
+}
+
+function applyVolume() {
+  const val = parseInt(document.getElementById('volume-slider').value);
+  if (player && player.setVolume) player.setVolume(val);
+}
+
+// Patch onPlayerReady
+const _origOnReady = onPlayerReady;
+onPlayerReady = function() {
+  ready = true;
+  buildQueue();
+  applyVolume();
+};
+
+function enterPlaylist() {
+  if (!videoBg) {
+    if (!isMobile()) {
+      document.getElementById('app').classList.add('goop-mode');
+      document.getElementById('goop-container').classList.add('show');
+    }
+    if (goopTween) goopTween.kill();
+    if (!isMobile()) {
+      goopTween = TweenMax.staggerFromTo('#goop-inner .blob', 4, {
+        cycle: {
+          attr: function(i) {
+            var r = i*90;
+            return { transform:'rotate('+r+') translate(8,0.1) rotate('+(-r)+')' }
+          }
+        }
+      }, {
+        cycle: {
+          attr: function(i) {
+            var r = i*90+360;
+            return { transform:'rotate('+r+') translate(8,0.1) rotate('+(-r)+')' }
+          }
+        },
+        ease:Linear.easeNone,
+        repeat:-1
+      });
+    }
+  }
+}
+
+let preventAutoPlay = false;
+
+
+
+// --- Shop removed ---
+
+// Init
+const savedShuffle = localStorage.getItem('endever_playlist_shuffle');
+if (savedShuffle === 'true') {
+  shuffle = true;
+  document.querySelectorAll('.shuffle-btn').forEach(el => el.classList.add('text-purple-400'));
+}
+renderPlaylistGrid();
+updateArtDisplay();
+initVolume();
+loadYTAPI();
+switchPlaylist(PLAYLISTS[0].id);
+enterPlaylist();
+</script>
+</body>
+</html>
