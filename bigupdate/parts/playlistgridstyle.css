@@ -1,0 +1,263 @@
+:root {
+  --bg-color: #f0f2f5;
+  --gap: 15px;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  min-height: 100vh;
+  margin: 0;
+  background: #0b0b0b;
+  font-family:
+    "Outfit",
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Roboto,
+    sans-serif;
+}
+
+.site-logo {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  height: 30px;
+  z-index: 1000;
+  transition: height 0.3s ease;
+}
+
+.site-logo.scrolled {
+  height: 22px;
+}
+
+.site-logo__img {
+  position: absolute;
+  top: 0;
+  right: 0;
+  height: 100%;
+  width: auto;
+  transition: opacity 0.3s ease;
+}
+
+.site-logo__img--scrolled {
+  opacity: 0;
+}
+
+.site-logo.scrolled .site-logo__img--default {
+  opacity: 0;
+}
+
+.site-logo.scrolled .site-logo__img--scrolled {
+  opacity: 1;
+}
+
+.exclusive {
+  width: 100%;
+  padding: 6vh 4vw 2vh;
+  box-sizing: border-box;
+}
+
+.exclusive__title {
+  color: #fff;
+  font-size: clamp(1.2rem, 3vw, 1.8rem);
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  margin: 0 0 20px;
+}
+
+.exclusive__viewport {
+  position: relative;
+}
+
+.exclusive__row {
+  display: flex;
+  gap: 18px;
+  overflow: hidden;
+  scroll-behavior: smooth;
+}
+
+.thumb {
+  flex: 0 0 calc((100% - 3 * 18px) / 4);
+  aspect-ratio: 16 / 9;
+  height: auto;
+  border-radius: 12px;
+  background: #161616;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  position: relative;
+  overflow: hidden;
+}
+
+.thumb::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.05),
+    rgba(255, 255, 255, 0)
+  );
+}
+
+.exclusive__more {
+  position: absolute;
+  top: calc(50% - 6px);
+  right: 0;
+  transform: translateY(-50%);
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(20, 20, 20, 0.85);
+  backdrop-filter: blur(8px);
+  color: #fff;
+  font-size: 22px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 5;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.15);
+  transition: background 0.25s ease;
+}
+
+.exclusive__more:hover {
+  background: #e50914;
+}
+
+@media (max-width: 1200px) {
+  .thumb {
+    flex-basis: calc((100% - 2 * 18px) / 3);
+  }
+}
+
+@media (max-width: 900px) {
+  .thumb {
+    flex-basis: calc((100% - 1 * 18px) / 2);
+  }
+}
+
+@media (max-width: 600px) {
+  .thumb {
+    flex-basis: calc((100% - 0 * 18px) / 1);
+  }
+}
+
+.creators .thumb {
+  aspect-ratio: 2 / 3;
+}
+
+.hero {
+  width: 100%;
+  height: 80vh;
+  background: #000;
+  overflow: hidden;
+}
+
+.hero iframe {
+  width: 100%;
+  height: 100%;
+  border: 0;
+  display: block;
+}
+
+/* The Bento Grid Logic */
+.bento-container {
+  display: grid;
+  gap: var(--gap);
+  width: 65vw;
+  height: 65vh;
+  max-width: 750px;
+  max-height: 600px;
+  margin-top: 12vh;
+  margin-bottom: 12vh;
+}
+
+/*
+Specific classes for each event target
+*/
+.bento-container.rows-3-1-1 {
+  grid-template-rows: 3fr 1fr 1fr;
+}
+
+.bento-container.rows-1-3-1 {
+  grid-template-rows: 1fr 3fr 1fr;
+}
+
+.bento-container.rows-1-1-3 {
+  grid-template-rows: 1fr 1fr 3fr;
+}
+
+.bento-container.cols-3-1-1 {
+  grid-template-columns: 3fr 1fr 1fr;
+}
+
+.bento-container.cols-1-3-1 {
+  grid-template-columns: 1fr 3fr 1fr;
+}
+
+.bento-container.cols-1-1-3 {
+  grid-template-columns: 1fr 1fr 3fr;
+}
+
+.bento-item {
+  background-color: var(--card-color);
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(255, 252, 225, 0.25);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: bold;
+  color: #333;
+  position: relative;
+  cursor: pointer;
+  overflow: hidden;
+  border: 1px solid rgba(255, 252, 225, 0.5);
+
+  img {
+    position: absolute;
+    inset: 0;
+    object-fit: cover;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+  }
+
+  .image-overlay {
+    position: absolute;
+    inset: 0;
+    background-color: #333;
+    opacity: 0;
+    z-index: 2;
+  }
+
+  .bento-label {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    padding: 12px 14px;
+    color: #fff;
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.85), rgba(0, 0, 0, 0));
+    opacity: 0;
+    transform: translateY(8px);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    z-index: 3;
+    pointer-events: none;
+  }
+}
+
+.bento-item:hover .bento-label {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Hover Effect: Scale up and bring to front */
+.bento-item:hover {
+  z-index: 10;
+}
