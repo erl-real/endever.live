@@ -1,0 +1,64 @@
+/* =============================================================================
+   EndEver Live — design tokens
+   -----------------------------------------------------------------------------
+   Values carried over verbatim from parts/gsapstyle.css and
+   parts/playlistgridstyle.css so the new pages sit inside the existing brand.
+   Everything below is the shared vocabulary: no page defines its own colour.
+   ========================================================================== */
+
+@import url("https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap");
+
+:root {
+  /* --- brand (unchanged) --- */
+  --color-brand: #e50914;
+  --color-brand-glow: rgba(229, 9, 20, 0.4);
+  --color-match: #46d369;
+
+  /* --- surfaces: a proper ramp built off the existing #0b0b0b / #141414 --- */
+  --color-bg: #0b0b0b;
+  --color-surface: #141414;
+  --color-surface-raised: #1a1a1a;
+  --color-surface-sunken: #070707;
+  --color-hairline: rgba(255, 255, 255, 0.08);
+  --color-hairline-strong: rgba(255, 255, 255, 0.16);
+
+  /* --- text (unchanged) --- */
+  --color-text-primary: #ffffff;
+  --color-text-secondary: #d1d1d1;
+  --color-text-muted: #a3a3a3;
+
+  /* --- kind accents, borrowed from the existing player colour cycle --- */
+  --color-kind-event: #00e5ff;
+  --color-kind-feedback: #ff1744;
+  --color-kind-lesson: #b026ff;
+  --color-kind-interviews: #ff6a00;
+  --color-live: #46d369;
+  --color-warn: #ec942c;
+
+  /* --- geometry (unchanged) --- */
+  --border-radius-lg: 20px;
+  --border-radius-md: 12px;
+  --border-radius-sm: 8px;
+  --slide-width: 76vw;
+  --slide-max-width: 1280px;
+  --slide-height: 72vh;
+  --slide-gap: 32px;
+  --header-height: 72px;
+  --gutter: clamp(16px, 4vw, 64px);
+  --rail-gap: 18px;
+
+  /* --- motion (unchanged) --- */
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --transition-fast: 0.25s var(--ease-out-expo);
+  --transition-normal: 0.5s var(--ease-out-expo);
+
+  --font: "Outfit", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    sans-serif;
+}
+
+/* Kind colour lookup — set kind="event|feedback|lesson" on any element. */
+[data-kind="event"] { --kind: var(--color-kind-event); }
+[data-kind="feedback"] { --kind: var(--color-kind-feedback); }
+[data-kind="lesson"] { --kind: var(--color-kind-lesson); }
+[data-kind] .kind-dot,
+[data-kind].kind-dot { background: var(--kind); }
