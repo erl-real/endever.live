@@ -1,0 +1,208 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <title>Browse — EndEver Live</title>
+  <meta name="description" content="Search and filter every event, feedback window and lesson.">
+  <link rel="stylesheet" href="/assets/tokens.css">
+  <link rel="stylesheet" href="/assets/app.css">
+</head>
+<body>
+
+<header class="site-header">
+  <a class="site-logo" href="/" aria-label="EndEver Live home"><img src="/logo.png" alt="endever.live"></a>
+  <nav aria-label="Primary">
+    <ul class="site-nav">
+      <li><a href="/browse.html?kind=event">Events</a></li>
+      <li><a href="/browse.html?kind=feedback">Feedback</a></li>
+      <li><a href="/browse.html?kind=lesson">Lessons</a></li>
+      <li><a href="/browse.html?kind=interviews">Interviews</a></li>
+      <li><a href="/browse.html?creator=1">Creators</a></li>
+      <li><a href="/playlist.html">Playlist</a></li>
+    </ul>
+  </nav>
+  <div class="site-header__spacer"></div>
+  <div class="site-header__actions">
+    <a class="btn btn--ghost btn--sm" href="/submit.html">Post</a>
+  </div>
+</header>
+
+<main class="page">
+  <div class="section-head">
+    <div>
+      <h1 id="page-title">Browse</h1>
+      <p id="page-sub">Everything on the platform.</p>
+    </div>
+  </div>
+
+  <form class="filters" id="filters" role="search">
+    <div class="filters__search">
+      <label class="sr-only" for="q">Search</label>
+      <input class="input" id="q" name="q" type="search" placeholder="Title, tag, genre or description…" autocomplete="off">
+    </div>
+    <div class="filters__group" id="kind-chips" role="group" aria-label="Type"></div>
+  </form>
+
+  <div id="results" class="grid"></div>
+  <div id="empty" class="empty" hidden>Nothing matches. Try fewer filters.</div>
+</main>
+
+<footer class="site-footer">
+  <span>endever.live</span>
+  <nav class="footer-links">
+    <a href="/terms.html">Terms</a><span class="footer-dot">&middot;</span>
+    <a href="/terms.html">Privacy</a><span class="footer-dot">&middot;</span>
+    <a href="/terms.html">Cookies</a><span class="footer-dot">&middot;</span>
+    <a href="#">Ads Info</a><span class="footer-dot">&middot;</span>
+    <a href="/about.html">About</a><span class="footer-dot">&middot;</span>
+    <a href="/creator.html">Become a Creator</a><span class="footer-dot">&middot;</span>
+    <a href="#">Memberships</a><span class="footer-dot">&middot;</span>
+    <a href="https://www.neverendever.com/" target="_blank" rel="noopener noreferrer">www.neverendever.com</a><span class="footer-dot">&middot;</span>
+    <a href="https://www.neverendever.com/pages/public/news/" target="_blank" rel="noopener noreferrer">News</a><span class="footer-dot">&middot;</span>
+    <a href="/faq.html">FAQ</a>
+  </nav>
+  <span id="mode-note"></span>
+</footer>
+
+<script src="/data.js"></script>
+<script src="/assets/api.js"></script>
+<script src="/assets/ui.js"></script>
+<script>
+  const { el, mount, card, creatorCard, query, headerScroll, markActiveNav } = UI;
+
+  const KINDS = [
+    ["", "All"],
+    ["event", "Events"],
+    ["feedback", "Feedback"],
+    ["lesson", "Lessons"],
+    ["interviews", "Interviews"],
+  ];
+
+  const params = query();
+  const state = {
+    kind: params.get("kind") || "",
+    q: params.get("q") || "",
+    tag: params.get("tag") || "",
+    creatorsOnly: params.get("creator") === "1",
+  };
+
+  function chipGroup(container, options, active, onPick) {
+    mount(container, options.map(([value, label]) =>
+      el("button", {
+        class: "chip", type: "button", text: label,
+        "aria-pressed": value === active ? "true" : "false",
+        onClick: () => onPick(value === active ? "" : value),
+      })
+    ));
+  }
+
+  function renderFilters() {
+    chipGroup(document.getElementById("kind-chips"), KINDS, state.kind,
+      (v) => { state.kind = v; sync(); });
+  }
+
+  function sync() {
+    const p = new URLSearchParams();
+    if (state.kind) p.set("kind", state.kind);
+    if (state.q) p.set("q", state.q);
+    if (state.tag) p.set("tag", state.tag);
+    if (state.creatorsOnly) p.set("creator", "1");
+    history.replaceState(null, "", `/browse.html?${p}`);
+    load();
+  }
+
+  function renderHeading() {
+    const title = document.getElementById("page-title");
+    const sub = document.getElementById("page-sub");
+    if (state.creatorsOnly) {
+      title.textContent = "Creators";
+      sub.textContent = "Everyone posting on EndEver Live.";
+      document.getElementById("filters").hidden = true;
+      document.getElementById("facet-chips").hidden = true;
+      return;
+    }
+    document.getElementById("filters").hidden = false;
+    if (state.tag) {
+      if (state.tag === "uug") {
+        title.textContent = "UUG Interviews";
+        sub.textContent = "Every United Underground interview, in one list.";
+      } else if (state.tag === "endever") {
+        title.textContent = "EndEver Interviews";
+        sub.textContent = "The EndEver interview series.";
+      } else {
+        title.textContent = "Interviews";
+        sub.textContent = `Tagged “${state.tag}”.`;
+      }
+      return;
+    }
+    if (state.kind === "event") {
+      title.textContent = "Events";
+      sub.textContent = "Sessions artists join with their music.";
+    } else if (state.kind === "feedback") {
+      title.textContent = "Feedback";
+      sub.textContent = "VODs of react windows. The streams live elsewhere.";
+    } else if (state.kind === "lesson") {
+      title.textContent = "Lessons";
+      sub.textContent = "Educational sessions from producers, vocalists and engineers.";
+    } else if (state.kind === "interviews") {
+      title.textContent = "Interviews";
+      sub.textContent = "United Underground sits down with the underground.";
+    } else {
+      title.textContent = "Browse";
+      sub.textContent = "Everything on the platform.";
+    }
+  }
+
+  const results = document.getElementById("results");
+  const empty = document.getElementById("empty");
+
+  function skeletons(n) {
+    mount(results, Array.from({ length: n }, () =>
+      el("div", { class: "skeleton", style: { aspectRatio: "16 / 9" } })));
+  }
+
+  async function load() {
+    renderHeading();
+    skeletons(8);
+    empty.hidden = true;
+
+    try {
+      if (state.creatorsOnly) {
+        const rows = await API.creators();
+        mount(results, rows.map(creatorCard));
+        empty.hidden = rows.length > 0;
+        return;
+      }
+
+      const data = await API.posts({
+        kind: state.kind, genre: state.genre,
+        tag: state.tag, q: state.q, limit: 100,
+      });
+      mount(results, (data.items || []).map(card));
+      empty.hidden = (data.items || []).length > 0;
+    } catch (err) {
+      mount(results, el("p", { class: "empty", text: "Could not load." }));
+      console.error(err);
+    }
+  }
+
+  (async () => {
+    headerScroll();
+    markActiveNav();
+    document.getElementById("q").value = state.q;
+
+    let debounce;
+    document.getElementById("q").addEventListener("input", (e) => {
+      state.q = e.target.value.trim();
+      clearTimeout(debounce);
+      debounce = setTimeout(sync, 250);
+    });
+
+    renderFilters();
+
+    load();
+  })();
+</script>
+</body>
+</html>

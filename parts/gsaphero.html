@@ -1,0 +1,320 @@
+
+<!-- inspired by https://tympanus.net/codrops/2025/04/21/mastering-carousels-with-gsap-from-basics-to-advanced-animation/ -->
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/Draggable.min.js"></script>
+
+    <link rel="stylesheet" href="./style.css?v=2" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pen</title>
+  </head>
+  <body>
+    <header class="header" role="banner">
+      <div class="header__left">
+        <nav aria-label="Main Navigation">
+          <ul class="nav-links">
+            <li>
+              <a href="#" class="nav-links__link nav-links__link--active">
+                Home
+              </a>
+            </li>
+            <li><a href="#" class="nav-links__link">Exclusives</a></li>
+            <li><a href="#" class="nav-links__link">Howtos</a></li>
+            <li><a href="#" class="nav-links__link">New & Popular</a></li>
+            <li><a href="../../../playlist.html" target="_top" class="nav-links__link">Playlist</a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+
+    <main
+      class="hero-container"
+      role="region"
+      aria-label="Featured Titles Carousel"
+    >
+      <div class="carousel-track" id="carouselTrack">
+        <!-- SLIDE 1 -->
+        <article
+          class="slide"
+          aria-roledescription="slide"
+          aria-label="1 of 5: Cyberpunk 2099"
+        >
+          <div class="slide__img-wrap">
+            <img
+              class="slide__img"
+              src="https://images.unsplash.com/photo-1578632767115-351597cf2477?auto=format&fit=crop&w=2000&q=80"
+              alt="Cyberpunk City"
+            />
+          </div>
+          <div class="slide__overlay"></div>
+          <div class="slide__content">
+            <div class="slide__badge">GSAP Flix Original</div>
+            <h1 class="slide__title">CYBERPUNK 2099</h1>
+            <div class="slide__meta">
+              <span class="match-score">98% Match</span>
+              <span>2026</span>
+              <span class="age-badge">18+</span>
+              <span class="quality-badge">4K Ultra HD</span>
+            </div>
+            <p class="slide__synopsis">
+              In a megacity controlled by synthetic artificial intelligence, a
+              rogue mercenary uncovers a dark network conspiracy that threatens
+              to erase humanity's last remaining memories.
+            </p>
+            <div class="btn-group">
+              <button class="btn btn--primary" aria-label="Play Cyberpunk 2099">
+                <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z" /></svg>
+                Play
+              </button>
+              <button
+                class="btn btn--secondary"
+                aria-label="More Info Cyberpunk 2099"
+              >
+                <svg viewBox="0 0 24 24">
+                  <path
+                    d="M11 7h2v2h-2zm0 4h2v6h-2zm1-9C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"
+                  />
+                </svg>
+                More Info
+              </button>
+            </div>
+          </div>
+        </article>
+
+        <!-- SLIDE 2 -->
+        <article
+          class="slide"
+          aria-roledescription="slide"
+          aria-label="2 of 5: Interstellar Void"
+        >
+          <div class="slide__img-wrap">
+            <img
+              class="slide__img"
+              src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=2000&q=80"
+              alt="Deep Space Nebula"
+            />
+          </div>
+          <div class="slide__overlay"></div>
+          <div class="slide__content">
+            <div class="slide__badge">Trending #1</div>
+            <h1 class="slide__title">INTERSTELLAR VOID</h1>
+            <div class="slide__meta">
+              <span class="match-score">99% Match</span>
+              <span>2026</span>
+              <span class="age-badge">16+</span>
+              <span class="quality-badge">HDR10+</span>
+            </div>
+            <p class="slide__synopsis">
+              When a deep-space research vessel encounters a mysterious anomaly
+              at the edge of the galaxy, the crew must navigate temporal shifts
+              and unearthly perils to make it back alive.
+            </p>
+            <div class="btn-group">
+              <button
+                class="btn btn--primary"
+                aria-label="Play Interstellar Void"
+              >
+                <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z" /></svg>
+                Play
+              </button>
+              <button
+                class="btn btn--secondary"
+                aria-label="More Info Interstellar Void"
+              >
+                <svg viewBox="0 0 24 24">
+                  <path
+                    d="M11 7h2v2h-2zm0 4h2v6h-2zm1-9C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"
+                  />
+                </svg>
+                More Info
+              </button>
+            </div>
+          </div>
+        </article>
+
+        <!-- SLIDE 3 -->
+        <article
+          class="slide"
+          aria-roledescription="slide"
+          aria-label="3 of 5: The Silent Realm"
+        >
+          <div class="slide__img-wrap">
+            <img
+              class="slide__img"
+              src="https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=2000&q=80"
+              alt="Misty Forest"
+            />
+          </div>
+          <div class="slide__overlay"></div>
+          <div class="slide__content">
+            <div class="slide__badge">New Release</div>
+            <h1 class="slide__title">THE SILENT REALM</h1>
+            <div class="slide__meta">
+              <span class="match-score">95% Match</span>
+              <span>2025</span>
+              <span class="age-badge">13+</span>
+              <span class="quality-badge">5.1 Audio</span>
+            </div>
+            <p class="slide__synopsis">
+              Deep within an ancient Nordic mist forest, a forgotten lineage of
+              guardians awakens to protect the realm from an impending mythical
+              shadow that consumes all sound.
+            </p>
+            <div class="btn-group">
+              <button
+                class="btn btn--primary"
+                aria-label="Play The Silent Realm"
+              >
+                <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z" /></svg>
+                Play
+              </button>
+              <button
+                class="btn btn--secondary"
+                aria-label="More Info The Silent Realm"
+              >
+                <svg viewBox="0 0 24 24">
+                  <path
+                    d="M11 7h2v2h-2zm0 4h2v6h-2zm1-9C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"
+                  />
+                </svg>
+                More Info
+              </button>
+            </div>
+          </div>
+        </article>
+
+        <!-- SLIDE 4 -->
+        <article
+          class="slide"
+          aria-roledescription="slide"
+          aria-label="4 of 5: Neon Velocity"
+        >
+          <div class="slide__img-wrap">
+            <img
+              class="slide__img"
+              src="https://images.unsplash.com/photo-1511447333015-45b65e60f6d5?auto=format&fit=crop&w=2000&q=80"
+              alt="Neon Highway"
+            />
+          </div>
+          <div class="slide__overlay"></div>
+          <div class="slide__content">
+            <div class="slide__badge">Critically Acclaimed</div>
+            <h1 class="slide__title">NEON VELOCITY</h1>
+            <div class="slide__meta">
+              <span class="match-score">96% Match</span>
+              <span>2026</span>
+              <span class="age-badge">18+</span>
+              <span class="quality-badge">Dolby Atmos</span>
+            </div>
+            <p class="slide__synopsis">
+              High stakes, underground anti-gravity racing, and illegal
+              augmentations collide in this heart-pounding adrenaline thriller
+              set in Tokyo's sub-level corridors.
+            </p>
+            <div class="btn-group">
+              <button class="btn btn--primary" aria-label="Play Neon Velocity">
+                <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z" /></svg>
+                Play
+              </button>
+              <button
+                class="btn btn--secondary"
+                aria-label="More Info Neon Velocity"
+              >
+                <svg viewBox="0 0 24 24">
+                  <path
+                    d="M11 7h2v2h-2zm0 4h2v6h-2zm1-9C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"
+                  />
+                </svg>
+                More Info
+              </button>
+            </div>
+          </div>
+        </article>
+
+        <!-- SLIDE 5 -->
+        <article
+          class="slide"
+          aria-roledescription="slide"
+          aria-label="5 of 5: Dune Chronicles"
+        >
+          <div class="slide__img-wrap">
+            <img
+              class="slide__img"
+              src="https://images.unsplash.com/photo-1509316975850-ff9c5deb0cd9?auto=format&fit=crop&w=2000&q=80"
+              alt="Desert Dunes"
+            />
+          </div>
+          <div class="slide__overlay"></div>
+          <div class="slide__content">
+            <div class="slide__badge">Must Watch</div>
+            <h1 class="slide__title">DUNE CHRONICLES</h1>
+            <div class="slide__meta">
+              <span class="match-score">97% Match</span>
+              <span>2025</span>
+              <span class="age-badge">16+</span>
+              <span class="quality-badge">IMAX Enhanced</span>
+            </div>
+            <p class="slide__synopsis">
+              Across infinite sand sea oceans, nomadic tribes fight for control
+              over the universe's most coveted natural element while surviving
+              behemoth subterranean leviathans.
+            </p>
+            <div class="btn-group">
+              <button
+                class="btn btn--primary"
+                aria-label="Play Dune Chronicles"
+              >
+                <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z" /></svg>
+                Play
+              </button>
+              <button
+                class="btn btn--secondary"
+                aria-label="More Info Dune Chronicles"
+              >
+                <svg viewBox="0 0 24 24">
+                  <path
+                    d="M11 7h2v2h-2zm0 4h2v6h-2zm1-9C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"
+                  />
+                </svg>
+                More Info
+              </button>
+            </div>
+          </div>
+        </article>
+      </div>
+    </main>
+
+    <div class="hud-controls">
+      <div class="progress-box" aria-live="polite">
+        <span id="currentCounter">01</span>
+        <div class="progress-bar-wrap">
+          <div class="progress-bar-fill" id="progressBar"></div>
+        </div>
+        <span id="totalCounter">05</span>
+      </div>
+      <div class="nav-buttons">
+        <button class="nav-btn" id="prevBtn" aria-label="Previous Slide">
+          <svg viewBox="0 0 24 24">
+            <polyline points="15 18 9 12 15 6"></polyline>
+          </svg>
+        </button>
+        <button class="nav-btn" id="nextBtn" aria-label="Next Slide">
+          <svg viewBox="0 0 24 24">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <script src="./script.js"></script>
+  </body>
+</html>

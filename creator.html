@@ -1,0 +1,355 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <title>Become a Creator — EndEver Live</title>
+  <meta name="description" content="Apply to become a creator on EndEver Live.">
+  <link rel="stylesheet" href="/assets/tokens.css">
+  <link rel="stylesheet" href="/assets/app.css">
+</head>
+<body>
+
+<header class="site-header">
+  <a class="site-logo" href="/" aria-label="EndEver Live home"><img src="/logo.png" alt="endever.live"></a>
+  <nav aria-label="Primary">
+    <ul class="site-nav">
+      <li><a href="/browse.html?kind=event">Events</a></li>
+      <li><a href="/browse.html?kind=feedback">Feedback</a></li>
+      <li><a href="/browse.html?kind=lesson">Lessons</a></li>
+      <li><a href="/browse.html?kind=interviews">Interviews</a></li>
+      <li><a href="/browse.html?creator=1">Creators</a></li>
+      <li><a href="/playlist.html">Playlist</a></li>
+    </ul>
+  </nav>
+  <div class="site-header__spacer"></div>
+  <div class="site-header__actions">
+    <a class="btn btn--ghost btn--sm" href="/submit.html">Post</a>
+  </div>
+</header>
+
+<main class="page">
+  <div class="section-head">
+    <div>
+      <h1>Become a Creator</h1>
+      <p>Tell us who you are and what you make. Everything lands in one cell on your profile.</p>
+    </div>
+  </div>
+
+  <div class="wrap">
+    <div class="creator-layout">
+
+      <aside class="creator-guide">
+        <h2 class="creator-guide__title">What we expect</h2>
+        <p class="creator-guide__lede">
+          Read this before you fill anything in. It is the difference between an
+          application we can act on and one we have to chase you for.
+        </p>
+
+        <h3>Your content</h3>
+        <p>
+          Link work that already exists. We want to see you are active before we
+          give you a posting slot — a channel, a SoundCloud, a Bandcamp, a Twitch
+          VOD folder. One strong link beats five weak ones.
+        </p>
+
+        <h3>Your plan</h3>
+        <p>
+          The year, two-year and five-year sections are the most important part
+          of this form. We are not looking for vague ambition. We want to know
+          what you will post, how often, and what you expect to exist in five
+          years that does not exist today.
+        </p>
+
+        <h3>Your craft</h3>
+        <p>
+          Instruments, DAWs, gear, schooling, bands, labels — only list what is
+          real. If you teach, say what and at what level. If you own it, say it.
+          If you would promote it, say why you would.
+        </p>
+
+        <h3>What happens next</h3>
+        <p>
+          Your answers are stored as a single JSON object on your profile. A
+          human reads them. We do not auto-approve, and we do not publish your
+          application anywhere.
+        </p>
+
+        <div class="creator-guide__note">
+          <strong>Already a creator?</strong>
+          <p>
+            You do not need to apply again. If you already post on EndEver Live,
+            this form will just overwrite your existing application.
+          </p>
+        </div>
+      </aside>
+
+      <section class="creator-form-wrap">
+        <div class="creator-gate" id="creator-gate">
+          <h2 class="creator-gate__title">Sign in to continue</h2>
+          <p class="creator-gate__lede">
+            You need an EndEver Live account to apply. It is the same account you
+            use for neverendever.com — one login, both sites.
+          </p>
+          <div class="creator-gate__actions">
+            <button class="btn btn--brand" id="login-btn" type="button">Log in or sign up</button>
+            <button class="btn btn--ghost" id="bypass-btn" type="button">Bypass — demo only</button>
+          </div>
+          <p class="creator-gate__hint" id="gate-hint">
+            Bypass is for development only. Nothing you submit while bypassed is
+            saved to a real account.
+          </p>
+        </div>
+
+        <form class="creator-form" id="creator-form" hidden>
+
+          <fieldset class="creator-form__group">
+            <legend>Why us</legend>
+
+            <label class="field">
+              <span class="field__label">Why should you be a creator here?</span>
+              <textarea class="textarea" name="why_creator" required
+                placeholder="Tell us what you do"></textarea>
+            </label>
+          </fieldset>
+
+          <fieldset class="creator-form__group">
+            <legend>Your content</legend>
+
+            <label class="field">
+              <span class="field__label">Link your work</span>
+              <input class="input" name="content_links" required
+                placeholder="https://youtube.com/yourchannel">
+              <span class="field__hint">One URL per line. Channel, portfolio, VOD folder.</span>
+            </label>
+
+            <label class="field">
+              <span class="field__label">Social platforms</span>
+              <input class="input" name="socials"
+                placeholder="https://instagram.com/you, https://twitch.tv/you">
+              <span class="field__hint">Comma separated. Every platform you are on.</span>
+            </label>
+          </fieldset>
+
+          <fieldset class="creator-form__group">
+            <legend>Your plan</legend>
+
+            <label class="field">
+              <span class="field__label">Next year</span>
+              <textarea class="textarea" name="plan_1yr" required
+                placeholder="What will you post in the next 12 months? How often?"></textarea>
+            </label>
+
+            <label class="field">
+              <span class="field__label">Next two years</span>
+              <textarea class="textarea" name="plan_2yr"
+                placeholder="What changes by then? What are you building towards?"></textarea>
+            </label>
+
+            <label class="field">
+              <span class="field__label"> Next five years</span>
+              <textarea class="textarea" name="plan_5yr"
+                placeholder="What exists in five years that does not exist today?"></textarea>
+            </label>
+          </fieldset>
+
+          <fieldset class="creator-form__group">
+            <legend>Your craft</legend>
+
+            <div class="form-grid">
+              <label class="field">
+                <span class="field__label">Resume</span>
+                <input class="input" name="resume_url" type="url"
+                  placeholder="https://…">
+                <span class="field__hint">Link to a resume or CV.</span>
+              </label>
+
+              <label class="field">
+                <span class="field__label">Music schooling</span>
+                <input class="input" name="schooling"
+                  placeholder="Berklee, self-taught, apprenticeship under…">
+              </label>
+
+              <label class="field">
+                <span class="field__label">Bands you work with</span>
+                <input class="input" name="bands"
+                  placeholder="Comma separated">
+              </label>
+
+              <label class="field">
+                <span class="field__label">Labels you work with</span>
+                <input class="input" name="labels"
+                  placeholder="Comma separated">
+              </label>
+
+              <label class="field">
+                <span class="field__label">Genres you specialize in</span>
+                <input class="input" name="genres"
+                  placeholder="hip hop, ambient, post-pop">
+              </label>
+
+              <label class="field">
+                <span class="field__label">Instruments you play / teach</span>
+                <input class="input" name="instruments"
+                  placeholder="808, vocals, modular synthesis">
+              </label>
+
+              <label class="field">
+                <span class="field__label">DAWs you use</span>
+                <input class="input" name="daws"
+                  placeholder="Ableton, FL Studio, Pro Tools">
+              </label>
+
+              <label class="field">
+                <span class="field__label">Equipment you own</span>
+                <input class="input" name="gear_owned"
+                  placeholder="Neumann U87, SSL bus compressor, tape machine">
+              </label>
+
+              <label class="field">
+                <span class="field__label">Equipment you love</span>
+                <input class="input" name="gear_love"
+                  placeholder="What you would buy tomorrow if you could">
+              </label>
+
+              <label class="field">
+                <span class="field__label">Equipment you would promote</span>
+                <input class="input" name="gear_promote"
+                  placeholder="What you would honestly recommend, and why">
+              </label>
+            </div>
+          </fieldset>
+
+          <fieldset class="creator-form__group">
+            <legend>What you make</legend>
+
+            <label class="field">
+              <span class="field__label">Products or software you build</span>
+              <textarea class="textarea" name="products"
+                placeholder="Plugins, sample packs, sample libraries, tools, apps — anything you make or develop."></textarea>
+              <span class="field__hint">Optional. Link it if it exists.</span>
+            </label>
+          </fieldset>
+
+          <div class="creator-form__footer">
+            <button class="btn btn--brand" type="submit" id="creator-submit">Submit application</button>
+            <span class="creator-form__status" id="creator-status"></span>
+          </div>
+        </form>
+      </section>
+
+    </div>
+  </div>
+</main>
+
+<footer class="site-footer">
+  <span>endever.live</span>
+  <nav class="footer-links">
+    <a href="/terms.html">Terms</a><span class="footer-dot">&middot;</span>
+    <a href="/terms.html">Privacy</a><span class="footer-dot">&middot;</span>
+    <a href="/terms.html">Cookies</a><span class="footer-dot">&middot;</span>
+    <a href="#">Ads Info</a><span class="footer-dot">&middot;</span>
+    <a href="/about.html">About</a><span class="footer-dot">&middot;</span>
+    <a href="/creator.html">Become a Creator</a><span class="footer-dot">&middot;</span>
+    <a href="#">Memberships</a><span class="footer-dot">&middot;</span>
+    <a href="https://www.neverendever.com/" target="_blank" rel="noopener noreferrer">www.neverendever.com</a><span class="footer-dot">&middot;</span>
+    <a href="https://www.neverendever.com/pages/public/news/" target="_blank" rel="noopener noreferrer">News</a><span class="footer-dot">&middot;</span>
+    <a href="/faq.html">FAQ</a>
+  </nav>
+</footer>
+
+<script src="/data.js"></script>
+<script src="/assets/api.js"></script>
+<script src="/assets/ui.js"></script>
+<script>
+  const { headerScroll, markActiveNav, toast } = UI;
+
+  const gate = document.getElementById("creator-gate");
+  const form = document.getElementById("creator-form");
+  const status = document.getElementById("creator-status");
+  const submitBtn = document.getElementById("creator-submit");
+
+  let signedIn = false;
+
+  function showForm() {
+    gate.hidden = true;
+    form.hidden = false;
+  }
+
+  document.getElementById("login-btn").addEventListener("click", () => {
+    status.textContent = "Auth is not wired up yet. Use Bypass to keep developing.";
+    status.style.color = "var(--color-warn)";
+  });
+
+  document.getElementById("bypass-btn").addEventListener("click", () => {
+    signedIn = true;
+    showForm();
+    toast("Bypassed — demo mode");
+  });
+
+  form.addEventListener("submit", (e) => {
+    e.preventDefault();
+    const f = form.elements;
+
+    const lines = (value) =>
+      value.split("\n").map((s) => s.trim()).filter(Boolean);
+    const csv = (value) =>
+      value.split(",").map((s) => s.trim()).filter(Boolean);
+
+    const payload = {
+      why_creator: f.why_creator.value.trim(),
+      content_links: lines(f.content_links.value),
+      socials: csv(f.socials.value),
+      plan_1yr: f.plan_1yr.value.trim(),
+      plan_2yr: f.plan_2yr.value.trim(),
+      plan_5yr: f.plan_5yr.value.trim(),
+      resume_url: f.resume_url.value.trim() || null,
+      schooling: f.schooling.value.trim() || null,
+      bands: csv(f.bands.value),
+      labels: csv(f.labels.value),
+      genres: csv(f.genres.value),
+      instruments: csv(f.instruments.value),
+      daws: csv(f.daws.value),
+      gear_owned: csv(f.gear_owned.value),
+      gear_love: csv(f.gear_love.value),
+      gear_promote: csv(f.gear_promote.value),
+      products: f.products.value.trim() || null,
+    };
+
+    Object.keys(payload).forEach((k) => {
+      if (payload[k] === null || (Array.isArray(payload[k]) && !payload[k].length)) {
+        delete payload[k];
+      }
+    });
+
+    submitBtn.disabled = true;
+    status.textContent = "Saving…";
+    status.style.color = "var(--color-text-muted)";
+
+    try {
+      const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "creator-application.json";
+      a.click();
+      URL.revokeObjectURL(url);
+
+      status.textContent = "Saved as creator-application.json — wire this to the API next.";
+      status.style.color = "var(--color-match)";
+      toast("Application saved");
+    } catch (err) {
+      status.textContent = err.message;
+      status.style.color = "var(--color-kind-feedback)";
+    } finally {
+      submitBtn.disabled = false;
+    }
+  });
+
+  (async () => {
+    headerScroll();
+    markActiveNav();
+  })();
+</script>
+</body>
+</html>

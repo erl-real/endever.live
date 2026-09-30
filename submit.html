@@ -1,0 +1,238 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <title>Post — EndEver Live</title>
+  <meta name="description" content="Post a VOD: an event, a feedback session, or a lesson.">
+  <link rel="stylesheet" href="/assets/tokens.css">
+  <link rel="stylesheet" href="/assets/app.css">
+</head>
+<body>
+
+<header class="site-header">
+  <a class="site-logo" href="/" aria-label="EndEver Live home"><img src="/logo.png" alt="endever.live"></a>
+  <nav aria-label="Primary">
+    <ul class="site-nav">
+      <li><a href="/browse.html?kind=event">Events</a></li>
+      <li><a href="/browse.html?kind=feedback">Feedback</a></li>
+      <li><a href="/browse.html?kind=lesson">Lessons</a></li>
+      <li><a href="/browse.html?kind=interviews">Interviews</a></li>
+      <li><a href="/browse.html?creator=1">Creators</a></li>
+      <li><a href="/playlist.html">Playlist</a></li>
+    </ul>
+  </nav>
+  <div class="site-header__spacer"></div>
+</header>
+
+<main class="page">
+  <div class="section-head">
+    <div>
+      <h1>Post a VOD</h1>
+      <p>Title, link, tags. That is the whole form.</p>
+    </div>
+  </div>
+
+  <div class="wrap wrap--narrow">
+    <form id="post-form">
+
+      <label class="field">
+        <span class="field__label">Type</span>
+        <select class="select" name="kind" required>
+          <option value="event">Event — a session artists join with their music</option>
+          <option value="feedback">Feedback — a VOD of a react window, hosted elsewhere</option>
+          <option value="lesson">Lesson — teaching from a producer, vocalist or engineer</option>
+          <option value="interviews">Interview — a UUG sit-down with an artist</option>
+        </select>
+        <span class="field__hint" id="kind-hint"></span>
+      </label>
+
+      <label class="field">
+        <span class="field__label">Title</span>
+        <input class="input" name="title" required maxlength="140" placeholder="Midnight Sessions Vol. 5">
+      </label>
+
+      <label class="field">
+        <span class="field__label">YouTube URL</span>
+        <input class="input" name="url" type="url" required placeholder="https://youtube.com/watch?v=…">
+        <span class="field__hint">youtube.com, youtu.be, /shorts and /live links all work.</span>
+      </label>
+
+      <label class="field">
+        <span class="field__label">Slug</span>
+        <input class="input" name="slug" required maxlength="80" placeholder="midnight-sessions-vol-5"
+               pattern="[a-z0-9]+(?:-[a-z0-9]+)*" style="font-family:ui-monospace,Menlo,Consolas,monospace;">
+        <span class="field__hint">Lowercase letters, numbers and hyphens. Becomes /vod/your-slug.</span>
+      </label>
+
+      <label class="field">
+        <span class="field__label">Description</span>
+        <textarea class="textarea" name="description" placeholder="What is it, who is it for, what should someone bring."></textarea>
+        <span class="field__hint">Searched, but not filtered on. Keep it in sentences.</span>
+      </label>
+
+      <div class="form-grid">
+        <label class="field">
+          <span class="field__label">Tags</span>
+          <input class="input" name="tags" placeholder="collab, live, low end">
+          <span class="field__hint">Comma separated. Filterable.</span>
+        </label>
+        <label class="field">
+          <span class="field__label">Genres</span>
+          <input class="input" name="genres" placeholder="electronic, ambient">
+          <span class="field__hint">Comma separated. Filterable.</span>
+        </label>
+        <label class="field">
+          <span class="field__label">Key</span>
+          <input class="input" name="musical_key" placeholder="F minor">
+        </label>
+        <label class="field">
+          <span class="field__label">Opens</span>
+          <input class="input" name="starts_at" type="datetime-local">
+          <span class="field__hint">When the event or react window goes live.</span>
+        </label>
+      </div>
+
+      <label class="checkline" style="margin-bottom:20px;">
+        <input type="checkbox" name="member_only">
+        <span>Members only — non-members see the page but not the video</span>
+      </label>
+
+      <label class="field">
+        <span class="field__label">Optional detail</span>
+        <input class="input" name="gear" placeholder="Neumann U67, tape delay, two inch of tape">
+        <span class="field__hint">Gear, room, format — one line, comma separated.</span>
+      </label>
+
+      <details style="margin-bottom:24px;">
+        <summary style="cursor:pointer; font-size:14px; color:var(--color-text-muted); padding:10px 0;">
+          Advanced — anything else (raw JSON)
+        </summary>
+        <label class="field" style="margin-top:10px;">
+          <span class="field__label">Extra fields, merged into the post's single details cell</span>
+          <textarea class="textarea" id="extra" spellcheck="false" style="font-family:ui-monospace,Menlo,Consolas,monospace; font-size:13px; min-height:150px;"></textarea>
+          <span class="field__hint">
+            Objects or arrays. Merged last, so anything here wins.
+            e.g. <code>{"teacher":"Dither","level":"beginner","chapters":[{"t":0,"label":"Intro"}]}</code>
+          </span>
+        </label>
+      </details>
+
+      <label class="checkline" style="margin-bottom:20px;">
+        <input type="checkbox" name="is_featured">
+        <span>Feature this on the home hero</span>
+      </label>
+
+      <div style="display:flex; gap:12px; align-items:center;">
+        <button class="btn btn--brand" type="submit" id="submit-btn">Publish</button>
+        <span id="form-status" style="font-size:13px; color:var(--color-text-muted);"></span>
+      </div>
+    </form>
+  </div>
+</main>
+
+<footer class="site-footer">
+  <span>endever.live</span>
+  <nav class="footer-links">
+    <a href="/terms.html">Terms</a><span class="footer-dot">&middot;</span>
+    <a href="/terms.html">Privacy</a><span class="footer-dot">&middot;</span>
+    <a href="/terms.html">Cookies</a><span class="footer-dot">&middot;</span>
+    <a href="#">Ads Info</a><span class="footer-dot">&middot;</span>
+    <a href="/about.html">About</a><span class="footer-dot">&middot;</span>
+    <a href="/creator.html">Become a Creator</a><span class="footer-dot">&middot;</span>
+    <a href="#">Memberships</a><span class="footer-dot">&middot;</span>
+    <a href="https://www.neverendever.com/" target="_blank" rel="noopener noreferrer">www.neverendever.com</a><span class="footer-dot">&middot;</span>
+    <a href="https://www.neverendever.com/pages/public/news/" target="_blank" rel="noopener noreferrer">News</a><span class="footer-dot">&middot;</span>
+    <a href="/faq.html">FAQ</a>
+  </nav>
+</footer>
+
+<script src="/data.js"></script>
+<script src="/assets/api.js"></script>
+<script src="/assets/ui.js"></script>
+<script>
+  const { headerScroll, markActiveNav, toast } = UI;
+
+  const form = document.getElementById("post-form");
+  const kindField = form.elements.kind;
+  const hint = document.getElementById("kind-hint");
+
+  const HINTS = {
+    event:    "The stream lives elsewhere. This is the VOD and the link out.",
+    feedback: "The react window lives elsewhere. This is the VOD of it.",
+    lesson:   "Teaching content. Add chapters and gear in the advanced JSON if you want.",
+    interviews: "A UUG sit-down. Title it with the artist name.",
+  };
+
+  function syncKind() {
+    hint.textContent = HINTS[kindField.value] || "";
+  }
+  kindField.addEventListener("change", syncKind);
+  syncKind();
+
+  const csv = (value) =>
+    value.split(",").map((s) => s.trim()).filter(Boolean);
+
+  const toIso = (value) => (value ? new Date(value).toISOString() : null);
+
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const f = form.elements;
+    const status = document.getElementById("form-status");
+    const btn = document.getElementById("submit-btn");
+
+    let details = {
+      description: f.description.value.trim() || undefined,
+    };
+    if (f.gear.value.trim()) {
+      details.gear = csv(f.gear.value);
+    }
+
+    const extra = document.getElementById("extra").value.trim();
+    if (extra) {
+      try {
+        Object.assign(details, JSON.parse(extra));
+      } catch (err) {
+        status.textContent = "Advanced JSON is not valid.";
+        status.style.color = "var(--color-kind-feedback)";
+        return;
+      }
+    }
+    Object.keys(details).forEach((k) => details[k] === undefined && delete details[k]);
+
+    const body = {
+      kind: f.kind.value,
+      slug: f.slug.value.trim(),
+      title: f.title.value.trim(),
+      url: f.url.value.trim(),
+      tags: csv(f.tags.value),
+      genres: csv(f.genres.value),
+      musical_key: f.musical_key.value.trim() || null,
+      starts_at: toIso(f.starts_at.value),
+      member_only: f.member_only.checked,
+      is_featured: f.is_featured.checked,
+      details,
+    };
+
+    btn.disabled = true;
+    status.textContent = "Publishing…";
+    status.style.color = "var(--color-text-muted)";
+
+    try {
+      const post = await API.createPost(body);
+      toast("Published");
+      location.href = `/postvod.html?slug=${encodeURIComponent(post.slug)}`;
+    } catch (err) {
+      status.textContent = err.message;
+      status.style.color = "var(--color-kind-feedback)";
+      btn.disabled = false;
+    }
+  });
+
+  (async () => {
+    headerScroll();
+    markActiveNav();
+  })();
+</script>
+</body>
+</html>
