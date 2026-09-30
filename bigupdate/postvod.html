@@ -1,0 +1,208 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <title>VOD — EndEver Live</title>
+  <link rel="stylesheet" href="/assets/tokens.css">
+  <link rel="stylesheet" href="/assets/app.css">
+</head>
+<body>
+
+<header class="site-header">
+  <a class="site-logo" href="/" aria-label="EndEver Live home"><img src="/logo.png" alt="endever.live"></a>
+  <nav aria-label="Primary">
+    <ul class="site-nav">
+      <li><a href="/browse.html?kind=event">Events</a></li>
+      <li><a href="/browse.html?kind=feedback">Feedback</a></li>
+      <li><a href="/browse.html?kind=lesson">Lessons</a></li>
+      <li><a href="/browse.html?kind=interviews">Interviews</a></li>
+      <li><a href="/browse.html?creator=1">Creators</a></li>
+      <li><a href="/playlist.html">Playlist</a></li>
+    </ul>
+  </nav>
+  <div class="site-header__spacer"></div>
+  <div class="site-header__actions">
+    <a class="btn btn--ghost btn--sm" href="/submit.html">Post</a>
+  </div>
+</header>
+
+<main class="page" id="page">
+  <div class="wrap wrap--narrow" style="padding-top:32px;">
+    <div class="skeleton" style="aspect-ratio:16/9; margin-bottom:24px;"></div>
+  </div>
+</main>
+
+<footer class="site-footer">
+  <span>endever.live</span>
+  <nav class="footer-links">
+    <a href="/terms.html">Terms</a><span class="footer-dot">&middot;</span>
+    <a href="/terms.html">Privacy</a><span class="footer-dot">&middot;</span>
+    <a href="/terms.html">Cookies</a><span class="footer-dot">&middot;</span>
+    <a href="#">Ads Info</a><span class="footer-dot">&middot;</span>
+    <a href="/about.html">About</a><span class="footer-dot">&middot;</span>
+    <a href="/creator.html">Become a Creator</a><span class="footer-dot">&middot;</span>
+    <a href="#">Memberships</a><span class="footer-dot">&middot;</span>
+    <a href="https://www.neverendever.com/" target="_blank" rel="noopener noreferrer">www.neverendever.com</a><span class="footer-dot">&middot;</span>
+    <a href="https://www.neverendever.com/pages/public/news/" target="_blank" rel="noopener noreferrer">News</a><span class="footer-dot">&middot;</span>
+    <a href="/faq.html">FAQ</a>
+  </nav>
+</footer>
+
+<script src="/data.js"></script>
+<script src="/assets/api.js"></script>
+<script src="/assets/ui.js"></script>
+<script>
+  const { el, mount, headerScroll, markActiveNav, whenFor, initials } = UI;
+
+  const slug = UI.query().get("slug");
+  const page = document.getElementById("page");
+
+  const line = (label, value) =>
+    el("div", { style: { display: "flex", gap: "10px", padding: "7px 0", borderBottom: "1px solid var(--color-hairline)" } }, [
+      el("span", { style: { fontSize: "12px", letterSpacing: "1.2px", textTransform: "uppercase", color: "var(--color-text-muted)", minWidth: "108px" }, text: label }),
+      el("span", { style: { fontSize: "14px" } }, [value]),
+    ]);
+
+  const section = (title, ...children) =>
+    el("section", { style: { marginTop: "40px" } }, [
+      el("h2", { style: { fontSize: "17px", fontWeight: "800", marginBottom: "14px" }, text: title }),
+      ...children,
+    ]);
+
+  function embed(post) {
+    if (!post.video_id) {
+      return el("a", { class: "btn btn--primary", href: post.url, target: "_blank", rel: "noopener noreferrer", text: "Watch →" });
+    }
+    const frame = el("iframe", {
+      src: `https://www.youtube-nocookie.com/embed/${post.video_id}`,
+      title: post.title,
+      allow: "accelerometer; clipboard-write; encrypted-media; picture-in-picture",
+      allowfullscreen: true,
+      loading: "lazy",
+      style: {
+        width: "100%", aspectRatio: "16/9", border: "0",
+        borderRadius: "var(--border-radius-md)", background: "#000", display: "block",
+      },
+    });
+    return el("div", {}, [frame]);
+  }
+
+  function lockedPanel(post) {
+    return el("div", {
+      style: {
+        aspectRatio: "16/9", display: "grid", placeItems: "center", textAlign: "center",
+        background: "var(--color-surface)", border: "1px solid var(--color-hairline)",
+        borderRadius: "var(--border-radius-md)", padding: "32px",
+      },
+    }, [
+      el("div", { style: { fontSize: "34px", fontWeight: "900", letterSpacing: "-0.5px", marginBottom: "8px" }, text: "Members only" }),
+      el("p", { style: { fontSize: "14px", color: "var(--color-text-muted)", maxWidth: "380px" },
+        text: "This VOD is for members. The stream and the react window live elsewhere — this is the recording." }),
+    ]);
+  }
+
+  function creatorStrip(creator) {
+    if (!creator) return null;
+    return el("a", {
+      href: `/creator.html?username=${encodeURIComponent(creator.username)}`,
+      style: { display: "flex", alignItems: "center", gap: "12px", marginTop: "20px" },
+    }, [
+      el("div", {
+        style: {
+          width: "42px", height: "42px", borderRadius: "50%", flexShrink: "0",
+          background: "var(--color-surface-raised)", display: "grid", placeItems: "center",
+          fontWeight: "800", fontSize: "14px", color: "var(--color-text-muted)",
+          border: "1px solid var(--color-hairline-strong)", overflow: "hidden",
+        },
+      }, [creator.avatar_url
+        ? el("img", { src: creator.avatar_url, alt: "", style: { width: "100%", height: "100%", objectFit: "cover" } })
+        : initials(creator.display_name)]),
+      el("div", {}, [
+        el("div", { style: { fontSize: "14px", fontWeight: "700" }, text: creator.display_name }),
+        el("div", { style: { fontSize: "12px", color: "var(--color-text-muted)" }, text: creator.tagline || `@${creator.username}` }),
+      ]),
+    ]);
+  }
+
+  function lessonBlock(post) {
+    const d = post.details || {};
+    const rows = [];
+    if (d.teacher) rows.push(line("Taught by", d.teacher));
+    if (d.level) rows.push(line("Level", d.level));
+    if (d.duration) rows.push(line("Length", d.duration));
+    if (post.musical_key) rows.push(line("Key", post.musical_key));
+    if (d.gear) rows.push(line("Gear", [].concat(d.gear).join(", ")));
+    if (!rows.length) return null;
+    return section("Details", el("div", {}, rows));
+  }
+
+  function chaptersBlock(post) {
+    const chapters = (post.details || {}).chapters;
+    if (!chapters || !chapters.length) return null;
+    const stamp = (s) => `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`;
+    return section("Chapters", el("ul", { style: { listStyle: "none" } },
+      chapters.map((c) =>
+        el("li", { style: { display: "flex", gap: "14px", padding: "10px 0", borderBottom: "1px solid var(--color-hairline)", fontSize: "14px" } }, [
+          el("span", { style: { color: "var(--color-kind-lesson)", fontVariantNumeric: "tabular-nums", fontWeight: "700", minWidth: "46px" }, text: stamp(c.t || 0) }),
+          el("span", { text: c.label }),
+        ])
+      )));
+  }
+
+  function creditsBlock(post) {
+    const credits = (post.details || {}).credits;
+    if (!credits || !credits.length) return null;
+    return section("Credits", el("div", {},
+      [].concat(credits).map((c) => line(c.role || "Credit", c.name))));
+  }
+
+  function render(data) {
+    const post = data.post;
+    document.title = `${post.title} — EndEver Live`;
+
+    const badges = [UI.kindBadge(post)].filter(Boolean);
+    if (post.member_only) badges.push(el("span", { class: "badge", style: { color: "var(--color-warn)", borderColor: "color-mix(in srgb, var(--color-warn) 45%, transparent)" } }, [el("span", { class: "badge__dot" }), "Members only"]));
+
+    const head = el("div", {}, [
+      el("div", { style: { display: "flex", gap: "8px", flexWrap: "wrap", marginBottom: "14px" } }, badges),
+      el("h1", { style: { fontSize: "clamp(26px, 4vw, 40px)", fontWeight: "900", letterSpacing: "-0.8px", lineHeight: "1.1", marginBottom: "12px" }, text: post.title }),
+      el("p", { style: { fontSize: "14px", color: "var(--color-text-muted)", marginBottom: "18px" },
+        text: [whenFor(post), post.musical_key].filter(Boolean).join("  ·  ") }),
+      (post.tags || []).length
+        ? el("div", { style: { display: "flex", gap: "6px", flexWrap: "wrap", marginBottom: "20px" } },
+            post.tags.map((t) => el("a", { class: "tag", href: `/browse.html?tag=${encodeURIComponent(t)}`, text: `#${t}` })))
+        : null,
+      post.locked ? lockedPanel(post) : embed(post),
+      (post.details && post.details.description)
+        ? el("p", { style: { fontSize: "16px", lineHeight: "1.65", marginTop: "24px", color: "var(--color-text-secondary)" }, text: post.details.description })
+        : null,
+      creatorStrip(data.creator),
+    ]);
+
+    const blocks = [];
+    if (post.kind === "lesson") {
+      const lesson = lessonBlock(post);
+      if (lesson) blocks.push(lesson);
+      const chapters = chaptersBlock(post);
+      if (chapters) blocks.push(chapters);
+    }
+    const credits = creditsBlock(post);
+    if (credits) blocks.push(credits);
+
+    mount(page, el("div", { class: "wrap wrap--narrow", style: { paddingTop: "32px" } }, [head, ...blocks]));
+  }
+
+  (async () => {
+    headerScroll();
+    markActiveNav();
+    if (!slug) {
+      mount(page, el("p", { class: "empty", text: "No VOD specified." }));
+      return;
+    }
+    try { render(await API.post(slug)); }
+    catch (err) { mount(page, el("p", { class: "empty", text: err.message })); }
+  })();
+</script>
+</body>
+</html>

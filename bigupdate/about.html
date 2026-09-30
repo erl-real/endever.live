@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <title>About — EndEver Live</title>
+  <meta name="description" content="Become a creator, and what membership gets you.">
+  <link rel="stylesheet" href="/assets/tokens.css">
+  <link rel="stylesheet" href="/assets/app.css">
+</head>
+<body>
+
+<header class="site-header">
+  <a class="site-logo" href="/" aria-label="EndEver Live home"><img src="/logo.png" alt="endever.live"></a>
+  <nav aria-label="Primary">
+    <ul class="site-nav">
+      <li><a href="/browse.html?kind=event">Events</a></li>
+      <li><a href="/browse.html?kind=feedback">Feedback</a></li>
+      <li><a href="/browse.html?kind=lesson">Lessons</a></li>
+      <li><a href="/browse.html?kind=interviews">Interviews</a></li>
+      <li><a href="/browse.html?creator=1">Creators</a></li>
+      <li><a href="/playlist.html">Playlist</a></li>
+    </ul>
+  </nav>
+  <div class="site-header__spacer"></div>
+  <div class="site-header__actions">
+    <a class="btn btn--ghost btn--sm" href="/submit.html">Post</a>
+  </div>
+</header>
+
+<main class="page">
+  <div class="section-head">
+    <div>
+      <h1>About EndEver Live</h1>
+      <p>What this is, who it is for, and how to get involved.</p>
+    </div>
+  </div>
+
+  <div class="wrap wrap--narrow">
+
+    <section class="about-section">
+      <h2>Become a Creator</h2>
+      <p>
+        EndEver Live is built by people who already make things. If you produce,
+        teach, host or interview, you can apply to post here.
+      </p>
+      <p>
+        The application asks for your existing work, your socials, a one, two and
+        five year plan, and the craft behind it — instruments, DAWs, gear,
+        schooling, bands, labels. Everything lands in one place on your profile.
+      </p>
+      <p>
+        A human reads every application. We do not auto-approve, and your
+        application is never published.
+      </p>
+      <a class="btn btn--brand" href="/creator.html">Apply to become a creator</a>
+    </section>
+
+    <section class="about-section">
+      <h2>Memberships</h2>
+      <p>
+        Some videos are <strong>members only</strong>. Non-members see the page,
+        the title and the description — but not the video. The stream itself
+        always lives where it lives; this is the VOD and the link out.
+      </p>
+      <p>
+        Membership is granted through the platforms you already support us on.
+        Link an active YouTube membership, Twitch subscription or Patreon
+        membership and it carries over here.
+      </p>
+      <a class="btn btn--ghost" href="/browse.html?member_only=1">See members-only videos</a>
+    </section>
+
+  </div>
+</main>
+
+<footer class="site-footer">
+  <span>endever.live</span>
+  <nav class="footer-links">
+    <a href="/terms.html">Terms</a><span class="footer-dot">&middot;</span>
+    <a href="/terms.html">Privacy</a><span class="footer-dot">&middot;</span>
+    <a href="/terms.html">Cookies</a><span class="footer-dot">&middot;</span>
+    <a href="#">Ads Info</a><span class="footer-dot">&middot;</span>
+    <a href="/about.html">About</a><span class="footer-dot">&middot;</span>
+    <a href="/creator.html">Become a Creator</a><span class="footer-dot">&middot;</span>
+    <a href="#">Memberships</a><span class="footer-dot">&middot;</span>
+    <a href="https://www.neverendever.com/" target="_blank" rel="noopener noreferrer">www.neverendever.com</a><span class="footer-dot">&middot;</span>
+    <a href="https://www.neverendever.com/pages/public/news/" target="_blank" rel="noopener noreferrer">News</a><span class="footer-dot">&middot;</span>
+    <a href="/faq.html">FAQ</a>
+  </nav>
+</footer>
+
+<script src="/data.js"></script>
+<script src="/assets/api.js"></script>
+<script src="/assets/ui.js"></script>
+<script>
+  (async () => {
+    const { headerScroll, markActiveNav } = UI;
+    headerScroll();
+    markActiveNav();
+  })();
+</script>
+</body>
+</html>

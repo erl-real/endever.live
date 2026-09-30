@@ -1,76 +1,256 @@
 <!DOCTYPE html>
 <html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <title>EndEver Live — events, feedback and lessons</title>
+  <meta name="description" content="Events, feedback sessions and lessons from music creators. VODs and links to where the streams live.">
+  <link rel="stylesheet" href="/assets/tokens.css">
+  <link rel="stylesheet" href="/assets/app.css">
+  <link rel="icon" href="/favicon.ico">
+</head>
+<body>
 
-  <head>
-    <meta charset="UTF-8">
-    <title>endever.live</title>
-    <link rel='stylesheet' href='https://codepen.io/GreenSock/pen/xxmzBrw.css'><link rel="stylesheet" href="parts/playlistgridstyle.css">
-
-  </head>
-    
-  <body>
-  <div class="site-logo">
-    <img class="site-logo__img site-logo__img--default" src="endeverlivelogo.png" alt="endever.live" />
-    <img class="site-logo__img site-logo__img--scrolled" src="endeverlivelogo2.png" alt="endever.live" />
+<header class="site-header">
+  <a class="site-logo" href="/" aria-label="EndEver Live home"><img src="/logo.png" alt="endever.live"></a>
+  <nav aria-label="Primary">
+    <ul class="site-nav">
+      <li><a href="/browse.html?kind=event">Events</a></li>
+      <li><a href="/browse.html?kind=feedback">Feedback</a></li>
+      <li><a href="/browse.html?kind=lesson">Lessons</a></li>
+      <li><a href="/browse.html?kind=interviews">Interviews</a></li>
+      <li><a href="/browse.html?creator=1">Creators</a></li>
+      <li><a href="/playlist.html">Playlist</a></li>
+    </ul>
+  </nav>
+  <div class="site-header__spacer"></div>
+  <div class="site-header__actions">
+    <a class="btn btn--ghost btn--sm" href="/submit.html">Post</a>
   </div>
-  <header class="hero">
-    <iframe src="parts\gsaphero.html" title="Hero content"></iframe>
-  </header>
-  <section class="exclusive">
-    <h2 class="exclusive__title">Exclusive Content</h2>
-    <div class="exclusive__viewport">
-      <div class="exclusive__row"></div>
-      <button class="exclusive__more" aria-label="Load more">&#8594;</button>
-    </div>
+</header>
+
+<main>
+  <section class="hero" aria-label="Featured">
+    <div class="hero__stage" id="hero-stage"></div>
+    <div class="hero__dots" id="hero-dots" role="tablist" aria-label="Featured posts"></div>
   </section>
-  <section class="exclusive creators">
-    <h2 class="exclusive__title">Creators</h2>
-    <div class="exclusive__viewport">
-      <div class="exclusive__row"></div>
-      <button class="exclusive__more" aria-label="Load more">&#8594;</button>
-    </div>
-  </section>
-  <div class="bento-container cols-1-3-1 rows-1-3-1">
-  <div data-column="0" data-row="0" class="bento-item">
-    <img alt="">
-    <div class="image-overlay"></div>
-  </div>
-  <div data-column="1" data-row="0" class="bento-item">
-    <img alt="">
-    <div class="image-overlay"></div>
-  </div>
-  <div data-column="2" data-row="0" class="bento-item">
-    <img alt="">
-    <div class="image-overlay"></div>
-  </div>
-  <div data-column="0" data-row="1" class="bento-item">
-    <img alt="">
-    <div class="image-overlay"></div>
-  </div>
-  <div data-column="1" data-row="1" class="bento-item center-piece">
-    <img alt="">
-    <div class="image-overlay"></div>
-  </div>
-  <div data-column="2" data-row="1" class="bento-item">
-    <img alt="">
-    <div class="image-overlay"></div>
-  </div>
-  <div data-column="0" data-row="2" class="bento-item">
-    <img alt="">
-    <div class="image-overlay"></div>
-  </div>
-  <div data-column="1" data-row="2" class="bento-item">
-    <img alt="">
-    <div class="image-overlay"></div>
-  </div>
-  <div data-column="2" data-row="2" class="bento-item">
-    <img alt="">
-    <div class="image-overlay"></div>
-  </div>
-</div>
-    <script src='https://unpkg.com/gsap@3/dist/gsap.min.js'></script>
-<script src='https://unpkg.com/gsap@3/dist/Flip.min.js'></script><script  src="parts\gsapscript.js"></script>
 
-  </body>
-  
+  <div id="home-rails"></div>
+</main>
+
+<footer class="site-footer">
+  <span>endever.live</span>
+  <nav class="footer-links">
+    <a href="/terms.html">Terms</a><span class="footer-dot">&middot;</span>
+    <a href="/terms.html">Privacy</a><span class="footer-dot">&middot;</span>
+    <a href="/terms.html">Cookies</a><span class="footer-dot">&middot;</span>
+    <a href="/about.html">About</a><span class="footer-dot">&middot;</span>
+    <a href="/creator.html">Become a Creator</a><span class="footer-dot">&middot;</span>
+    <a href="#">Memberships</a><span class="footer-dot">&middot;</span>
+    <a href="https://www.neverendever.com/" target="_blank" rel="noopener noreferrer">www.neverendever.com</a><span class="footer-dot">&middot;</span>
+    <a href="https://www.neverendever.com/pages/public/news/" target="_blank" rel="noopener noreferrer">News</a><span class="footer-dot">&middot;</span>
+    <a href="/faq.html">FAQ</a>
+  </nav>
+  <span id="mode-note"></span>
+</footer>
+
+<script src="/data.js"></script>
+<script src="/assets/api.js"></script>
+<script src="/assets/ui.js"></script>
+<script>
+  const { el, mount, card, heroCarousel, rail, syncRailArrows, headerScroll, markActiveNav } = UI;
+
+  const PAGE = 6;
+  const FILL_LIMIT = 4;
+
+  const PLAYLISTS = [
+    { name: "Bass Test",     art: "art/basstestside.png",               tracks: 101 },
+    { name: "FULL CDs",      art: "art/fullcds.png",                     tracks: 46 },
+    { name: "LSD Radio",     art: "art/LSDTV.jpg",                      tracks: 101 },
+    { name: "Acid Drop",     art: "art/aciddrop.jpg",                   tracks: 88 },
+    { name: "Tomes",         art: "art/raptomes.png",                   tracks: 32 },
+    { name: "Post Pop",      art: "art/postpop.jpg",                    tracks: 57 },
+    { name: "Knock Out",     art: "art/knockoutside.png",               tracks: 29 },
+    { name: "Reload",        art: "art/reloaded.png",                   tracks: 20 },
+    { name: "Unsigned",      art: "art/unsigned.jpg",                   tracks: 82 },
+    { name: "The End",       art: "art/theend.jpg",                     tracks: 27 },
+    { name: "BackSeat66",    art: "art/backseat66side.png",             tracks: 84 },
+    { name: "Hustle Nation", art: "art/hustlenationside.png",           tracks: 85 },
+    { name: "Dither",        art: "art/dither.png",                     tracks: 29 },
+    { name: "HOT 100",       art: "art/top100beta.jpg",                 tracks: 89 },
+    { name: "Projects",      art: "art/1.png",                          tracks: 24 },
+    { name: "NEVR",          art: "art/nevr.jpg",                       tracks: 100 },
+    { name: ".exe Obj",      art: "art/exe obj by themighty808.png",    tracks: 17 },
+    { name: "Closing Time",  art: "art/closeingtime.png",               tracks: 25 },
+    { name: "Red",           art: "art/redplaylist1.png",               tracks: 37 },
+    { name: "Homesick",      art: "art/homesick.png",                   tracks: 45 },
+  ];
+
+  const ROWS = [
+    { key: "events", kind: "event", title: "Events", note: "Sessions artists join with their music", href: "/browse.html?kind=event" },
+    { key: "feedback", kind: "feedback", title: "Feedback", note: "VODs of react windows — streams live elsewhere", href: "/browse.html?kind=feedback" },
+    { key: "lessons", kind: "lesson", title: "Lessons", note: "From producers, vocalists and engineers", href: "/browse.html?kind=lesson" },
+    { key: "int-endever", kind: "interviews", tag: "endever", title: "EndEver Interviews", note: "The EndEver interview series", href: "/browse.html?kind=interviews&tag=endever" },
+    { key: "int-uug", kind: "interviews", tag: "uug", title: "UUG Interviews", note: "United Underground sits down with the underground", href: "/browse.html?kind=interviews&tag=uug" },
+    { key: "creators", title: "Creators", note: "Everyone posting right now", href: "/browse.html?creator=1", render: "creator" },
+    { key: "playlists", title: "Playlists", note: "20 playlists · 1118 tracks", href: "/playlist.html", render: "playlist" },
+  ];
+
+  const cache = {};
+  const rowState = {};
+
+  function stFor(key) {
+    if (!rowState[key]) rowState[key] = { offset: 0, hasMore: true, loading: false, done: false };
+    return rowState[key];
+  }
+
+  function playlistCard(item) {
+    return el("a", { class: "card card--playlist", href: "/playlist.html" }, [
+      el("div", { class: "card__media" }, [
+        el("img", { src: `/${item.art}`, alt: "", loading: "lazy" }),
+      ]),
+      el("div", { class: "card__body" }, [
+        el("h3", { class: "card__title", text: item.name }),
+        el("div", { class: "card__sub", text: `${item.tracks} tracks` }),
+      ]),
+    ]);
+  }
+
+  function renderFor(row) {
+    if (row.render === "creator") return UI.creatorCard;
+    if (row.render === "playlist") return playlistCard;
+    return card;
+  }
+
+  function paint() {
+    const host = document.getElementById("home-rails");
+    mount(host, ROWS.map((row) =>
+      rail({
+        key: row.key,
+        kind: row.kind,
+        title: row.title,
+        note: row.note,
+        href: row.href,
+        items: cache[row.key] || [],
+        render: renderFor(row),
+      })
+    ).filter(Boolean));
+    syncRailArrows(host);
+    ROWS.forEach(attachLazy);
+  }
+
+  async function loadPage(row, reset) {
+    const st = stFor(row.key);
+    if (st.loading || (!reset && st.done)) return [];
+    st.loading = true;
+    const size = row.page || PAGE;
+    const offset = reset ? 0 : st.offset;
+    try {
+      let items;
+      if (row.render === "creator") {
+        items = await API.creators();
+        st.done = true;
+        st.hasMore = false;
+        st.offset = items.length;
+      } else if (row.render === "playlist") {
+        items = PLAYLISTS.slice(offset, offset + size);
+        st.offset = offset + items.length;
+        if (items.length < size) { st.done = true; st.hasMore = false; }
+      } else {
+        const params = { limit: size, offset };
+        if (row.kind) params.kind = row.kind;
+        if (row.tag) params.tag = row.tag;
+        const data = await API.posts(params);
+        items = data.items || [];
+        st.offset = offset + items.length;
+        if (items.length < size) { st.done = true; st.hasMore = false; }
+      }
+      if (reset) cache[row.key] = items;
+      else cache[row.key] = (cache[row.key] || []).concat(items);
+      return items;
+    } finally {
+      st.loading = false;
+    }
+  }
+
+  function rowEl(key) {
+    return document.querySelector(`#home-rails .rail__row[data-row-key="${key}"]`);
+  }
+
+  function appendCards(row, items) {
+    const node = rowEl(row.key);
+    if (!node || !items.length) return;
+    const render = renderFor(row);
+    items.forEach((item) => node.appendChild(render(item)));
+    syncRailArrows(document.getElementById("home-rails"));
+  }
+
+  async function loadMore(row) {
+    const st = stFor(row.key);
+    if (st.loading || !st.hasMore) return;
+    const items = await loadPage(row, false);
+    appendCards(row, items);
+  }
+
+  function attachLazy(row) {
+    const node = rowEl(row.key);
+    if (!node || node.dataset.lazy === "1") return;
+    node.dataset.lazy = "1";
+    const st = stFor(row.key);
+    if (!st.hasMore) return;
+
+    node.addEventListener("scroll", () => {
+      if (!st.hasMore || st.loading) return;
+      const remaining = node.scrollWidth - node.scrollLeft - node.clientWidth;
+      if (remaining > node.clientWidth * 0.5) return;
+      loadMore(row);
+    }, { passive: true });
+
+    let fills = 0;
+    const fill = async () => {
+      if (!st.hasMore || st.loading || fills >= FILL_LIMIT) return;
+      if (node.scrollWidth > node.clientWidth + 1) return;
+      fills += 1;
+      const items = await loadPage(row, false);
+      if (!items.length) return;
+      appendCards(row, items);
+      fill();
+    };
+    fill();
+  }
+
+  (async () => {
+    headerScroll();
+    markActiveNav();
+
+    const mode = await API.detect();
+    if (mode === "demo") {
+      const note = document.getElementById("mode-note");
+      note.textContent = "Demo data";
+      note.style.color = "var(--color-warn)";
+    }
+
+    try {
+      const data = await API.home();
+      const fallback = (data.rails && data.rails.latest) || [];
+      heroCarousel(
+        document.getElementById("hero-stage"),
+        document.getElementById("hero-dots"),
+        data.hero && data.hero.length ? data.hero : fallback
+      );
+    } catch (err) {
+      console.error(err);
+    }
+
+    try {
+      await Promise.all(ROWS.map((row) => loadPage(row, true)));
+    } catch (err) {
+      console.error(err);
+    }
+    paint();
+
+    window.addEventListener("resize", () => syncRailArrows(document));
+  })();
+</script>
+</body>
 </html>
