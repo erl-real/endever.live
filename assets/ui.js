@@ -34,7 +34,7 @@ const UI = (() => {
 
   /* ------------------------------------------------------------- format */
 
-  const KIND_LABEL = { event: "Event", feedback: "Feedback", lesson: "Lesson", interviews: "Interview" };
+  const KIND_LABEL = { event: "Event", feedback: "Feedback", lesson: "Lesson", interviews: "Interview", set: "Set" };
 
   function formatDate(value, opts) {
     if (!value) return "";
@@ -94,23 +94,20 @@ const UI = (() => {
   }
 
   function card(post) {
-    const badges = [];
-    if (post.kind !== "interviews") badges.push(kindBadge(post));
-    badges.push(liveBadge(post));
+    const creatorName = (post.creator_profile && post.creator_profile.display_name)
+      || (window.DEMO_DATA && (window.DEMO_DATA.creators || []).find((c) => c.id === post.creator)?.display_name)
+      || "";
     return el("a", { class: "card", href: `/postvod.html?slug=${encodeURIComponent(post.slug)}`, dataset: { kind: post.kind } }, [
       el("div", { class: "card__media" }, [
-        post.thumb_url ? el("img", { src: post.thumb_url, alt: "", loading: "lazy" }) : null,
-        badges.length ? el("div", { class: "card__badges" }, badges) : null,
+        post.thumb_url ? el("img", { src: post.thumb_url, alt: "", loading: "lazy", onError: (e) => { e.target.src = post.thumb_url.replace('maxresdefault', 'hqdefault'); } }) : null,
         el("div", { class: "card__play" }, [PLAY_ICON()]),
       ]),
       el("div", { class: "card__body" }, [
         el("h3", { class: "card__title", text: post.title }),
-        post.kind !== "interviews"
-          ? el("div", { class: "card__sub" }, [el("span", { text: whenFor(post) })])
+        creatorName
+          ? el("div", { class: "card__sub" }, [el("span", { text: creatorName })])
           : null,
-        (post.tags || []).length
-          ? el("div", { class: "card__tags" }, (post.tags || []).slice(0, 3).map((t) => el("span", { class: "tag", text: t })))
-          : null,
+        null,
       ]),
     ]);
   }

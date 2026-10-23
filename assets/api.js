@@ -65,18 +65,33 @@ const API = (() => {
       );
     }
     if (params.kind === "event") rows.sort((a, b) => (a.starts_at || "").localeCompare(b.starts_at || ""));
-    else rows.sort((a, b) => (b.created_at || "").localeCompare(a.created_at || ""));
+    else if (params.kind === "lesson") {
+      const prio = { "tcv-throat-camera": 0, "tcv-vocal-distortion": 1 };
+      rows.sort((a, b) => (prio[a.slug] ?? 99) - (prio[b.slug] ?? 99) || (b.created_at || "").localeCompare(a.created_at || ""));
+    } else rows.sort((a, b) => (b.created_at || "").localeCompare(a.created_at || ""));
     const offset = params.offset || 0;
     const limit = params.limit || 24;
-    return { items: rows.slice(offset, offset + limit), limit, offset, is_member: false };
+    // mirror the backend gate: derive thumb_url from video_id when missing
+    const gated = rows.slice(offset, offset + limit).map((r) => {
+      const row = { ...r };
+      if (!row.thumb_url && row.video_id) {
+        row.thumb_url = `https://i.ytimg.com/vi/${row.video_id}/maxresdefault.jpg`;
+      }
+      return row;
+    });
+    return { items: gated, limit, offset, is_member: false };
   }
 
   function demoPost(slug) {
     if (!DEMO) throw new Error("no demo data");
     const post = DEMO.posts.find((p) => p.slug === slug);
     if (!post) throw Object.assign(new Error("not found"), { status: 404 });
+    const row = { ...post };
+    if (!row.thumb_url && row.video_id) {
+      row.thumb_url = `https://i.ytimg.com/vi/${row.video_id}/maxresdefault.jpg`;
+    }
     const creator = (DEMO.creators || []).find((c) => c.id === post.creator) || null;
-    return { post, creator, is_member: false };
+    return { post: row, creator, is_member: false };
   }
 
   function demoCreators() {
@@ -88,7 +103,13 @@ const API = (() => {
     if (!DEMO) throw new Error("no demo data");
     const creator = (DEMO.creators || []).find((c) => c.username === username);
     if (!creator) throw Object.assign(new Error("not found"), { status: 404 });
-    const posts = (DEMO.posts || []).filter((p) => p.creator === creator.id);
+    const posts = (DEMO.posts || []).filter((p) => p.creator === creator.id).map((p) => {
+      const row = { ...p };
+      if (!row.thumb_url && row.video_id) {
+        row.thumb_url = `https://i.ytimg.com/vi/${row.video_id}/maxresdefault.jpg`;
+      }
+      return row;
+    });
     return { creator, posts, is_member: false };
   }
 
@@ -133,7 +154,8 @@ const API = (() => {
     facets:      () => tryRequest(() => request("/api/facets"), demoFacets),
     posts:       (params) => tryRequest(() => request("/api/posts", { params }), () => demoPosts(params)),
     post:        (slug) => tryRequest(() => request(`/api/posts/${encodeURIComponent(slug)}`), () => demoPost(slug)),
-    creators:    () => tryRequest(() => request("/api/creators"), demoCreators),
+    youtubeFeed:  (channel) => tryRequest(() => request("/api/youtube-feed", { params: { channel: channel || "" } }), () => ({ items: (DEMO && DEMO.youtube_feed) || [], channel: channel || "" })),
+    creators:    () => tryRequest(() => request('/api/creators'), demoCreators),
     creator:     (username) => tryRequest(() => request(`/api/creators/${encodeURIComponent(username)}`), () => demoCreator(username)),
 
     createPost:  (body) => request("/api/posts", { method: "POST", body }),
