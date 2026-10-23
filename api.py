@@ -435,8 +435,8 @@ def create_post():
         return jsonify(error="title is required"), 400
     if not url:
         return jsonify(error="url is required"), 400
-    if kind not in ("event", "feedback", "lesson", "interviews"):
-        return jsonify(error="kind must be event, feedback, lesson or interviews"), 400
+    if kind not in ("event", "feedback", "lesson", "interviews", "set"):
+        return jsonify(error="kind must be event, feedback, lesson, interviews or set"), 400
     if not slug:
         return jsonify(error="slug is required"), 400
 
@@ -543,6 +543,81 @@ def get_creator(username):
         posts=[_gate(r, is_member) for r in posts],
         is_member=is_member,
     )
+
+
+# ---------------------------------------------------------------------------
+# youtube live feed — fetches a channel's latest videos from YouTube RSS
+# ---------------------------------------------------------------------------
+_YT_FEED_CACHE = {}
+_YT_FEED_TTL = 300  # seconds
+
+
+@app.get("/api/youtube-feed")
+def youtube_feed():
+    import time, urllib.request, xml.etree.ElementTree as ET
+
+    channel_id = (request.args.get("channel") or "").strip()
+    if channel_id:
+        channels = [channel_id]
+    else:
+        channels = ["UCBiJBaDaM3K6vPVggLhTyWA", "UCK5G-rUDSKKUXeMkrL7Bs1w", "UCJquYOG5EL82sKTfH9aMA9Q", "UCdbetV_5wxUnBTdb_d51qoA"]
+    for cid in channels:
+        if not re.match(r"^UC[A-Za-z0-9_-]{22}$", cid):
+            return jsonify(error="invalid channel id"), 400
+
+    cache_key = channel_id or "all"
+    now = time.time()
+    cached = _YT_FEED_CACHE.get(cache_key)
+    if cached and now - cached[0] < _YT_FEED_TTL:
+        return jsonify(items=cached[1], channel=cache_key, cached=True)
+
+    ns = {
+        "atom": "http://www.w3.org/2005/Atom",
+        "yt": "http://www.youtube.com/xml/schemas/2015",
+        "media": "http://search.yahoo.com/mrss/",
+    }
+
+    all_items = []
+    for cid in channels:
+        url = f"https://www.youtube.com/feeds/videos.xml?channel_id={cid}"
+        try:
+            req = urllib.request.Request(url, headers={
+                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+                "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+                "Accept-Language": "en-US,en;q=0.5",
+            })
+            data = urllib.request.urlopen(req, timeout=15).read().decode("utf-8")
+        except Exception as exc:
+            if cached:
+                return jsonify(items=cached[1], channel=cache_key, stale=True)
+            return jsonify(error=f"feed fetch failed: {exc}", items=[]), 502
+
+        try:
+            root = ET.fromstring(data)
+        except ET.ParseError as exc:
+            if cached:
+                return jsonify(items=cached[1], channel=cache_key, stale=True)
+            return jsonify(error=f"feed parse failed: {exc}", items=[]), 502
+
+        for entry in root.findall("atom:entry", ns):
+            vid_el = entry.find("yt:videoId", ns)
+            title_el = entry.find("atom:title", ns)
+            pub_el = entry.find("atom:published", ns)
+            if vid_el is None or title_el is None:
+                continue
+            vid = vid_el.text
+            all_items.append({
+                "video_id": vid,
+                "title": title_el.text,
+                "published": pub_el.text if pub_el is not None else None,
+                "thumb_url": f"https://i.ytimg.com/vi/{vid}/maxresdefault.jpg",
+                "url": f"https://www.youtube.com/watch?v={vid}",
+            })
+
+    all_items.sort(key=lambda x: x.get("published") or "", reverse=True)
+    all_items = all_items[:12]
+    _YT_FEED_CACHE[cache_key] = (now, all_items)
+    return jsonify(items=all_items, channel=cache_key)
 
 
 # ---------------------------------------------------------------------------

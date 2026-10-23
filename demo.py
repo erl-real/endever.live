@@ -1,12 +1,5 @@
 """
 Seed data for DEMO mode.
-
-Shape-identical to what Supabase returns, so the frontend cannot tell the
-difference. Thumbnails come from YouTube off video_id — no local art.
-
-Creators mirror the existing public.profiles columns we read:
-id, username, display_name, avatar_url, tagline, bio, primary_role,
-primary_genre, color.
 """
 
 from datetime import datetime, timedelta, timezone
@@ -27,472 +20,162 @@ def _slugify(value):
 
 
 CREATORS = [
-    {
-        "id": "11111111-1111-4111-8111-111111111111",
-        "username": "neverendever",
-        "display_name": "Never End Ever",
-        "avatar_url": None,
-        "tagline": "Radio host. Selector. Occasional producer.",
-        "bio": "Running the room since the first stream.",
-        "primary_role": "Host",
-        "primary_genre": "Electronic",
-        "color": "#00f5d4",
-    },
-    {
-        "id": "22222222-2222-4222-8222-222222222222",
-        "username": "hammeta",
-        "display_name": "Hammeta",
-        "avatar_url": None,
-        "tagline": "Producer. Drum design. Loud opinions on low end.",
-        "bio": "Mix engineer. Drum samples. Terrace house apologist.",
-        "primary_role": "Producer",
-        "primary_genre": "Electronic",
-        "color": "#ff1744",
-    },
-    {
-        "id": "33333333-3333-4333-8333-333333333333",
-        "username": "dither",
-        "display_name": "Dither",
-        "avatar_url": None,
-        "tagline": "Vocalist. Topline writer. Breath take champion.",
-        "bio": "Leads the Friday vocal session.",
-        "primary_role": "Vocalist",
-        "primary_genre": "R&B",
-        "color": "#b026ff",
-    },
-    {
-        "id": "44444444-4444-4444-8444-444444444444",
-        "username": "themighty808",
-        "display_name": "TheMighty808",
-        "avatar_url": None,
-        "tagline": "Drum machine archivist. 909 evangelist.",
-        "bio": "Explains the machines.",
-        "primary_role": "Producer",
-        "primary_genre": "Hip Hop",
-        "color": "#ff6a00",
-    },
-    {
-        "id": "55555555-5555-4555-8555-555555555555",
-        "username": "lorelodge",
-        "display_name": "Lore Lodge",
-        "avatar_url": None,
-        "tagline": "Field recording. Location scouts.",
-        "bio": "Goes outside for the sound.",
-        "primary_role": "Sound Designer",
-        "primary_genre": "Ambient",
-        "color": "#46d369",
-    },
-    {
-        "id": "66666666-6666-4666-8666-666666666666",
-        "username": "unitedunderground",
-        "display_name": "United Underground",
-        "avatar_url": None,
-        "tagline": "UUG — interviews with the underground.",
-        "bio": "United Underground. Interviews, sessions and the occasional rant.",
-        "primary_role": "Collective",
-        "primary_genre": "Hip Hop",
-        "color": "#e50914",
-    },
+    {"id": "11111111-1111-4111-8111-111111111111", "username": "neverendever", "display_name": "Never End Ever", "avatar_url": None, "tagline": "Radio host. Selector. Occasional producer.", "bio": "Running the room since the first stream.", "primary_role": "Host", "primary_genre": "Electronic", "color": "#00f5d4"},
+    {"id": "22222222-2222-4222-8222-222222222222", "username": "hammeta", "display_name": "Hammeta", "avatar_url": None, "tagline": "Producer. Drum design. Loud opinions on low end.", "bio": "Mix engineer. Drum samples. Terrace house apologist.", "primary_role": "Producer", "primary_genre": "Electronic", "color": "#ff1744"},
+    {"id": "66666666-6666-4666-8666-666666666666", "username": "drumeo", "display_name": "Drumeo", "avatar_url": None, "tagline": "Drum lessons from the world's best drummers.", "bio": "Drumeo - the biggest name in drum education.", "primary_role": "Educator", "primary_genre": "Rock", "color": "#c21807"},
+    {"id": "77777777-7777-4777-8777-777777777777", "username": "thecharismaticvoice", "display_name": "The Charismatic Voice", "avatar_url": None, "tagline": "Vocal analysis and reaction videos.", "bio": "Elizabeth Zharoff - vocal coach and analyst.", "primary_role": "Vocal Coach", "primary_genre": "Vocal", "color": "#9c27b0"},
+    {"id": "88888888-8888-4888-8888-888888888888", "username": "rickbeato", "display_name": "Rick Beato", "avatar_url": None, "tagline": "Music theory, interviews, and what makes songs great.", "bio": "Rick Beato - music producer, educator, and YouTuber.", "primary_role": "Educator", "primary_genre": "Rock", "color": "#e65100"},
+    {"id": "99999999-9999-4999-8999-999999999999", "username": "synthet7", "display_name": "Synthet7", "avatar_url": None, "tagline": "Music production, synthesis, and sound design.", "bio": "Synthet7 - deep dives into music production.", "primary_role": "Producer", "primary_genre": "Electronic", "color": "#00bcd4"},
+    {"id": "aa000000-0000-4a00-8a00-000000000001", "username": "martymusic", "display_name": "Marty Music", "avatar_url": None, "tagline": "Guitar lessons and music theory.", "bio": "Marty Music - guitar lessons.", "primary_role": "Educator", "primary_genre": "Rock", "color": "#4caf50"},
+    {"id": "aa000000-0000-4a00-8a00-000000000002", "username": "pauldavids", "display_name": "Paul Davids", "avatar_url": None, "tagline": "Guitar lessons, music theory, and gear.", "bio": "Paul Davids - guitar educator.", "primary_role": "Educator", "primary_genre": "Rock", "color": "#2196f3"},
+    {"id": "aa000000-0000-4a00-8a00-000000000003", "username": "producelikeapro", "display_name": "Produce Like A Pro", "avatar_url": None, "tagline": "Music production interviews and lessons.", "bio": "Produce Like A Pro - interviews and lessons.", "primary_role": "Educator", "primary_genre": "Production", "color": "#ff9800"},
+    {"id": "aa000000-0000-4a00-8a00-000000000004", "username": "yousuckatproducing", "display_name": "You Suck At Producing", "avatar_url": None, "tagline": "Music production lessons with humor.", "bio": "You Suck At Producing - music production lessons.", "primary_role": "Educator", "primary_genre": "Electronic", "color": "#f44336"},
+    {"id": "aa000000-0000-4a00-8a00-000000000005", "username": "inthemix", "display_name": "In The Mix", "avatar_url": None, "tagline": "Music production and mixing.", "bio": "In The Mix - music production, mixing, and mastering.", "primary_role": "Educator", "primary_genre": "Electronic", "color": "#9c27b0"},
+    {"id": "aa000000-0000-4a00-8a00-000000000006", "username": "theneedledrop", "display_name": "The Needle Drop", "avatar_url": None, "tagline": "Music reviews and reactions.", "bio": "The Needle Drop - music reviews, reactions, and analysis.", "primary_role": "Reviewer", "primary_genre": "Various", "color": "#795548"},
+    {"id": "aa000000-0000-4a00-8a00-000000000007", "username": "blakemclain", "display_name": "Blake McLain", "avatar_url": None, "tagline": "Music production feedback and reactions.", "bio": "Blake McLain - music production feedback and reactions.", "primary_role": "Educator", "primary_genre": "Production", "color": "#607d8b"},
+    {"id": "aa000000-0000-4a00-8a00-000000000008", "username": "andrewhuang", "display_name": "Andrew Huang", "avatar_url": None, "tagline": "Music production experiments and lessons.", "bio": "Andrew Huang - music production, experiments, and lessons.", "primary_role": "Producer", "primary_genre": "Electronic", "color": "#e91e63"},
+    {"id": "aa000000-0000-4a00-8a00-000000000009", "username": "emilyharpist", "display_name": "Emily Harpist", "avatar_url": None, "tagline": "Harp lessons and performances.", "bio": "Emily Harpist - harp lessons and performances.", "primary_role": "Educator", "primary_genre": "Classical", "color": "#3f51b5"},
+    {"id": "aa000000-0000-4a00-8a00-000000000010", "username": "8bitmusictheory", "display_name": "8-bit Music Theory", "avatar_url": None, "tagline": "Music theory in video games.", "bio": "8-bit Music Theory - music theory analysis of video game music.", "primary_role": "Educator", "primary_genre": "Theory", "color": "#7c4dff"},
+    {"id": "aa000000-0000-4a00-8a00-000000000011", "username": "12tone", "display_name": "12tone", "avatar_url": None, "tagline": "Music theory and analysis.", "bio": "12tone - music theory and analysis.", "primary_role": "Educator", "primary_genre": "Theory", "color": "#009688"},
+    {"id": "aa000000-0000-4a00-8a00-000000000012", "username": "davidbennettpiano", "display_name": "David Bennett Piano", "avatar_url": None, "tagline": "Piano lessons and music theory.", "bio": "David Bennett Piano - piano lessons and music theory.", "primary_role": "Educator", "primary_genre": "Classical", "color": "#8bc34a"},
+    {"id": "aa000000-0000-4a00-8a00-000000000013", "username": "marcrebillet", "display_name": "Marc Rebillet", "avatar_url": None, "tagline": "Live looping and improv sets.", "bio": "Marc Rebillet - live looping, improv, and sets.", "primary_role": "Performer", "primary_genre": "Electronic", "color": "#ff5722"},
+    {"id": "aa000000-0000-4a00-8a00-000000000014", "username": "mrwobbles", "display_name": "Mr Wobbles", "avatar_url": None, "tagline": "Live sets and performances.", "bio": "Mr Wobbles - live sets and performances.", "primary_role": "Performer", "primary_genre": "Electronic", "color": "#673ab7"},
+    {"id": "bb000000-0000-4b00-8b00-000000000001", "username": "flstudio", "display_name": "FL Studio", "avatar_url": None, "tagline": "Official FL Studio tutorials.", "bio": "FL Studio - official tutorials and guides.", "primary_role": "Educator", "primary_genre": "Electronic", "color": "#ff6600"},
 ]
 
 POSTS = [
-    # ---------------------------------------------------------------- events
-    {
-        "id": "a0000001-0000-4000-8000-000000000001",
-        "creator": CREATORS[0]["id"],
-        "kind": "event",
-        "slug": "midnight-sessions-vol-4",
-        "title": "Midnight Sessions Vol. 4",
-        "url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
-        "provider": "youtube",
-        "video_id": "dQw4w9WgXcQ",
-        "thumb_url": "/demoart/15.png",
-        "tags": ["collab", "live", "late night"],
-        "genres": ["electronic", "ambient"],
-        "musical_key": "F minor",
-        "member_only": False,
-        "starts_at": _iso(NOW + timedelta(days=2, hours=4)),
-        "is_featured": True,
-        "is_published": True,
-        "created_at": _iso(NOW - timedelta(days=6)),
-        "updated_at": _iso(NOW - timedelta(days=6)),
-        "details": {
-            "description": "Four hours, four artists, one shared signal chain. Bring a track you have been sitting on and play it into the room.",
-            "host": "Never End Ever",
-            "format": "live stream + multi-track",
-            "credits": [
-                {"role": "Host", "name": "Never End Ever"},
-                {"role": "Signal", "name": "Hammeta"},
-            ],
-            "gear": ["Neumann U87", "SSL Bus Compressor", "Tape delay into the desk"],
-        },
-    },
-    {
-        "id": "a0000001-0000-4000-8000-000000000002",
-        "creator": CREATORS[4]["id"],
-        "kind": "event",
-        "slug": "field-recording-walk-tokyo",
-        "title": "Field Recording Walk — Tokyo",
-        "url": "https://www.youtube.com/watch?v=9bZkp7q19f0",
-        "provider": "youtube",
-        "video_id": "9bZkp7q19f0",
-        "thumb_url": "/demoart/16.png",
-        "tags": ["field recording", "tokyo", "day trip"],
-        "genres": ["ambient", "sound design"],
-        "musical_key": None,
-        "member_only": False,
-        "starts_at": _iso(NOW + timedelta(days=11)),
-        "is_featured": False,
-        "is_published": True,
-        "created_at": _iso(NOW - timedelta(days=3)),
-        "updated_at": _iso(NOW - timedelta(days=3)),
-        "details": {
-            "description": "A full day walking the city with recorders. Subway platforms, arcade cabinets, the underside of the expressway.",
-            "host": "Lore Lodge",
-            "format": "in person + stream",
-            "credits": [{"role": "Guide", "name": "Lore Lodge"}],
-            "gear": ["Zoom F3", "Contact mics", "Deadcats that are not mine"],
-        },
-    },
-    {
-        "id": "a0000001-0000-4000-8000-000000000003",
-        "creator": CREATORS[2]["id"],
-        "kind": "event",
-        "slug": "open-vocal-booth-fridays",
-        "title": "Open Vocal Booth — Fridays",
-        "url": "https://www.youtube.com/watch?v=kJQP7kiw5Fk",
-        "provider": "youtube",
-        "video_id": "kJQP7kiw5Fk",
-        "thumb_url": "/demoart/17.png",
-        "tags": ["vocals", "open session", "weekly"],
-        "genres": ["rnb", "soul", "pop"],
-        "musical_key": None,
-        "member_only": False,
-        "starts_at": _iso(NOW - timedelta(days=1)),
-        "is_featured": False,
-        "is_published": True,
-        "created_at": _iso(NOW - timedelta(days=20)),
-        "updated_at": _iso(NOW - timedelta(days=20)),
-        "details": {
-            "description": "Recurring Friday booth session. Sing something, we record it, you take the take home.",
-            "host": "Dither",
-            "format": "live stream",
-            "credits": [{"role": "Vocalist", "name": "Dither"}],
-            "gear": ["Neumann U67", "Avalon VT-737sp", "Two inch of tape"],
-        },
-    },
-    # ------------------------------------------------------------- feedback
-    {
-        "id": "a0000002-0000-4000-8000-000000000001",
-        "creator": CREATORS[1]["id"],
-        "kind": "feedback",
-        "slug": "reacts-basstest-v3",
-        "title": "Reacts: Bass Test v3 (master)",
-        "url": "https://www.youtube.com/watch?v=3JZ_D3ELwOQ",
-        "provider": "youtube",
-        "video_id": "3JZ_D3ELwOQ",
-        "thumb_url": "/demoart/18.png",
-        "tags": ["low end", "mastering", "reacts"],
-        "genres": ["electronic", "bass"],
-        "musical_key": "G minor",
-        "member_only": False,
-        "starts_at": _iso(NOW - timedelta(hours=6)),
-        "is_featured": True,
-        "is_published": True,
-        "created_at": _iso(NOW - timedelta(hours=7)),
-        "updated_at": _iso(NOW - timedelta(hours=7)),
-        "details": {
-            "description": "Master is up. The stream is live elsewhere — this is the VOD. React between 1 and 5 on how the low end sits.",
-            "host": "Hammeta",
-            "format": "VOD of a live react window",
-            "criteria": ["low end weight", "kick vs bass separation", "monitors at low level"],
-        },
-    },
-    {
-        "id": "a0000002-0000-4000-8000-000000000002",
-        "creator": CREATORS[3]["id"],
-        "kind": "feedback",
-        "slug": "reacts-808-scratch-pack",
-        "title": "Reacts: 808 scratch pack",
-        "url": "https://www.youtube.com/watch?v=ZbZSe6N_BXs",
-        "provider": "youtube",
-        "video_id": "ZbZSe6N_BXs",
-        "thumb_url": "/demoart/19.png",
-        "tags": ["808", "drums", "samples"],
-        "genres": ["hip hop", "trap"],
-        "musical_key": None,
-        "member_only": False,
-        "starts_at": _iso(NOW - timedelta(days=2)),
-        "is_featured": False,
-        "is_published": True,
-        "created_at": _iso(NOW - timedelta(days=3)),
-        "updated_at": _iso(NOW - timedelta(days=1)),
-        "details": {
-            "description": "Two hundred kicks, none tuned. The react window has closed — this is the VOD.",
-            "host": "TheMighty808",
-            "format": "VOD of a closed react window",
-            "results": {"count": 148, "average": 3.6},
-        },
-    },
-    {
-        "id": "a0000002-0000-4000-8000-000000000003",
-        "creator": CREATORS[2]["id"],
-        "kind": "feedback",
-        "slug": "reacts-take-two-dither",
-        "title": "Reacts: Take Two (Dither)",
-        "url": "https://www.youtube.com/watch?v=fJ9rUzIMcZQ",
-        "provider": "youtube",
-        "video_id": "fJ9rUzIMcZQ",
-        "thumb_url": "/demoart/20.png",
-        "tags": ["vocals", "takes", "reacts"],
-        "genres": ["rnb", "soul"],
-        "musical_key": None,
-        "member_only": False,
-        "starts_at": _iso(NOW + timedelta(hours=20)),
-        "is_featured": False,
-        "is_published": True,
-        "created_at": _iso(NOW - timedelta(hours=2)),
-        "updated_at": _iso(NOW - timedelta(hours=2)),
-        "details": {
-            "description": "Second pass on the booth take. The stream opens tomorrow evening — this is the VOD.",
-            "host": "Dither",
-            "format": "VOD of an upcoming react window",
-        },
-    },
-    # -------------------------------------------------------------- lessons
-    {
-        "id": "a0000003-0000-4000-8000-000000000001",
-        "creator": CREATORS[1]["id"],
-        "kind": "lesson",
-        "slug": "why-your-kick-disappears-on-small-speakers",
-        "title": "Why your kick disappears on small speakers",
-        "url": "https://www.youtube.com/watch?v=hTWKbfoikeg",
-        "provider": "youtube",
-        "video_id": "hTWKbfoikeg",
-        "thumb_url": "/demoart/21.png",
-        "tags": ["mixing", "low end", "translation"],
-        "genres": ["electronic", "production"],
-        "musical_key": "A minor",
-        "member_only": False,
-        "starts_at": None,
-        "is_featured": True,
-        "is_published": True,
-        "created_at": _iso(NOW - timedelta(days=9)),
-        "updated_at": _iso(NOW - timedelta(days=9)),
-        "details": {
-            "description": "You mix on monitors. They play down at forty hertz. Your phone does not. This is the twelve minutes that explain the whole problem.",
-            "teacher": "Hammeta",
-            "level": "intermediate",
-            "duration": "12:04",
-            "chapters": [
-                {"t": 0, "label": "The actual failure mode"},
-                {"t": 214, "label": "Harmonic content, not volume"},
-                {"t": 486, "label": "Three fixes that translate"},
-            ],
-            "gear": ["Genelec 8341", "A7X", "iPhone SE speaker"],
-        },
-    },
-    {
-        "id": "a0000003-0000-4000-8000-000000000002",
-        "creator": CREATORS[2]["id"],
-        "kind": "lesson",
-        "slug": "diaphragm-and-distance",
-        "title": "Diaphragm and distance: the first ten minutes of any session",
-        "url": "https://www.youtube.com/watch?v=d1o9x8LaGmg",
-        "provider": "youtube",
-        "video_id": "d1o9x8LaGmg",
-        "thumb_url": "/demoart/22.png",
-        "tags": ["vocals", "technique", "mic placement"],
-        "genres": ["rnb", "soul", "pop"],
-        "musical_key": None,
-        "member_only": False,
-        "starts_at": None,
-        "is_featured": False,
-        "is_published": True,
-        "created_at": _iso(NOW - timedelta(days=15)),
-        "updated_at": _iso(NOW - timedelta(days=15)),
-        "details": {
-            "description": "Before you touch a compressor, decide what the mic is. Large diaphragm versus dynamic, close versus two feet.",
-            "teacher": "Dither",
-            "level": "beginner",
-            "duration": "09:41",
-            "chapters": [
-                {"t": 0, "label": "Pick the mic for the voice"},
-                {"t": 180, "label": "Distance is tone"},
-                {"t": 402, "label": "The pop filter lie"},
-            ],
-            "gear": ["Neumann U67", "SM7B", "RE20"],
-        },
-    },
-    {
-        "id": "a0000003-0000-4000-8000-000000000003",
-        "creator": CREATORS[3]["id"],
-        "kind": "lesson",
-        "slug": "808-tuning-from-scratch",
-        "title": "808 tuning from scratch, no plugin talk",
-        "url": "https://www.youtube.com/watch?v=YQHsXMglC9A",
-        "provider": "youtube",
-        "video_id": "YQHsXMglC9A",
-        "thumb_url": "/demoart/23.png",
-        "tags": ["808", "synthesis", "drums"],
-        "genres": ["hip hop", "trap"],
-        "musical_key": "C minor",
-        "member_only": False,
-        "starts_at": None,
-        "is_featured": False,
-        "is_published": True,
-        "created_at": _iso(NOW - timedelta(days=22)),
-        "updated_at": _iso(NOW - timedelta(days=22)),
-        "details": {
-            "description": "Slide, decay, pitch bend. Build the kick from three oscillators and no preset.",
-            "teacher": "TheMighty808",
-            "level": "intermediate",
-            "duration": "18:22",
-            "chapters": [
-                {"t": 0, "label": "Oscillators and the slide"},
-                {"t": 520, "label": "Decay is the whole sound"},
-                {"t": 940, "label": "Hearing the fundamental"},
-            ],
-            "gear": ["Ableton Live", "808 sub by Nullsoft"],
-        },
-    },
-    {
-        "id": "a0000003-0000-4000-8000-000000000004",
-        "creator": CREATORS[4]["id"],
-        "kind": "lesson",
-        "slug": "recording-a-subway-platform",
-        "title": "Recording a subway platform without sounding like a tourist",
-        "url": "https://www.youtube.com/watch?v=lp-EO5I60KA",
-        "provider": "youtube",
-        "video_id": "lp-EO5I60KA",
-        "thumb_url": "/demoart/24.png",
-        "tags": ["field recording", "foley", "technique"],
-        "genres": ["ambient", "sound design"],
-        "musical_key": None,
-        "member_only": False,
-        "starts_at": None,
-        "is_featured": False,
-        "is_published": True,
-        "created_at": _iso(NOW - timedelta(days=31)),
-        "updated_at": _iso(NOW - timedelta(days=31)),
-        "details": {
-            "description": "Angle, distance, and patience. How to get a platform that sits under a track instead of drowning it.",
-            "teacher": "Lore Lodge",
-            "level": "beginner",
-            "duration": "14:08",
-            "chapters": [
-                {"t": 0, "label": "Angle before gear"},
-                {"t": 300, "label": "Get out of the middle"},
-                {"t": 700, "label": "Always record it twice"},
-            ],
-            "gear": ["Zoom F6", "DPA 4060", "Boring answer: patience"],
-        },
-    },
+    {"id": "a0000003-0000-4000-8000-000000000005", "creator": CREATORS[2]["id"], "kind": "lesson", "slug": "drumeo-el-estepario-nin", "title": "El Estepario Siberiano Hears Nine Inch Nails For The First Time", "url": "https://www.youtube.com/watch?v=eb01q2oPSEM", "provider": "youtube", "video_id": "eb01q2oPSEM", "thumb_url": None, "tags": ["drums", "nine inch nails", "hearing songs"], "genres": ["rock", "industrial"], "musical_key": None, "member_only": False, "starts_at": None, "is_featured": True, "is_published": True, "created_at": _iso(NOW - timedelta(days=0)), "updated_at": _iso(NOW - timedelta(days=0)), "details": {"description": "El Estepario Siberiano hears Nine Inch Nails for the first time, live in the Drumeo studio.", "teacher": "Drumeo", "level": "intermediate", "duration": "15:39", "gear": ["Drum kit"]}},
+    {"id": "a0000003-0000-4000-8000-000000000006", "creator": CREATORS[2]["id"], "kind": "lesson", "slug": "drumeo-aaron-gillespie-nin-challenge", "title": "Aaron Gillespie vs. The Nine Inch Nails Drum Challenge", "url": "https://www.youtube.com/watch?v=eVorXW7UjTY", "provider": "youtube", "video_id": "eVorXW7UjTY", "thumb_url": None, "tags": ["drums", "nine inch nails", "challenge"], "genres": ["rock", "industrial"], "musical_key": None, "member_only": False, "starts_at": None, "is_featured": False, "is_published": True, "created_at": _iso(NOW - timedelta(days=2)), "updated_at": _iso(NOW - timedelta(days=2)), "details": {"description": "Aaron Gillespie takes on the Nine Inch Nails drum challenge in the Drumeo studio.", "teacher": "Drumeo", "level": "intermediate", "duration": "14:00", "gear": ["Drum kit"]}},
+    {"id": "a0000003-0000-4000-8000-000000000007", "creator": CREATORS[2]["id"], "kind": "lesson", "slug": "drumeo-paul-mccartney-drums", "title": "Why Paul McCartney Doesn't Drum Like A Drummer", "url": "https://www.youtube.com/watch?v=Y7diIhSG6eA", "provider": "youtube", "video_id": "Y7diIhSG6eA", "thumb_url": None, "tags": ["drums", "paul mccartney", "technique"], "genres": ["rock", "pop"], "musical_key": None, "member_only": False, "starts_at": None, "is_featured": False, "is_published": True, "created_at": _iso(NOW - timedelta(days=6)), "updated_at": _iso(NOW - timedelta(days=6)), "details": {"description": "Why Paul McCartney's drumming doesn't sound like a drummer's.", "teacher": "Drumeo", "level": "intermediate", "duration": "12:00", "gear": ["Drum kit"]}},
+    {"id": "a0000002-0000-4000-8000-000000000004", "creator": CREATORS[3]["id"], "kind": "feedback", "slug": "tcv-tonic-if-you-could-only-see", "title": "I Did NOT See This Coming! First Time Hearing Tonic", "url": "https://www.youtube.com/watch?v=U2jY7_NYa5s", "provider": "youtube", "video_id": "U2jY7_NYa5s", "thumb_url": None, "tags": ["reacts", "vocals", "first time hearing"], "genres": ["rock", "vocal"], "musical_key": None, "member_only": False, "starts_at": None, "is_featured": False, "is_published": True, "created_at": _iso(NOW - timedelta(days=3)), "updated_at": _iso(NOW - timedelta(days=3)), "details": {"description": "First time hearing Tonic - vocal analysis by The Charismatic Voice.", "host": "The Charismatic Voice", "format": "VOD of a react"}},
+    {"id": "a0000002-0000-4000-8000-000000000005", "creator": CREATORS[3]["id"], "kind": "feedback", "slug": "tcv-house-of-rising-sun", "title": "Vocal ANALYSIS of House of the Rising Sun by The Animals", "url": "https://www.youtube.com/watch?v=9umt0NxeNmA", "provider": "youtube", "video_id": "9umt0NxeNmA", "thumb_url": None, "tags": ["reacts", "vocals", "analysis"], "genres": ["rock", "vocal"], "musical_key": None, "member_only": False, "starts_at": None, "is_featured": False, "is_published": True, "created_at": _iso(NOW - timedelta(days=4)), "updated_at": _iso(NOW - timedelta(days=4)), "details": {"description": "Vocal analysis of House of the Rising Sun.", "host": "The Charismatic Voice", "format": "VOD of a react"}},
+    {"id": "a0000002-0000-4000-8000-000000000006", "creator": CREATORS[3]["id"], "kind": "feedback", "slug": "tcv-paradise-city", "title": "First Time Digging Into Paradise City by Guns N' Roses", "url": "https://www.youtube.com/watch?v=rB2uLZxsmM0", "provider": "youtube", "video_id": "rB2uLZxsmM0", "thumb_url": None, "tags": ["reacts", "vocals", "first time hearing"], "genres": ["rock", "vocal"], "musical_key": None, "member_only": False, "starts_at": None, "is_featured": False, "is_published": True, "created_at": _iso(NOW - timedelta(days=7)), "updated_at": _iso(NOW - timedelta(days=7)), "details": {"description": "First time hearing Guns N' Roses Paradise City.", "host": "The Charismatic Voice", "format": "VOD of a react"}},
+    {"id": "a0000003-0000-4000-8000-000000000011", "creator": CREATORS[3]["id"], "kind": "lesson", "slug": "tcv-throat-camera", "title": "OPERATION: Throat Camera", "url": "https://www.youtube.com/watch?v=Ua8SuWNPrLE", "provider": "youtube", "video_id": "Ua8SuWNPrLE", "thumb_url": None, "tags": ["vocals", "throat camera", "technique"], "genres": ["rock", "vocal"], "musical_key": None, "member_only": False, "starts_at": None, "is_featured": False, "is_published": True, "created_at": _iso(NOW - timedelta(days=10)), "updated_at": _iso(NOW - timedelta(days=10)), "details": {"description": "Throat camera footage of Will Ramos performing harsh vocals.", "teacher": "The Charismatic Voice", "level": "advanced", "duration": "15:00", "gear": []}},
+    {"id": "a0000003-0000-4000-8000-000000000012", "creator": CREATORS[3]["id"], "kind": "lesson", "slug": "tcv-vocal-distortion", "title": "The Science Behind Vocal Distortion", "url": "https://www.youtube.com/watch?v=JkBV8GoPWXY", "provider": "youtube", "video_id": "JkBV8GoPWXY", "thumb_url": None, "tags": ["vocals", "distortion", "technique"], "genres": ["rock", "vocal"], "musical_key": None, "member_only": False, "starts_at": None, "is_featured": False, "is_published": True, "created_at": _iso(NOW - timedelta(days=12)), "updated_at": _iso(NOW - timedelta(days=12)), "details": {"description": "The science behind vocal distortion.", "teacher": "The Charismatic Voice", "level": "advanced", "duration": "20:00", "gear": []}},
+    {"id": "a0000003-0000-4000-8000-000000000013", "creator": CREATORS[3]["id"], "kind": "lesson", "slug": "tcv-straw-glissando", "title": "Straw Glissando (Vocal Exercises Series)", "url": "https://www.youtube.com/watch?v=ubh4p7Y2ZuE", "provider": "youtube", "video_id": "ubh4p7Y2ZuE", "thumb_url": None, "tags": ["vocals", "exercise", "technique"], "genres": ["vocal"], "musical_key": None, "member_only": False, "starts_at": None, "is_featured": False, "is_published": True, "created_at": _iso(NOW - timedelta(days=14)), "updated_at": _iso(NOW - timedelta(days=14)), "details": {"description": "Straw glissando vocal exercise.", "teacher": "The Charismatic Voice", "level": "beginner", "duration": "10:00", "gear": []}},
+    {"id": "a0000002-0000-4000-8000-000000000007", "creator": CREATORS[4]["id"], "kind": "feedback", "slug": "rick-beato-just-like-heaven", "title": "What Makes This Song Great? Just Like Heaven - The Cure", "url": "https://www.youtube.com/watch?v=LPNHwwXh3Ks", "provider": "youtube", "video_id": "LPNHwwXh3Ks", "thumb_url": None, "tags": ["reacts", "music theory", "song analysis"], "genres": ["rock", "pop"], "musical_key": None, "member_only": False, "starts_at": None, "is_featured": False, "is_published": True, "created_at": _iso(NOW - timedelta(days=5)), "updated_at": _iso(NOW - timedelta(days=5)), "details": {"description": "What Makes This Song Great? - Just Like Heaven by The Cure.", "host": "Rick Beato", "format": "VOD of a song analysis"}},
+    {"id": "a0000002-0000-4000-8000-000000000008", "creator": CREATORS[4]["id"], "kind": "feedback", "slug": "rick-beato-bohemian-rhapsody", "title": "What Makes This Song Great? Bohemian Rhapsody - QUEEN", "url": "https://www.youtube.com/watch?v=3Ym7X_wCsPQ", "provider": "youtube", "video_id": "3Ym7X_wCsPQ", "thumb_url": None, "tags": ["reacts", "music theory", "song analysis"], "genres": ["rock", "classic rock"], "musical_key": None, "member_only": False, "starts_at": None, "is_featured": False, "is_published": True, "created_at": _iso(NOW - timedelta(days=8)), "updated_at": _iso(NOW - timedelta(days=8)), "details": {"description": "What Makes This Song Great? - Bohemian Rhapsody by QUEEN.", "host": "Rick Beato", "format": "VOD of a song analysis"}},
+    {"id": "a0000002-0000-4000-8000-000000000009", "creator": CREATORS[4]["id"], "kind": "feedback", "slug": "rick-beato-black-pearl-jam", "title": "What Makes This Song Great? Black - Pearl Jam", "url": "https://www.youtube.com/watch?v=9k55l7LMA7w", "provider": "youtube", "video_id": "9k55l7LMA7w", "thumb_url": None, "tags": ["reacts", "music theory", "song analysis"], "genres": ["rock", "grunge"], "musical_key": None, "member_only": False, "starts_at": None, "is_featured": False, "is_published": True, "created_at": _iso(NOW - timedelta(days=10)), "updated_at": _iso(NOW - timedelta(days=10)), "details": {"description": "What Makes This Song Great? - Black by Pearl Jam.", "host": "Rick Beato", "format": "VOD of a song analysis"}},
+    {"id": "a0000002-0000-4000-8000-000000000010", "creator": CREATORS[4]["id"], "kind": "feedback", "slug": "rick-beato-master-of-puppets", "title": "What Makes This Song Great? Master of Puppets - Metallica", "url": "https://www.youtube.com/watch?v=5EOHKfoDyrI", "provider": "youtube", "video_id": "5EOHKfoDyrI", "thumb_url": None, "tags": ["reacts", "music theory", "song analysis"], "genres": ["metal", "rock"], "musical_key": None, "member_only": False, "starts_at": None, "is_featured": False, "is_published": True, "created_at": _iso(NOW - timedelta(days=12)), "updated_at": _iso(NOW - timedelta(days=12)), "details": {"description": "What Makes This Song Great? - Master of Puppets by Metallica.", "host": "Rick Beato", "format": "VOD of a song analysis"}},
+    {"id": "a0000003-0000-4000-8000-000000000016", "creator": CREATORS[5]["id"], "kind": "lesson", "slug": "synthet7-rhythm-everyone-knows", "title": "the rhythm everyone knows", "url": "https://www.youtube.com/watch?v=F6tz5TduutI", "provider": "youtube", "video_id": "F6tz5TduutI", "thumb_url": None, "tags": ["music production", "rhythm", "synthesis"], "genres": ["electronic", "production"], "musical_key": None, "member_only": False, "starts_at": None, "is_featured": False, "is_published": True, "created_at": _iso(NOW - timedelta(days=2)), "updated_at": _iso(NOW - timedelta(days=2)), "details": {"description": "Deep dive into the rhythm everyone knows.", "teacher": "Synthet7", "level": "intermediate", "duration": "12:00", "gear": []}},
+    {"id": "a0000003-0000-4000-8000-000000000017", "creator": CREATORS[5]["id"], "kind": "lesson", "slug": "synthet7-greatest-chord", "title": "the greatest chord to put between chords", "url": "https://www.youtube.com/watch?v=Z7yLSapKKg4", "provider": "youtube", "video_id": "Z7yLSapKKg4", "thumb_url": None, "tags": ["music theory", "chords", "harmony"], "genres": ["electronic", "production"], "musical_key": None, "member_only": False, "starts_at": None, "is_featured": False, "is_published": True, "created_at": _iso(NOW - timedelta(days=4)), "updated_at": _iso(NOW - timedelta(days=4)), "details": {"description": "The greatest chord to put between chords.", "teacher": "Synthet7", "level": "intermediate", "duration": "10:00", "gear": []}},
+    {"id": "a0000003-0000-4000-8000-000000000018", "creator": CREATORS[6]["id"], "kind": "lesson", "slug": "martymusic-crazy-train", "title": "Crazy Train Guitar Lesson - Ozzy Osbourne", "url": "https://www.youtube.com/watch?v=61YCfNHZuHE", "provider": "youtube", "video_id": "61YCfNHZuHE", "thumb_url": None, "tags": ["guitar", "lesson", "ozzy"], "genres": ["rock", "metal"], "musical_key": None, "member_only": False, "starts_at": None, "is_featured": False, "is_published": True, "created_at": _iso(NOW - timedelta(days=1)), "updated_at": _iso(NOW - timedelta(days=1)), "details": {"description": "Crazy Train guitar lesson by Marty Music.", "teacher": "Marty Music", "level": "intermediate", "duration": "15:00", "gear": ["Guitar"]}},
+    {"id": "a0000003-0000-4000-8000-000000000019", "creator": CREATORS[7]["id"], "kind": "lesson", "slug": "pauldavids-getting-good", "title": "My philosophy on GETTING GOOD at guitar", "url": "https://www.youtube.com/watch?v=0CumD2ipiRA", "provider": "youtube", "video_id": "0CumD2ipiRA", "thumb_url": None, "tags": ["guitar", "practice", "technique"], "genres": ["rock"], "musical_key": None, "member_only": False, "starts_at": None, "is_featured": False, "is_published": True, "created_at": _iso(NOW - timedelta(days=2)), "updated_at": _iso(NOW - timedelta(days=2)), "details": {"description": "Paul Davids' philosophy on getting good at guitar.", "teacher": "Paul Davids", "level": "intermediate", "duration": "12:00", "gear": ["Guitar"]}},
+    {"id": "a0000003-0000-4000-8000-000000000020", "creator": CREATORS[8]["id"], "kind": "lesson", "slug": "producelikeapro-saturation", "title": "5 Quick Saturation Mixing Tricks", "url": "https://www.youtube.com/watch?v=97e-0TxuOKI", "provider": "youtube", "video_id": "97e-0TxuOKI", "thumb_url": None, "tags": ["mixing", "saturation", "production"], "genres": ["production"], "musical_key": None, "member_only": False, "starts_at": None, "is_featured": False, "is_published": True, "created_at": _iso(NOW - timedelta(days=3)), "updated_at": _iso(NOW - timedelta(days=3)), "details": {"description": "5 quick saturation mixing tricks by Produce Like A Pro.", "teacher": "Produce Like A Pro", "level": "intermediate", "duration": "10:00", "gear": []}},
+    {"id": "a0000003-0000-4000-8000-000000000021", "creator": CREATORS[9]["id"], "kind": "lesson", "slug": "yousuckatproducing-roasting", "title": "Roasting tracks from my discord", "url": "https://www.youtube.com/watch?v=uls-hfqoqZA", "provider": "youtube", "video_id": "uls-hfqoqZA", "thumb_url": None, "tags": ["production", "feedback", "roasting"], "genres": ["electronic", "production"], "musical_key": None, "member_only": False, "starts_at": None, "is_featured": False, "is_published": True, "created_at": _iso(NOW - timedelta(days=4)), "updated_at": _iso(NOW - timedelta(days=4)), "details": {"description": "Roasting tracks from discord.", "teacher": "You Suck At Producing", "level": "intermediate", "duration": "15:00", "gear": []}},
+    {"id": "a0000003-0000-4000-8000-000000000022", "creator": CREATORS[10]["id"], "kind": "lesson", "slug": "inthemix-fixing-bad-advice", "title": "Fixing Bad Music Production and Mixing Advice EP.1", "url": "https://www.youtube.com/watch?v=KjG8QHo2KIM", "provider": "youtube", "video_id": "KjG8QHo2KIM", "thumb_url": None, "tags": ["mixing", "production", "advice"], "genres": ["electronic", "production"], "musical_key": None, "member_only": False, "starts_at": None, "is_featured": False, "is_published": True, "created_at": _iso(NOW - timedelta(days=5)), "updated_at": _iso(NOW - timedelta(days=5)), "details": {"description": "Fixing bad music production and mixing advice.", "teacher": "In The Mix", "level": "intermediate", "duration": "18:00", "gear": []}},
+    {"id": "a0000002-0000-4000-8000-000000000011", "creator": CREATORS[11]["id"], "kind": "feedback", "slug": "theneedledrop-bandcamp", "title": "IT CAME FROM BANDCAMP (JULY 2016)", "url": "https://www.youtube.com/watch?v=3QuLKmZB5lg", "provider": "youtube", "video_id": "3QuLKmZB5lg", "thumb_url": None, "tags": ["reacts", "music review", "bandcamp"], "genres": ["various"], "musical_key": None, "member_only": False, "starts_at": None, "is_featured": False, "is_published": True, "created_at": _iso(NOW - timedelta(days=6)), "updated_at": _iso(NOW - timedelta(days=6)), "details": {"description": "Music review and reactions from The Needle Drop.", "host": "The Needle Drop", "format": "VOD of a review"}},
+    {"id": "a0000002-0000-4000-8000-000000000012", "creator": CREATORS[12]["id"], "kind": "feedback", "slug": "blakemclain-noah-kahan", "title": "No one makes music like THIS anymore - Noah Kahan Reaction", "url": "https://www.youtube.com/watch?v=0Bp2groftRc", "provider": "youtube", "video_id": "0Bp2groftRc", "thumb_url": None, "tags": ["reacts", "analysis", "noah kahan"], "genres": ["folk", "pop"], "musical_key": None, "member_only": False, "starts_at": None, "is_featured": False, "is_published": True, "created_at": _iso(NOW - timedelta(days=7)), "updated_at": _iso(NOW - timedelta(days=7)), "details": {"description": "Noah Kahan reaction and analysis by Blake McLain.", "host": "Blake McLain", "format": "VOD of a react"}},
+    {"id": "a0000003-0000-4000-8000-000000000023", "creator": CREATORS[13]["id"], "kind": "lesson", "slug": "andrewhuang-song-generator", "title": "Song Generator: Slide Whistle, Rhodes, Ballad", "url": "https://www.youtube.com/watch?v=_oOo0ohJkJM", "provider": "youtube", "video_id": "_oOo0ohJkJM", "thumb_url": None, "tags": ["production", "experiment", "song generator"], "genres": ["electronic", "production"], "musical_key": None, "member_only": False, "starts_at": None, "is_featured": False, "is_published": True, "created_at": _iso(NOW - timedelta(days=8)), "updated_at": _iso(NOW - timedelta(days=8)), "details": {"description": "Song generator experiment by Andrew Huang.", "teacher": "Andrew Huang", "level": "intermediate", "duration": "15:00", "gear": []}},
+    {"id": "a0000003-0000-4000-8000-000000000024", "creator": CREATORS[15]["id"], "kind": "lesson", "slug": "8bit-wind-waker", "title": "Wind Waker's Boss Themes are the Best in the Series", "url": "https://www.youtube.com/watch?v=WTj9cL48a2A", "provider": "youtube", "video_id": "WTj9cL48a2A", "thumb_url": None, "tags": ["music theory", "video game", "zelda"], "genres": ["theory", "game music"], "musical_key": None, "member_only": False, "starts_at": None, "is_featured": False, "is_published": True, "created_at": _iso(NOW - timedelta(days=9)), "updated_at": _iso(NOW - timedelta(days=9)), "details": {"description": "Music theory analysis of Wind Waker's boss themes.", "teacher": "8-bit Music Theory", "level": "intermediate", "duration": "20:00", "gear": []}},
+    {"id": "a0000003-0000-4000-8000-000000000025", "creator": CREATORS[16]["id"], "kind": "lesson", "slug": "12tone-under-pressure", "title": "Understanding Under Pressure", "url": "https://www.youtube.com/watch?v=rhd-pMT4mSk", "provider": "youtube", "video_id": "rhd-pMT4mSk", "thumb_url": None, "tags": ["music theory", "analysis", "queen"], "genres": ["theory"], "musical_key": None, "member_only": False, "starts_at": None, "is_featured": False, "is_published": True, "created_at": _iso(NOW - timedelta(days=10)), "updated_at": _iso(NOW - timedelta(days=10)), "details": {"description": "Music theory analysis of Under Pressure.", "teacher": "12tone", "level": "intermediate", "duration": "15:00", "gear": []}},
+    {"id": "a0000003-0000-4000-8000-000000000026", "creator": CREATORS[17]["id"], "kind": "lesson", "slug": "davidbennett-pachelbel", "title": "21 Songs that use Pachelbel's Canon chord progression", "url": "https://www.youtube.com/watch?v=_PC6jwoHyOk", "provider": "youtube", "video_id": "_PC6jwoHyOk", "thumb_url": None, "tags": ["music theory", "piano", "chords"], "genres": ["classical", "theory"], "musical_key": None, "member_only": False, "starts_at": None, "is_featured": False, "is_published": True, "created_at": _iso(NOW - timedelta(days=11)), "updated_at": _iso(NOW - timedelta(days=11)), "details": {"description": "21 songs that use Pachelbel's Canon chord progression.", "teacher": "David Bennett Piano", "level": "intermediate", "duration": "20:00", "gear": []}},
+    {"id": "b0000004-0000-4000-8000-000000000000", "creator": CREATORS[0]["id"], "kind": "interviews", "slug": "kairose-000", "title": "EndEver Interview - Kairose", "url": "https://www.youtube.com/watch?v=8HRpGtQJuTE", "provider": "youtube", "video_id": "8HRpGtQJuTE", "thumb_url": None, "tags": ["interview", "endever"], "genres": ["hip hop"], "musical_key": None, "member_only": False, "starts_at": None, "is_featured": False, "is_published": True, "created_at": _iso(NOW - timedelta(days=60)), "updated_at": _iso(NOW - timedelta(days=60)), "details": {"description": "EndEver sits down with Kairose.", "interviewee": "Kairose", "series": "EndEver Interviews"}},
 ]
 
-# ---------------------------------------------------------------------------
-# UUG interview playlist — hardcoded for now.
-# (video_id, artist name) pairs scraped from the existing interview list.
-# ---------------------------------------------------------------------------
-_UUG = CREATORS[-1]["id"]
+POSTS.append({
+    "id": "a0000005-0000-4000-8000-000000000001",
+    "creator": CREATORS[18]["id"],
+    "kind": "set",
+    "slug": "marc-rebillet-dallas-highlights",
+    "title": "STREAM HIGHLIGHTS: LAST SHOW IN DALLAS",
+    "url": "https://www.youtube.com/watch?v=MOQp8TNiOF8",
+    "provider": "youtube",
+    "video_id": "MOQp8TNiOF8",
+    "thumb_url": None,
+    "tags": ["set", "live", "improv"],
+    "genres": ["electronic", "funk"],
+    "musical_key": None,
+    "member_only": False,
+    "starts_at": None,
+    "is_featured": False,
+    "is_published": True,
+    "created_at": _iso(NOW - timedelta(days=5)),
+    "updated_at": _iso(NOW - timedelta(days=5)),
+    "details": {"description": "Marc Rebillet live set highlights from the last show in Dallas.", "host": "Marc Rebillet", "format": "live set"},
+})
 
-_INTERVIEWS = [
-    ("8HRpGtQJuTE", "Kairose"),
-    ("TBZy2HnGfgk", "Finesselations"), ("WulmEg_sNPY", "Darii"),
-    ("HFJKJAyS5AM", "ICYWYTE"), ("ebGx_2J0yms", "WhynotSev"),
-    ("xSiDspmNGIc", "Kayla G"), ("opEaSiScaVg", "Ynfrmthe19th"),
-    ("7Wv6qFnvUyI", "Dolovon"), ("LHiJIZ5C5sw", "Ziahfyah"),
-    ("wddoVa-rlfY", "7fiends"), ("TOQ7Bh0TnqI", "Yung Solarflare"),
-    ("6R1xqGA68RQ", "BlueMonday"), ("mtMXpfp_u7M", "YvngBandoBoy"),
-    ("zP63BrxhjTM", "DreamCHLD"), ("oXVKelXimII", "0kzvch"),
-    ("4kou5nDxy_Q", "Mula Staxks feature"), ("aHlOPq89Es4", "Mula Staxks"),
-    ("VgPRVwNU0OM", "5k Moncler"), ("ONA58MB-bWY", "7sirens"),
-    ("OM1ehsWsVdc", "Yvng MC"), ("FYQb6uLNkt8", "Baretta"),
-    ("EbWT8XoaTak", "Vice"), ("YTi29F9QPxA", "22bk"),
-    ("7TGJDeZHECQ", "Jnhygs"), ("rXYUjGwkkzE", "Zodiax"),
-    ("ng1GV40GqR4", "Dkgmac"), ("4t6tTY94KgE", "2burbo"),
-    ("nQraORx71xo", "Sopperior"), ("rn-CMYkNUZQ", "Jesusluvsshadow"),
-    ("0zONsMhOwnA", "Cali Brat"), ("u8gk8rUhRV8", "Bossa"),
-    ("PoHsC7_PCSE", "Jei"), ("EXqHlK6pJYc", "imprinceway"),
-    ("KQrGYsbvhuQ", "XellaRed"), ("vmYYscSDwkI", "Deyluvkirby"),
-    ("SWUOz6N8H5M", "HVP3RSREVENGE"), ("Rfs2p9KbHTA", "V777RHEES"),
-    ("ILXCyXmfKGY", "VXJOKING"), ("MDnpDhkKWK8", "Sharpboi"),
-    ("wU14eahn9mA", "YNLNAIS"), ("YhDN2hRxd6M", "Killing Vultures"),
-    ("STg0Xg5k_Mc", "Pingmas"), ("wiPl8EfuC0I", "2400miri"),
-    ("Eso0ry6M4o4", "nyloit"), ("f2Exaade38w", "saskr"),
-    ("ptwcESrZP6s", "gaptoothv4mp"), ("0WbeHHNBMyQ", "iluvdes"),
-    ("Q-NCU7qFdUE", "yungfrendi"), ("o8OTiYbAUL4", "mattbartkus"),
-    ("Z85Kz_SzLf4", "musicbymilla"), ("dQkOWyTAD8Y", "badfazzo"),
-    ("eA_zIBO1Jvs", "Tenkay"), ("baWmojcBWkc", "brodiebased"),
-    ("zshyM_s38ks", "Lumi x iluvern"), ("sT8QthhY-X8", "Subiibabii"),
-    ("bYYcr0_57LE", "9lives"), ("EPtWQ0aLDbw", "Kenesukoh"),
-    ("YWYOs_NFhvo", "HeyOzbee"), ("Wdw83D0DZDU", "A-D"),
-    ("fUwZmg7JhY8", "SuperTrap"), ("GT4xYZAreog", "marluxiam"),
-    ("63PsNl6S9eI", "iluvern"), ("SXB_SK3OVvg", "artieasylum"),
-    ("7Ga4mY-nUCY", "SLXMPED"), ("latKdVUtB84", "ksinkasdeya"),
-    ("9q91S3_yVtM", "Wokedes"), ("Fp8ZCYXote0", "Rsieh Raxan"),
-    ("247ZPTLcGmM", "808toofly"), ("vA6QrrUWV30", "Hr"),
-    ("cB6qzgzGMXo", "Kaydehn"), ("l8tRntZBsa8", "Kempachii"),
-    ("NNMFpbhzbkE", "Predayed"),
-]
+POSTS.append({
+    "id": "a0000005-0000-4000-8000-000000000002",
+    "creator": CREATORS[19]["id"],
+    "kind": "set",
+    "slug": "mr-wobbles-harmony-park",
+    "title": "Mr. Wobbles LIVE SET @ Harmony Park Family Campout",
+    "url": "https://www.youtube.com/watch?v=-uFDzd9GeDk",
+    "provider": "youtube",
+    "video_id": "-uFDzd9GeDk",
+    "thumb_url": None,
+    "tags": ["set", "live", "campout"],
+    "genres": ["electronic", "reggae"],
+    "musical_key": None,
+    "member_only": False,
+    "starts_at": None,
+    "is_featured": False,
+    "is_published": True,
+    "created_at": _iso(NOW - timedelta(days=3)),
+    "updated_at": _iso(NOW - timedelta(days=3)),
+    "details": {"description": "Mr. Wobbles live set at Harmony Park Family Campout.", "host": "Mr Wobbles", "format": "live set"},
+})
 
+POSTS.append({
+    "id": "a0000003-0000-4000-8000-000000000027",
+    "creator": CREATORS[20]["id"],
+    "kind": "lesson",
+    "slug": "fl-studio-automation",
+    "title": "Make it move with Automation - Learn FL Studio",
+    "url": "https://www.youtube.com/watch?v=Su7Zvxib2kw",
+    "provider": "youtube",
+    "video_id": "Su7Zvxib2kw",
+    "thumb_url": None,
+    "tags": ["fl studio", "automation", "production"],
+    "genres": ["electronic", "production"],
+    "musical_key": None,
+    "member_only": False,
+    "starts_at": None,
+    "is_featured": False,
+    "is_published": True,
+    "created_at": _iso(NOW - timedelta(days=1)),
+    "updated_at": _iso(NOW - timedelta(days=1)),
+    "details": {"description": "Learn FL Studio automation.", "teacher": "FL Studio", "level": "beginner", "duration": "10:00", "gear": ["FL Studio"]},
+})
 
-def _build_interviews():
-    rows = []
-    for i, (vid, name) in enumerate(_INTERVIEWS):
-        slug = _slugify(name) + f"-{i:03d}"
-        rows.append({
-            "id": f"b0000004-{i:04d}-4000-8000-000000000000",
-            "creator": _UUG,
-            "kind": "interviews",
-            "slug": slug,
-            "title": f"EndEver Interview — {name}" if name == "Kairose" else f"UUG Interview — {name}",
-            "url": f"https://www.youtube.com/watch?v={vid}",
-            "provider": "youtube",
-            "video_id": vid,
-            "thumb_url": None,
-            "tags": ["interview", "endever"] if name == "Kairose" else ["interview", "uug"],
-            "genres": ["hip hop"],
-            "musical_key": None,
-            "member_only": False,
-            "starts_at": None,
-            "is_featured": False,
-            "is_published": True,
-            "created_at": _iso(NOW - timedelta(days=60 - i)),
-            "updated_at": _iso(NOW - timedelta(days=60 - i)),
-            "details": {
-                "description": f"United Underground sits down with {name}.",
-                "interviewee": name,
-                "series": "EndEver Interviews",
-            },
-        })
-    return rows
+POSTS.append({
+    "id": "a0000003-0000-4000-8000-000000000028",
+    "creator": CREATORS[20]["id"],
+    "kind": "lesson",
+    "slug": "fl-studio-recording",
+    "title": "The easiest way to record - Learn FL Studio",
+    "url": "https://www.youtube.com/watch?v=qTh4COvhIs0",
+    "provider": "youtube",
+    "video_id": "qTh4COvhIs0",
+    "thumb_url": None,
+    "tags": ["fl studio", "recording", "production"],
+    "genres": ["electronic", "production"],
+    "musical_key": None,
+    "member_only": False,
+    "starts_at": None,
+    "is_featured": False,
+    "is_published": True,
+    "created_at": _iso(NOW - timedelta(days=2)),
+    "updated_at": _iso(NOW - timedelta(days=2)),
+    "details": {"description": "Learn the easiest way to record in FL Studio.", "teacher": "FL Studio", "level": "beginner", "duration": "8:00", "gear": ["FL Studio"]},
+})
 
-
-POSTS = POSTS + _build_interviews()
-
-
-# ---------------------------------------------------------------------------
-# query helpers — mirror the shapes api.py expects back
-# ---------------------------------------------------------------------------
 
 def _creator_by_id(creator_id):
     for c in CREATORS:
         if c["id"] == creator_id:
             return c
-    return {"id": creator_id, "username": "unknown", "display_name": "Unknown",
-            "avatar_url": None, "tagline": "", "bio": "", "primary_role": "",
-            "primary_genre": "", "color": None}
+    return {"id": creator_id, "username": "unknown", "display_name": "Unknown", "avatar_url": None, "tagline": "", "bio": "", "primary_role": "", "primary_genre": "", "color": None}
 
 
 def gate(row, is_member):
-    """Strip playback fields from a member-only vod for a non-member."""
     row = dict(row or {})
     row.setdefault("tags", [])
     row.setdefault("genres", [])
     row.setdefault("details", {})
     if not row.get("thumb_url") and row.get("video_id"):
-        row["thumb_url"] = f"https://i.ytimg.com/vi/{row['video_id']}/hqdefault.jpg"
+        row["thumb_url"] = f"https://i.ytimg.com/vi/{row['video_id']}/maxresdefault.jpg"
     if row.get("member_only") and not is_member:
         for field in ("url", "video_id", "thumb_url"):
             row[field] = None
@@ -514,12 +197,15 @@ def list_posts(kind=None, tag=None, genre=None, creator=None, q=None, limit=24, 
         rows = [r for r in rows if r["creator"] == creator]
     if q:
         needle = q.lower()
-        rows = [r for r in rows if needle in r["title"].lower()
-                or any(needle in t.lower() for t in r["tags"])
-                or any(needle in g.lower() for g in r["genres"])
-                or needle in (r["details"].get("description") or "").lower()]
+        rows = [r for r in rows if needle in r["title"].lower() or any(needle in t.lower() for t in r["tags"]) or any(needle in g.lower() for g in r["genres"]) or needle in (r["details"].get("description") or "").lower()]
     if kind == "event":
         rows.sort(key=lambda r: r["starts_at"] or "")
+    elif kind == "lesson":
+        priority = {"tcv-throat-camera": 0, "tcv-vocal-distortion": 1}
+        rows.sort(key=lambda r: (priority.get(r["slug"], 99), ))
+        rest = [r for r in rows if r["slug"] not in priority]
+        rest.sort(key=lambda r: r["created_at"], reverse=True)
+        rows = [r for r in rows if r["slug"] in priority] + rest
     else:
         rows.sort(key=lambda r: r["created_at"], reverse=True)
     return [gate(r, False) for r in rows[offset:offset + limit]]
@@ -534,11 +220,7 @@ def get_post(slug):
 
 def post_detail(slug):
     post = get_post(slug)
-    return {
-        "post": gate(post, False),
-        "creator": _creator_by_id(post["creator"]),
-        "is_member": False,
-    }
+    return {"post": gate(post, False), "creator": _creator_by_id(post["creator"]), "is_member": False}
 
 
 def facets():
@@ -569,9 +251,17 @@ def home():
             "events": list_posts(kind="event", limit=12),
             "feedback": list_posts(kind="feedback", limit=12),
             "lessons": list_posts(kind="lesson", limit=12),
+            "sets": list_posts(kind="set", limit=12),
             "interviews": list_posts(kind="interviews", limit=12),
             "latest": list_posts(limit=12),
         },
         "creators": [dict(c) for c in CREATORS],
         "is_member": False,
     }
+
+
+def youtube_feed(channel_id=None):
+    return {"items": [], "channel": channel_id}
+
+YOUTUBE_FEED = []
+YOUTUBE_FEEDS = {}

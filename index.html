@@ -30,6 +30,20 @@
 </header>
 
 <main>
+  <div id="disclaimer-modal" style="position:fixed;top:16px;right:16px;z-index:9999;max-width:360px;width:90%;">
+    <div style="background:var(--color-surface);border:1px solid var(--color-hairline-strong);border-radius:var(--border-radius-lg);padding:20px 22px;text-align:left;box-shadow:0 8px 32px rgba(0,0,0,0.5);">
+      <h2 style="font-size:16px;font-weight:900;margin-bottom:10px;">EndEver Live</h2>
+      <p style="font-size:12px;line-height:1.6;color:var(--color-text-secondary);margin-bottom:16px;">
+        Proof of concept. Platform is unfinished.<br>
+        All content owned and controlled by its creators.<br>
+        Partnerships, sponsors, whitelisting, submissions not yet finalized.<br>
+        Events not live yet. No AI content, ever.<br>
+        Creators: join Discord or stay tuned for submissions.<br>
+        Issues will be patched before launch.
+      </p>
+      <button id="disclaimer-btn" class="btn btn--brand" style="width:100%;">I understand</button>
+    </div>
+  </div>
   <section class="hero" aria-label="Featured">
     <div class="hero__stage" id="hero-stage"></div>
     <div class="hero__dots" id="hero-dots" role="tablist" aria-label="Featured posts"></div>
@@ -58,7 +72,7 @@
 <script src="/assets/api.js"></script>
 <script src="/assets/ui.js"></script>
 <script>
-  const { el, mount, card, heroCarousel, rail, syncRailArrows, headerScroll, markActiveNav } = UI;
+  const { el, mount, card, heroCarousel, rail, syncRailArrows, headerScroll, markActiveNav, formatWhen } = UI;
 
   const PAGE = 6;
   const FILL_LIMIT = 4;
@@ -87,12 +101,12 @@
   ];
 
   const ROWS = [
-    { key: "events", kind: "event", title: "Events", note: "Sessions artists join with their music", href: "/browse.html?kind=event" },
-    { key: "feedback", kind: "feedback", title: "Feedback", note: "VODs of react windows — streams live elsewhere", href: "/browse.html?kind=feedback" },
+    { key: "newest", title: "Newest", note: "Latest posts", href: "/browse.html", kind: null },
     { key: "lessons", kind: "lesson", title: "Lessons", note: "From producers, vocalists and engineers", href: "/browse.html?kind=lesson" },
-    { key: "int-endever", kind: "interviews", tag: "endever", title: "EndEver Interviews", note: "The EndEver interview series", href: "/browse.html?kind=interviews&tag=endever" },
-    { key: "int-uug", kind: "interviews", tag: "uug", title: "UUG Interviews", note: "United Underground sits down with the underground", href: "/browse.html?kind=interviews&tag=uug" },
     { key: "creators", title: "Creators", note: "Everyone posting right now", href: "/browse.html?creator=1", render: "creator" },
+    { key: "events", kind: "event", title: "Events", note: "Sessions artists join with their music", href: "/browse.html?kind=event" },
+    { key: "feedback", kind: "feedback", title: "Feedback", note: "VODs of react windows - streams live elsewhere", href: "/browse.html?kind=feedback" },
+    { key: "int-endever", kind: "interviews", tag: "endever", title: "EndEver Interviews", note: "The EndEver interview series", href: "/browse.html?kind=interviews&tag=endever" },
     { key: "playlists", title: "Playlists", note: "20 playlists · 1118 tracks", href: "/playlist.html", render: "playlist" },
   ];
 
@@ -116,9 +130,22 @@
     ]);
   }
 
+  function liveVideoCard(item) {
+    return el("a", { class: "card", href: item.url, target: "_blank", rel: "noopener noreferrer" }, [
+      el("div", { class: "card__media" }, [
+        item.thumb_url ? el("img", { src: item.thumb_url, alt: "", loading: "lazy", onError: (e) => { e.target.src = item.thumb_url.replace('maxresdefault', 'hqdefault'); } }) : null,
+      ]),
+      el("div", { class: "card__body" }, [
+        el("h3", { class: "card__title", text: item.title }),
+        item.channel ? el("div", { class: "card__sub" }, [el("span", { text: item.channel })]) : null,
+      ]),
+    ]);
+  }
+
   function renderFor(row) {
     if (row.render === "creator") return UI.creatorCard;
     if (row.render === "playlist") return playlistCard;
+    if (row.render === "live") return liveVideoCard;
     return card;
   }
 
@@ -232,11 +259,11 @@
 
     try {
       const data = await API.home();
-      const fallback = (data.rails && data.rails.latest) || [];
+      const newest = (data.rails && data.rails.latest) || [];
       heroCarousel(
         document.getElementById("hero-stage"),
         document.getElementById("hero-dots"),
-        data.hero && data.hero.length ? data.hero : fallback
+        newest.length ? newest : (data.hero || [])
       );
     } catch (err) {
       console.error(err);
@@ -250,6 +277,12 @@
     paint();
 
     window.addEventListener("resize", () => syncRailArrows(document));
+
+    const dm = document.getElementById("disclaimer-modal");
+    const db = document.getElementById("disclaimer-btn");
+    db.addEventListener("click", () => {
+      dm.style.display = "none";
+    });
   })();
 </script>
 </body>

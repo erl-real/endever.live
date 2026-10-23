@@ -77,6 +77,7 @@
     ["feedback", "Feedback"],
     ["lesson", "Lessons"],
     ["interviews", "Interviews"],
+  ["set", "Sets"],
   ];
 
   const params = query();
@@ -86,6 +87,7 @@
     tag: params.get("tag") || "",
     creatorsOnly: params.get("creator") === "1",
   };
+  const pageState = { offset: 0, limit: 24, hasMore: true, loading: false };
 
   function chipGroup(container, options, active, onPick) {
     mount(container, options.map(([value, label]) =>
@@ -109,7 +111,7 @@
     if (state.tag) p.set("tag", state.tag);
     if (state.creatorsOnly) p.set("creator", "1");
     history.replaceState(null, "", `/browse.html?${p}`);
-    load();
+    load(true);
   }
 
   function renderHeading() {
@@ -124,10 +126,7 @@
     }
     document.getElementById("filters").hidden = false;
     if (state.tag) {
-      if (state.tag === "uug") {
-        title.textContent = "UUG Interviews";
-        sub.textContent = "Every United Underground interview, in one list.";
-      } else if (state.tag === "endever") {
+      if (state.tag === "endever") {
         title.textContent = "EndEver Interviews";
         sub.textContent = "The EndEver interview series.";
       } else {
@@ -147,7 +146,7 @@
       sub.textContent = "Educational sessions from producers, vocalists and engineers.";
     } else if (state.kind === "interviews") {
       title.textContent = "Interviews";
-      sub.textContent = "United Underground sits down with the underground.";
+      sub.textContent = "The EndEver interview series.";
     } else {
       title.textContent = "Browse";
       sub.textContent = "Everything on the platform.";
@@ -162,29 +161,49 @@
       el("div", { class: "skeleton", style: { aspectRatio: "16 / 9" } })));
   }
 
-  async function load() {
-    renderHeading();
-    skeletons(8);
-    empty.hidden = true;
-
-    try {
-      if (state.creatorsOnly) {
+  async function load(reset) {
+    if (reset) {
+      renderHeading();
+      skeletons(8);
+      empty.hidden = true;
+      pageState.offset = 0;
+      pageState.hasMore = true;
+    }
+    if (pageState.loading || !pageState.hasMore) return;
+    if (state.creatorsOnly) {
+      if (reset) {
         const rows = await API.creators();
         mount(results, rows.map(creatorCard));
         empty.hidden = rows.length > 0;
-        return;
       }
-
+      return;
+    }
+    pageState.loading = true;
+    try {
       const data = await API.posts({
         kind: state.kind, genre: state.genre,
-        tag: state.tag, q: state.q, limit: 100,
+        tag: state.tag, q: state.q,
+        limit: pageState.limit, offset: pageState.offset,
       });
-      mount(results, (data.items || []).map(card));
-      empty.hidden = (data.items || []).length > 0;
+      const items = data.items || [];
+      if (reset) mount(results, items.map(card));
+      else items.forEach((it) => results.appendChild(card(it)));
+      pageState.offset += items.length;
+      pageState.hasMore = items.length >= pageState.limit;
+      empty.hidden = results.children.length > 0;
     } catch (err) {
-      mount(results, el("p", { class: "empty", text: "Could not load." }));
+      if (reset) mount(results, el("p", { class: "empty", text: "Could not load." }));
       console.error(err);
+    } finally {
+      pageState.loading = false;
     }
+  }
+
+  function loadMore() {
+    const scrollBottom = window.innerHeight + window.scrollY;
+    const docHeight = document.documentElement.scrollHeight;
+    if (scrollBottom < docHeight - 300) return;
+    load(false);
   }
 
   (async () => {
@@ -201,7 +220,9 @@
 
     renderFilters();
 
-    load();
+    load(true);
+
+    window.addEventListener("scroll", loadMore, { passive: true });
   })();
 </script>
 </body>

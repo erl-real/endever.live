@@ -30,7 +30,7 @@ create table if not exists public.vods (
   creator      uuid not null references auth.users (id) on delete cascade,
 
   -- --- bite-sized: searched / filtered / sorted on ---
-  kind         text not null check (kind in ('event', 'feedback', 'lesson', 'interviews')),
+  kind         text not null check (kind in ('event', 'feedback', 'lesson', 'interviews', 'set')),
   slug         text not null unique,
   title        text not null,
   url          text not null,
