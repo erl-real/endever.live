@@ -43,6 +43,13 @@ WEB_DIR = BASE_DIR
 app = Flask(__name__, static_folder=None)
 CORS(app)
 
+@app.after_request
+def no_cache(response):
+    response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
+    response.headers["Pragma"] = "no-cache"
+    response.headers["Expires"] = "0"
+    return response
+
 SUPABASE_URL = os.environ.get("SUPABASE_URL", "").strip()
 SUPABASE_ANON = os.environ.get("SUPABASE_ANON_KEY", "").strip()
 SUPABASE_SERVICE = os.environ.get("SUPABASE_SERVICE_KEY", "").strip()
@@ -293,12 +300,12 @@ def home():
 
     base = _db.from_("vods").select(PUBLIC_VODS).eq("is_published", True)
 
-    hero = base.eq("is_featured", True).order("starts_at").limit(5).execute().data
-    events = base.eq("kind", "event").order("starts_at").limit(12).execute().data
-    feedback = base.eq("kind", "feedback").order("created_at", desc=True).limit(12).execute().data
-    lessons = base.eq("kind", "lesson").order("created_at", desc=True).limit(12).execute().data
-    interviews = base.eq("kind", "interviews").order("created_at", desc=True).limit(100).execute().data
-    latest = base.order("created_at", desc=True).limit(12).execute().data
+    hero = base.order("created_at", desc=True).limit(5).execute().data
+    events = base.eq("kind", "event").order("starts_at").limit(48).execute().data
+    feedback = base.eq("kind", "feedback").order("created_at", desc=True).limit(48).execute().data
+    lessons = base.eq("kind", "lesson").order("created_at", desc=True).limit(48).execute().data
+    interviews = base.eq("kind", "interviews").order("created_at", desc=True).limit(200).execute().data
+    latest = base.order("created_at", desc=True).limit(48).execute().data
 
     is_member = _is_member(_current_user_id())
 

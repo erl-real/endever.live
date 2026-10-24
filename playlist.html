@@ -56,10 +56,167 @@
 
   .glass { background: rgba(9,9,11,0.8); backdrop-filter: blur(12px); border-bottom: 1px solid rgba(255,255,255,0.06); }
 
+  .mini-nav {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 10px 12px;
+    margin-left: 6px;
+  }
+  .mini-links { display: flex; align-items: center; gap: 14px; }
+  .mini-nav a {
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: #a1a1aa;
+    white-space: nowrap;
+    opacity: 0.12;
+    transition: opacity 0.2s ease, color 0.15s ease;
+  }
+  .mini-nav a:hover,
+  .mini-nav a:focus-visible { opacity: 1; color: #fff; }
+  @media (max-width: 820px) {
+    .playlist-header {
+      height: auto !important;
+      flex-wrap: wrap;
+      row-gap: 2px;
+      padding-bottom: 6px;
+    }
+    .mini-nav {
+      order: 3;
+      flex: 1 0 100%;
+      gap: 10px;
+      min-width: 0;
+      padding: 2px 0 0;
+      margin-left: 0;
+    }
+    .mini-links {
+      flex: 1 1 auto;
+      min-width: 0;
+      gap: 14px;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .mini-links::-webkit-scrollbar { display: none; }
+    .mini-nav a {
+      font-size: 10px;
+      letter-spacing: 0.12em;
+      opacity: 0.55;
+      padding: 5px 0;
+    }
+    .mini-nav a:active,
+    .mini-nav a[aria-current="page"] { opacity: 1; color: #fff; }
+    .note-cog-wrap { order: -1; flex-shrink: 0; }
+    .mini-cog { padding: 6px; margin: -6px; opacity: 0.55; }
+    .note-menu { left: 0; right: auto; }
+  }
+
+  .note-cog-wrap { position: relative; z-index: 60; display: inline-flex; align-items: center; }
+  .mini-cog {
+    display: inline-flex;
+    align-items: center;
+    background: none;
+    border: 0;
+    padding: 4px;
+    margin: -4px;
+    color: #a1a1aa;
+    opacity: 0.12;
+    cursor: pointer;
+    transition: opacity 0.2s ease, color 0.15s ease;
+  }
+  .mini-cog:hover,
+  .mini-cog:focus-visible,
+  .note-cog-wrap.open .mini-cog { opacity: 1; color: #fff; }
+  .note-menu {
+    display: none;
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    z-index: 400;
+    min-width: 150px;
+    padding: 4px;
+    background: #18181b;
+    border: 1px solid #27272a;
+    border-radius: 8px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.55);
+  }
+  .note-menu.open { display: block; }
+  .note-menu button {
+    display: block;
+    width: 100%;
+    padding: 7px 10px;
+    border: 0;
+    border-radius: 5px;
+    background: none;
+    color: #d4d4d8;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    text-align: left;
+    cursor: pointer;
+  }
+  .note-menu button:hover { background: #27272a; color: #fff; }
+
+  #notes-layer { position: fixed; inset: 0; z-index: 60; pointer-events: none; }
+  .sticky-note {
+    position: fixed;
+    width: 230px;
+    height: 200px;
+    display: flex;
+    flex-direction: column;
+    background: #fde68a;
+    color: #1c1917;
+    border-radius: 3px;
+    box-shadow: 0 12px 30px rgba(0,0,0,0.45);
+    overflow: hidden;
+    pointer-events: auto;
+  }
+  .sticky-note__bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 6px 8px 4px;
+    background: rgba(0,0,0,0.06);
+    cursor: grab;
+    touch-action: none;
+  }
+  .sticky-note__bar:active { cursor: grabbing; }
+  .sticky-note__title {
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    opacity: 0.5;
+  }
+  .sticky-note__del {
+    border: 0;
+    background: none;
+    padding: 0 2px;
+    font-size: 14px;
+    line-height: 1;
+    color: rgba(0,0,0,0.45);
+    cursor: pointer;
+  }
+  .sticky-note__del:hover { color: #000; }
+  .sticky-note textarea {
+    flex: 1;
+    width: 100%;
+    resize: none;
+    border: 0;
+    outline: none;
+    background: transparent;
+    padding: 8px 10px 10px;
+    color: #1c1917;
+    font: 12px/1.5 'Inter', sans-serif;
+  }
+
   @keyframes pulse-dot { 0%,100%{opacity:1} 50%{opacity:0.4} }
   .live-dot { animation: pulse-dot 1.5s ease-in-out infinite; }
 
-  .sidebar { transition: width 0.25s ease; overflow: hidden; }
+  .sidebar { position: relative; z-index: 20; transition: width 0.25s ease; overflow: hidden; }
   .sidebar.collapsed { width: 32px !important; }
   .sidebar.collapsed > .expanded-content { display: none; }
   .sidebar:not(.collapsed) > .collapsed-content { display: none; }
@@ -156,8 +313,26 @@
 
 <div id="app" style="position:relative;z-index:10;display:flex;flex-direction:column;height:100vh">
 
-<div class="shrink-0 px-3 h-11 flex items-center justify-between">
+<div class="playlist-header shrink-0 px-3 h-11 flex items-center justify-between">
   <a href="/" title="EndEver Live home" class="text-xs font-black text-white uppercase italic tracking-tight shrink-0 cursor-pointer hover:text-red-500 transition-colors">ENDEVER.LIVE</a>
+  <nav class="mini-nav shrink" aria-label="Primary">
+    <div class="mini-links">
+      <a href="/browse.html?kind=event">Events</a>
+      <a href="/browse.html?kind=feedback">Feedback</a>
+      <a href="/browse.html?kind=lesson">Lessons</a>
+      <a href="/browse.html?kind=interviews">Interviews</a>
+      <a href="/browse.html?creator=1">Creators</a>
+      <a href="/playlist.html" aria-current="page">Playlist</a>
+    </div>
+    <span class="note-cog-wrap">
+      <button id="note-cog" class="mini-cog" type="button" aria-label="Note options" aria-expanded="false" title="Notes">
+        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+      </button>
+      <div class="note-menu" id="note-menu">
+        <button type="button" id="note-add">New note</button>
+      </div>
+    </span>
+  </nav>
   <div class="flex items-center gap-2 flex-1 justify-center min-w-0 px-3">
     <span id="now-title" class="text-xs font-black text-white uppercase italic tracking-tight truncate">Select a track</span>
   </div>
@@ -768,7 +943,7 @@ function switchPlaylist(id) {
   titles = {};
   buildQueue();
   if (!videoBg) toggleVideoBg();
-  if (ready && player) playIndex(0);
+  if (ready && player) playIndex(shuffle && playQueue.length ? playQueue[0] : 0);
   updateArtDisplay();
 }
 
@@ -884,11 +1059,19 @@ function scrollToCurrent() {
 }
 
 function togglePlaylistSidebar() {
-  document.getElementById('playlist-sidebar').classList.toggle('collapsed');
+  const side = document.getElementById('playlist-sidebar');
+  side.classList.toggle('collapsed');
+  if (!side.classList.contains('collapsed') && window.innerWidth < 768) {
+    document.getElementById('controls-sidebar').classList.add('collapsed');
+  }
 }
 
 function toggleControlsSidebar() {
-  document.getElementById('controls-sidebar').classList.toggle('collapsed');
+  const side = document.getElementById('controls-sidebar');
+  side.classList.toggle('collapsed');
+  if (!side.classList.contains('collapsed') && window.innerWidth < 768) {
+    document.getElementById('playlist-sidebar').classList.add('collapsed');
+  }
 }
 
 let videoBg = false;
@@ -1016,8 +1199,142 @@ renderPlaylistGrid();
 updateArtDisplay();
 initVolume();
 loadYTAPI();
+if (window.innerWidth < 768) {
+  document.getElementById('controls-sidebar').classList.add('collapsed');
+  document.getElementById('playlist-sidebar').classList.add('collapsed');
+}
 switchPlaylist(PLAYLISTS[0].id);
 enterPlaylist();
+
+</script>
+<script>
+// --- Sticky notes ---
+(function initNotes() {
+  const layer = document.createElement('div');
+  layer.id = 'notes-layer';
+  document.body.appendChild(layer);
+
+  const cog = document.getElementById('note-cog');
+  const menu = document.getElementById('note-menu');
+  const addBtn = document.getElementById('note-add');
+  const wrap = cog.closest('.note-cog-wrap');
+  const STORE = 'endever_playlist_notes';
+  const notes = new Map();
+  let seq = 0;
+
+  const clamp = (v, min, max) => Math.min(Math.max(v, min), Math.max(min, max));
+
+  function save() {
+    const rows = [];
+    notes.forEach((note) => {
+      rows.push({ id: note.id, x: note.x, y: note.y, text: note.ta.value });
+    });
+    try { localStorage.setItem(STORE, JSON.stringify(rows)); } catch (e) {}
+  }
+
+  function createNote(data) {
+    data = data || {};
+    const id = data.id || `note-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`;
+    const el = document.createElement('div');
+    el.className = 'sticky-note';
+    el.innerHTML = '<div class="sticky-note__bar"><span class="sticky-note__title">Note</span><button class="sticky-note__del" type="button" aria-label="Delete note">&times;</button></div><textarea placeholder="Write a note..."></textarea>';
+    layer.appendChild(el);
+
+    const note = { id, el, ta: el.querySelector('textarea'), x: 0, y: 0 };
+    const w = el.offsetWidth || 230;
+    const h = el.offsetHeight || 200;
+    const offset = (seq++ % 6) * 20;
+    note.x = clamp(typeof data.x === 'number' ? data.x : (window.innerWidth - w) / 2 + offset, 0, window.innerWidth - w);
+    note.y = clamp(typeof data.y === 'number' ? data.y : (window.innerHeight - h) / 2 + offset, 0, window.innerHeight - h);
+    el.style.left = `${note.x}px`;
+    el.style.top = `${note.y}px`;
+    note.ta.value = data.text || '';
+
+    note.ta.addEventListener('input', () => {
+      clearTimeout(note.timer);
+      note.timer = setTimeout(save, 300);
+    });
+
+    el.querySelector('.sticky-note__del').addEventListener('click', (e) => {
+      e.stopPropagation();
+      el.remove();
+      notes.delete(id);
+      save();
+    });
+
+    const bar = el.querySelector('.sticky-note__bar');
+    let drag = null;
+    bar.addEventListener('pointerdown', (e) => {
+      if (e.target.closest('.sticky-note__del')) return;
+      const rect = el.getBoundingClientRect();
+      drag = { dx: e.clientX - rect.left, dy: e.clientY - rect.top };
+      bar.setPointerCapture(e.pointerId);
+      e.preventDefault();
+    });
+    bar.addEventListener('pointermove', (e) => {
+      if (!drag) return;
+      note.x = clamp(e.clientX - drag.dx, 0, window.innerWidth - el.offsetWidth);
+      note.y = clamp(e.clientY - drag.dy, 0, window.innerHeight - el.offsetHeight);
+      el.style.left = `${note.x}px`;
+      el.style.top = `${note.y}px`;
+    });
+    const endDrag = () => {
+      if (!drag) return;
+      drag = null;
+      save();
+    };
+    bar.addEventListener('pointerup', endDrag);
+    bar.addEventListener('pointercancel', endDrag);
+
+    notes.set(id, note);
+    return note;
+  }
+
+  const isOpen = () => menu.classList.contains('open');
+
+  function setOpen(open) {
+    menu.classList.toggle('open', open);
+    cog.setAttribute('aria-expanded', String(open));
+    wrap.classList.toggle('open', open);
+  }
+
+  function closeMenu() {
+    setOpen(false);
+  }
+
+  cog.addEventListener('click', (e) => {
+    e.stopPropagation();
+    setOpen(!isOpen());
+  });
+
+  addBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    closeMenu();
+    createNote().ta.focus();
+  });
+
+  document.addEventListener('click', (e) => {
+    if (isOpen() && !wrap.contains(e.target)) closeMenu();
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && isOpen()) closeMenu();
+  });
+
+  window.addEventListener('resize', () => {
+    notes.forEach((note) => {
+      note.x = clamp(note.x, 0, window.innerWidth - note.el.offsetWidth);
+      note.y = clamp(note.y, 0, window.innerHeight - note.el.offsetHeight);
+      note.el.style.left = `${note.x}px`;
+      note.el.style.top = `${note.y}px`;
+    });
+  });
+
+  try {
+    const saved = JSON.parse(localStorage.getItem(STORE) || '[]');
+    if (Array.isArray(saved)) saved.forEach((row) => createNote(row));
+  } catch (e) {}
+})();
 </script>
 </body>
 </html>

@@ -2,6 +2,9 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <title>EndEver Live — events, feedback and lessons</title>
   <meta name="description" content="Events, feedback sessions and lessons from music creators. VODs and links to where the streams live.">
@@ -25,7 +28,7 @@
   </nav>
   <div class="site-header__spacer"></div>
   <div class="site-header__actions">
-    <a class="btn btn--ghost btn--sm" href="/submit.html">Post</a>
+    <a class="btn btn--ghost btn--sm" href="/submit.html" data-auth-required hidden>Post</a>
   </div>
 </header>
 
@@ -56,8 +59,8 @@
   <span>endever.live</span>
   <nav class="footer-links">
     <a href="/terms.html">Terms</a><span class="footer-dot">&middot;</span>
-    <a href="/terms.html">Privacy</a><span class="footer-dot">&middot;</span>
-    <a href="/terms.html">Cookies</a><span class="footer-dot">&middot;</span>
+    <a href="/terms.html#privacy">Privacy</a><span class="footer-dot">&middot;</span>
+    <a href="/terms.html#cookies">Cookies</a><span class="footer-dot">&middot;</span>
     <a href="/about.html">About</a><span class="footer-dot">&middot;</span>
     <a href="/creator.html">Become a Creator</a><span class="footer-dot">&middot;</span>
     <a href="#">Memberships</a><span class="footer-dot">&middot;</span>
@@ -68,13 +71,13 @@
   <span id="mode-note"></span>
 </footer>
 
-<script src="/data.js"></script>
-<script src="/assets/api.js"></script>
-<script src="/assets/ui.js"></script>
+<script src="/data.js?v=4"></script>
+<script src="/assets/api.js?v=4"></script>
+<script src="/assets/ui.js?v=4"></script>
 <script>
-  const { el, mount, card, heroCarousel, rail, syncRailArrows, headerScroll, markActiveNav, formatWhen } = UI;
+  const { el, mount, card, heroCarousel, rail, syncRailArrows, headerScroll, markActiveNav } = UI;
 
-  const PAGE = 6;
+  const PAGE = 48;
   const FILL_LIMIT = 4;
 
   const PLAYLISTS = [
@@ -108,9 +111,19 @@
     { key: "feedback", kind: "feedback", title: "Feedback", note: "VODs of react windows - streams live elsewhere", href: "/browse.html?kind=feedback" },
     { key: "int-endever", kind: "interviews", tag: "endever", title: "EndEver Interviews", note: "The EndEver interview series", href: "/browse.html?kind=interviews&tag=endever" },
     { key: "playlists", title: "Playlists", note: "20 playlists · 1118 tracks", href: "/playlist.html", render: "playlist" },
+    { key: "classic", title: "Classic", render: "live", href: null },
   ];
 
-  const cache = {};
+  const CLASSIC_VIDEO = {
+    id: "classic-1",
+    title: "The Art Of Mixing (A Arte da Mixagem) - David Gibson",
+    url: "https://youtu.be/TEjOdqZFvhY",
+    provider: "youtube",
+    video_id: "TEjOdqZFvhY",
+    thumb_url: "https://i.ytimg.com/vi/TEjOdqZFvhY/hqdefault.jpg",
+  };
+
+  const cache = { classic: [CLASSIC_VIDEO] };
   const rowState = {};
 
   function stFor(key) {
@@ -183,6 +196,11 @@
         items = PLAYLISTS.slice(offset, offset + size);
         st.offset = offset + items.length;
         if (items.length < size) { st.done = true; st.hasMore = false; }
+      } else if (row.render === "live") {
+        items = cache[row.key] || [];
+        st.done = true;
+        st.hasMore = false;
+        st.offset = items.length;
       } else {
         const params = { limit: size, offset };
         if (row.kind) params.kind = row.kind;
@@ -260,10 +278,11 @@
     try {
       const data = await API.home();
       const newest = (data.rails && data.rails.latest) || [];
+      const heroItems = (newest.length ? newest : (data.hero || [])).slice(0, 5);
       heroCarousel(
         document.getElementById("hero-stage"),
         document.getElementById("hero-dots"),
-        newest.length ? newest : (data.hero || [])
+        heroItems
       );
     } catch (err) {
       console.error(err);

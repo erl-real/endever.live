@@ -1,7 +1,10 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="utf-8">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <title>Become a Creator — EndEver Live</title>
   <meta name="description" content="Apply to become a creator on EndEver Live.">
@@ -24,19 +27,19 @@
   </nav>
   <div class="site-header__spacer"></div>
   <div class="site-header__actions">
-    <a class="btn btn--ghost btn--sm" href="/submit.html">Post</a>
+    <a class="btn btn--ghost btn--sm" href="/submit.html" data-auth-required hidden>Post</a>
   </div>
 </header>
 
 <main class="page">
   <div class="section-head">
     <div>
-      <h1>Become a Creator</h1>
-      <p>Tell us who you are and what you make. Everything lands in one cell on your profile.</p>
+      <h1 id="creator-title">Become a Creator</h1>
+      <p id="creator-sub">Tell us who you are and what you make. Everything lands in one cell on your profile.</p>
     </div>
   </div>
 
-  <div class="wrap">
+  <div class="wrap" id="apply-view">
     <div class="creator-layout">
 
       <aside class="creator-guide">
@@ -240,15 +243,25 @@
 
     </div>
   </div>
+
+  <div class="wrap" id="profile-view" hidden>
+    <div class="creator-profile" id="profile-head"></div>
+    <div class="grid grid--flush" id="profile-posts"></div>
+    <div class="profile-more" id="profile-more-wrap" hidden>
+      <button class="btn btn--ghost" type="button" id="profile-more">Load more videos</button>
+    </div>
+    <p class="empty" id="profile-empty" hidden>No posts yet.</p>
+    <p class="empty" id="profile-missing" hidden>Creator not found.</p>
+  </div>
 </main>
 
 <footer class="site-footer">
   <span>endever.live</span>
   <nav class="footer-links">
     <a href="/terms.html">Terms</a><span class="footer-dot">&middot;</span>
-    <a href="/terms.html">Privacy</a><span class="footer-dot">&middot;</span>
-    <a href="/terms.html">Cookies</a><span class="footer-dot">&middot;</span>
-    <a href="#">Ads Info</a><span class="footer-dot">&middot;</span>
+    <a href="/terms.html#privacy">Privacy</a><span class="footer-dot">&middot;</span>
+    <a href="/terms.html#cookies">Cookies</a><span class="footer-dot">&middot;</span>
+    <a href="/terms.html#ads">Ads Info</a><span class="footer-dot">&middot;</span>
     <a href="/about.html">About</a><span class="footer-dot">&middot;</span>
     <a href="/creator.html">Become a Creator</a><span class="footer-dot">&middot;</span>
     <a href="#">Memberships</a><span class="footer-dot">&middot;</span>
@@ -258,11 +271,11 @@
   </nav>
 </footer>
 
-<script src="/data.js"></script>
-<script src="/assets/api.js"></script>
-<script src="/assets/ui.js"></script>
+<script src="/data.js?v=4"></script>
+<script src="/assets/api.js?v=4"></script>
+<script src="/assets/ui.js?v=4"></script>
 <script>
-  const { headerScroll, markActiveNav, toast } = UI;
+  const { el, mount, card, initials, headerScroll, markActiveNav, toast } = UI;
 
   const gate = document.getElementById("creator-gate");
   const form = document.getElementById("creator-form");
@@ -346,9 +359,149 @@
     }
   });
 
+  async function showProfile(username) {
+    const applyView = document.getElementById("apply-view");
+    const profileView = document.getElementById("profile-view");
+    const head = document.getElementById("profile-head");
+    const posts = document.getElementById("profile-posts");
+    const emptyPosts = document.getElementById("profile-empty");
+    const missing = document.getElementById("profile-missing");
+    const title = document.getElementById("creator-title");
+    const sub = document.getElementById("creator-sub");
+    const moreWrap = document.getElementById("profile-more-wrap");
+    const moreBtn = document.getElementById("profile-more");
+
+    const BATCH = 48;
+    let allItems = [];
+    let shown = 0;
+
+    const profileCard = (post) => {
+      const node = card(post);
+      if (post.external) {
+        node.href = post.url;
+        node.target = "_blank";
+        node.rel = "noopener noreferrer";
+      }
+      return node;
+    };
+
+    function renderMore() {
+      const slice = allItems.slice(shown, shown + BATCH);
+      slice.forEach((post) => posts.appendChild(profileCard(post)));
+      shown += slice.length;
+      const left = allItems.length - shown;
+      moreWrap.hidden = left === 0;
+      moreBtn.textContent = left > 0 ? `Load more videos (${left} left)` : "Load more videos";
+    }
+
+    applyView.hidden = true;
+    profileView.hidden = false;
+
+    try {
+      const data = await API.creator(username);
+      const c = data.creator;
+      const catalog = await fetch("/creator_videos.json")
+        .then((res) => (res.ok ? res.json() : {}))
+        .catch(() => ({}));
+
+      const seeded = data.posts || [];
+      const byVideo = new Map(seeded.filter((p) => p.video_id).map((p) => [p.video_id, p]));
+      const items = [];
+      const seen = new Set();
+
+      for (const video of catalog[username] || []) {
+        const key = video.video_id;
+        if (!key || seen.has(key)) continue;
+        seen.add(key);
+        const hit = byVideo.get(key);
+        if (hit) {
+          items.push(hit);
+          continue;
+        }
+        items.push({
+          id: `yt-${key}`,
+          creator: c.id,
+          kind: "video",
+          slug: `yt-${key}`,
+          title: video.title,
+          url: `https://www.youtube.com/watch?v=${key}`,
+          provider: "youtube",
+          video_id: key,
+          thumb_url: `https://i.ytimg.com/vi/${key}/hqdefault.jpg`,
+          tags: [],
+          genres: [],
+          musical_key: null,
+          member_only: false,
+          starts_at: null,
+          is_featured: false,
+          is_published: true,
+          created_at: null,
+          updated_at: null,
+          details: {},
+          external: true,
+        });
+      }
+      for (const post of seeded) {
+        if (!seen.has(post.video_id)) items.push(post);
+      }
+
+      document.title = `${c.display_name} — EndEver Live`;
+      title.textContent = c.display_name || c.username;
+      sub.textContent = c.tagline || `@${c.username}`;
+
+      mount(head, [
+        c.avatar_url
+          ? el("div", { class: "creator-profile__avatar" }, [el("img", { src: c.avatar_url, alt: "" })])
+          : el("div", { class: "creator-profile__avatar", text: initials(c.display_name || c.username) }),
+        el("div", {}, [
+          el("h2", { text: c.display_name || c.username }),
+          c.tagline ? el("p", { class: "creator-profile__tagline", text: c.tagline }) : null,
+          c.bio ? el("p", { class: "creator-profile__bio", text: c.bio }) : null,
+          el("div", { class: "creator-profile__meta" }, [
+            c.primary_role ? el("span", { text: c.primary_role }) : null,
+            c.primary_genre ? el("span", { text: c.primary_genre }) : null,
+            el("span", { text: `${items.length} videos` }),
+          ]),
+        ]),
+      ]);
+
+      allItems = items;
+      shown = 0;
+      posts.replaceChildren();
+      if (!items.length) {
+        emptyPosts.hidden = false;
+        moreWrap.hidden = true;
+        return;
+      }
+
+      emptyPosts.hidden = true;
+      moreWrap.hidden = items.length <= BATCH;
+      renderMore();
+
+      if ("IntersectionObserver" in window) {
+        const io = new IntersectionObserver((entries) => {
+          if (entries.some((entry) => entry.isIntersecting) && shown < allItems.length) {
+            renderMore();
+          }
+        }, { rootMargin: "600px 0px" });
+        io.observe(moreWrap);
+      }
+      moreBtn.addEventListener("click", () => {
+        if (shown < allItems.length) renderMore();
+      });
+    } catch (err) {
+      console.error(err);
+      title.textContent = "Creator";
+      sub.textContent = "";
+      missing.hidden = false;
+    }
+  }
+
   (async () => {
     headerScroll();
     markActiveNav();
+    const username = new URLSearchParams(location.search).get("username");
+    if (username) await showProfile(username);
   })();
 </script>
 </body>

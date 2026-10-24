@@ -2,6 +2,9 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <title>FAQ — EndEver Live</title>
   <meta name="description" content="Frequently asked questions about EndEver Live.">
@@ -24,7 +27,7 @@
   </nav>
   <div class="site-header__spacer"></div>
   <div class="site-header__actions">
-    <a class="btn btn--ghost btn--sm" href="/submit.html">Post</a>
+    <a class="btn btn--ghost btn--sm" href="/submit.html" data-auth-required hidden>Post</a>
   </div>
 </header>
 
@@ -140,8 +143,8 @@
   <span>endever.live</span>
   <nav class="footer-links">
     <a href="/terms.html">Terms</a><span class="footer-dot">&middot;</span>
-    <a href="/terms.html">Privacy</a><span class="footer-dot">&middot;</span>
-    <a href="/terms.html">Cookies</a><span class="footer-dot">&middot;</span>
+    <a href="/terms.html#privacy">Privacy</a><span class="footer-dot">&middot;</span>
+    <a href="/terms.html#cookies">Cookies</a><span class="footer-dot">&middot;</span>
     <a href="/about.html">About</a><span class="footer-dot">&middot;</span>
     <a href="/creator.html">Become a Creator</a><span class="footer-dot">&middot;</span>
     <a href="#">Memberships</a><span class="footer-dot">&middot;</span>
@@ -151,9 +154,9 @@
   </nav>
 </footer>
 
-<script src="/data.js"></script>
-<script src="/assets/api.js"></script>
-<script src="/assets/ui.js"></script>
+<script src="/data.js?v=4"></script>
+<script src="/assets/api.js?v=4"></script>
+<script src="/assets/ui.js?v=4"></script>
 <script>
   (async () => {
     const { headerScroll, markActiveNav } = UI;
